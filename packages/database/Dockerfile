@@ -3,7 +3,7 @@ WORKDIR /app
 RUN apk add --no-cache openssl
 RUN corepack enable
 
-COPY package.json pnpm-workspace.yaml turbo.json ./
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json ./
 COPY packages/database/package.json ./packages/database/package.json
 
 RUN pnpm install --frozen-lockfile --filter=database...
