@@ -254,7 +254,7 @@ export function Calculator({
               <input
                 type="number"
                 min="1"
-                className="w-full md:w-32 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                className="w-full md:w-32 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-gray-900"
                 value={selections.quantity}
                 onChange={(e) => updateSelection('quantity', parseInt(e.target.value) || 1)}
               />

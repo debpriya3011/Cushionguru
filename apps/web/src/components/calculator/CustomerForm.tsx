@@ -110,7 +110,7 @@ export function CustomerForm({ onChange, initialData }: CustomerFormProps) {
             type="text"
             value={data.firstName}
             onChange={(e) => handleChange('firstName', e.target.value)}
-            className={`w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+            className={`w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 ${
               errors.firstName ? 'border-red-500' : 'border-gray-300'
             }`}
             placeholder="John"
@@ -127,7 +127,7 @@ export function CustomerForm({ onChange, initialData }: CustomerFormProps) {
             type="text"
             value={data.lastName}
             onChange={(e) => handleChange('lastName', e.target.value)}
-            className={`w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+            className={`w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 ${
               errors.lastName ? 'border-red-500' : 'border-gray-300'
             }`}
             placeholder="Doe"
@@ -148,7 +148,7 @@ export function CustomerForm({ onChange, initialData }: CustomerFormProps) {
             type="email"
             value={data.email}
             onChange={(e) => handleChange('email', e.target.value)}
-            className={`w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+            className={`w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 ${
               errors.email ? 'border-red-500' : 'border-gray-300'
             }`}
             placeholder="john.doe@example.com"
@@ -165,7 +165,7 @@ export function CustomerForm({ onChange, initialData }: CustomerFormProps) {
             type="tel"
             value={data.phone}
             onChange={(e) => handleChange('phone', e.target.value)}
-            className={`w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+            className={`w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 ${
               errors.phone ? 'border-red-500' : 'border-gray-300'
             }`}
             placeholder="(555) 123-4567"
@@ -186,7 +186,7 @@ export function CustomerForm({ onChange, initialData }: CustomerFormProps) {
             type="text"
             value={data.address.line1}
             onChange={(e) => handleChange('address.line1', e.target.value)}
-            className={`w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+            className={`w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 ${
               errors['address.line1'] ? 'border-red-500' : 'border-gray-300'
             }`}
             placeholder="123 Main Street"
@@ -203,7 +203,7 @@ export function CustomerForm({ onChange, initialData }: CustomerFormProps) {
             type="text"
             value={data.address.line2}
             onChange={(e) => handleChange('address.line2', e.target.value)}
-            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
             placeholder="Apt 4B"
           />
         </div>
@@ -216,7 +216,7 @@ export function CustomerForm({ onChange, initialData }: CustomerFormProps) {
               type="text"
               value={data.address.city}
               onChange={(e) => handleChange('address.city', e.target.value)}
-              className={`w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+              className={`w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 ${
                 errors['address.city'] ? 'border-red-500' : 'border-gray-300'
               }`}
               placeholder="New York"
@@ -233,7 +233,7 @@ export function CustomerForm({ onChange, initialData }: CustomerFormProps) {
               type="text"
               value={data.address.state}
               onChange={(e) => handleChange('address.state', e.target.value)}
-              className={`w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+              className={`w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 ${
                 errors['address.state'] ? 'border-red-500' : 'border-gray-300'
               }`}
               placeholder="NY"
@@ -250,7 +250,7 @@ export function CustomerForm({ onChange, initialData }: CustomerFormProps) {
               type="text"
               value={data.address.zip}
               onChange={(e) => handleChange('address.zip', e.target.value)}
-              className={`w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+              className={`w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 ${
                 errors['address.zip'] ? 'border-red-500' : 'border-gray-300'
               }`}
               placeholder="10001"

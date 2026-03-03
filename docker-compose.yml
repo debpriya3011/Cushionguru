@@ -9,34 +9,17 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - DATABASE_URL=postgresql://postgres:postgres@db:5432/cushion_saas?schema=public
-      - NEXTAUTH_SECRET=superlongrandomsecretkey123456789
-      - NEXTAUTH_URL=http://localhost:3000
+      - DATABASE_URL=${DATABASE_URL}
+      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
+      - NEXTAUTH_URL=${NEXTAUTH_URL}
       - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
       - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
       - AWS_S3_BUCKET=${AWS_S3_BUCKET}
       - AWS_REGION=${AWS_REGION}
       - RESEND_API_KEY=${RESEND_API_KEY}
     depends_on:
-      - db
       - redis
 
-  # PostgreSQL Database
-  db:
-    image: postgres:15-alpine
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=cushion_saas
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
 
   # Redis Cache
   redis:
@@ -52,13 +35,10 @@ services:
       context: .
       dockerfile: ./packages/database/Dockerfile
     environment:
-      - DATABASE_URL=postgresql://postgres:postgres@db:5432/cushion_saas?schema=public
+      - DATABASE_URL=${DATABASE_URL}
     ports:
       - "5555:5555"
-    depends_on:
-      - db
     command: npx prisma studio --host 0.0.0.0
 
 volumes:
-  postgres_data:
   redis_data:

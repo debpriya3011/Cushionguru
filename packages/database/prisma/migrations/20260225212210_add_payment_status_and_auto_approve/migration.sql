@@ -1,5 +1,5 @@
 -- CreateEnum
-CREATE TYPE "PaymentStatus" AS ENUM ('PENDING', 'SUCCESS', 'FAILED', 'REFUNDED');
+CREATE TYPE "PaymentStatus" AS ENUM ('PENDING', 'SUCCESS', 'FAILED', 'REFUNDED','UNPAID');
 
 -- AlterTable
 ALTER TABLE "quotes" ADD COLUMN     "paymentDate" TIMESTAMP(3),
