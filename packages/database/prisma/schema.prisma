@@ -273,9 +273,8 @@ enum QuoteStatus {
 }
 
 enum PaymentStatus {
-  UNPAID
   PENDING
-  SUCCESSFUL
+  SUCCESS
   FAILED
   REFUNDED
 }
@@ -327,7 +326,7 @@ model Quote {
   convertedToOrderId String?  @unique
   
   // Payment tracking
-  paymentStatus   PaymentStatus @default(UNPAID)
+  paymentStatus   PaymentStatus @default(PENDING)
   stripePaymentIntentId String?
   paymentDate     DateTime?
   
