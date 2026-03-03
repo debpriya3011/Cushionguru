@@ -288,7 +288,7 @@ export default function RetailerQuoteDetailsPage() {
                         <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-3">
                             {quote.quoteNumber}
                             <Badge className="bg-blue-100 text-blue-800 ml-2">{quote.status}</Badge>
-                            {quote.paymentStatus === 'SUCCESSFUL' && (
+                            {quote.paymentStatus === 'SUCCESS' && (
                                 <Badge className="bg-green-100 text-green-800 ml-2">PAID</Badge>
                             )}
                         </h1>
@@ -406,7 +406,7 @@ export default function RetailerQuoteDetailsPage() {
                             <CheckCircle className="w-4 h-4 mr-2" /> Mark as Accepted
                         </Button>
                     )}
-                    {quote.status === 'ACCEPTED' && quote.paymentStatus !== 'SUCCESSFUL' && (
+                    {quote.status === 'ACCEPTED' && quote.paymentStatus !== 'SUCCESS' && (
                         <Button className="bg-purple-600 hover:bg-purple-700" onClick={() => handlePayment()}>
                             <Tag className="w-4 h-4 mr-2" /> Pay Now
                         </Button>

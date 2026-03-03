@@ -24,7 +24,7 @@ export async function POST(req: Request) {
             const updatedQuote = await prisma.quote.update({
                 where: { id: quoteId },
                 data: {
-                    paymentStatus: 'SUCCESSFUL',
+                    paymentStatus: 'SUCCESS',
                     paymentDate: new Date()
                 }
             })
@@ -39,7 +39,7 @@ export async function POST(req: Request) {
             const updatedQuote = await prisma.quote.update({
                 where: { id: quoteId },
                 data: {
-                    paymentStatus: 'SUCCESSFUL',
+                    paymentStatus: 'SUCCESS',
                     paymentDate: new Date()
                 }
             })
