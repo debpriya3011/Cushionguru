@@ -98,10 +98,14 @@ export default function NewQuotePage() {
         retailerId={session.user.retailerId}
         onCalculate={handleCalculate}
         onSubmit={handleSubmit}
-        markup={session.user.retailer ? {
-          type: session.user.retailer.markupType as 'PERCENTAGE' | 'FIXED',
-          value: session.user.retailer.markupValue,
-        } : undefined}
+        markup={
+          session.user.retailer?.markupType && session.user.retailer?.markupValue !== undefined
+            ? {
+                type: session.user.retailer.markupType as 'PERCENTAGE' | 'FIXED',
+                value: session.user.retailer.markupValue,
+              }
+            : undefined
+        }
       />
     </div>
   )
