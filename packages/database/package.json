@@ -5,8 +5,6 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    // compile with --build for consistency; there are no references today
-    // but it makes future multi-package workflows easier.
     "build": "tsc -b",
     "dev": "tsc --watch",
     "db:generate": "dotenv -e ../../.env -- prisma generate",
