@@ -1,0 +1,819 @@
+#0 building with "default" instance using docker driver
+
+#1 [prisma-studio internal] load build definition from Dockerfile
+#1 transferring dockerfile: 540B done
+#1 DONE 0.0s
+
+#2 [app internal] load build definition from Dockerfile
+#2 transferring dockerfile: 1.74kB done
+#2 DONE 0.0s
+
+#3 [prisma-studio internal] load metadata for docker.io/library/node:20-alpine
+#3 DONE 0.4s
+
+#4 [prisma-studio internal] load .dockerignore
+#4 transferring context: 221B done
+#4 DONE 0.0s
+
+#5 [app internal] load .dockerignore
+#5 transferring context: 221B done
+#5 DONE 0.0s
+
+#6 [app 1/9] FROM docker.io/library/node:20-alpine@sha256:09e2b3d9726018aecf269bd35325f46bf75046a643a66d28360ec71132750ec8
+#6 DONE 0.0s
+
+#7 [app 3/9] RUN apk add --no-cache openssl
+#7 CACHED
+
+#8 [app 2/9] WORKDIR /app
+#8 CACHED
+
+#9 [app 4/9] RUN corepack enable
+#9 CACHED
+
+#10 [prisma-studio internal] load build context
+#10 transferring context: 4.25kB done
+#10 DONE 0.0s
+
+#11 [app internal] load build context
+#11 transferring context: 37.09kB done
+#11 DONE 0.0s
+
+#12 [prisma-studio 8/9] COPY packages/database ./packages/database
+#12 CACHED
+
+#13 [prisma-studio 6/9] COPY packages/database/package.json ./packages/database/package.json
+#13 CACHED
+
+#14 [prisma-studio 5/9] COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json ./
+#14 CACHED
+
+#15 [prisma-studio 7/9] RUN pnpm install --frozen-lockfile --filter=database...
+#15 CACHED
+
+#16 [prisma-studio 9/9] RUN cd packages/database && pnpm exec prisma generate
+#16 CACHED
+
+#17 [app deps  7/10] COPY packages/calculator-engine/package.json ./packages/calculator-engine/package.json
+#17 CACHED
+
+#18 [app deps  9/10] COPY packages/shared-types/package.json ./packages/shared-types/package.json
+#18 CACHED
+
+#19 [app deps 10/10] RUN pnpm install --frozen-lockfile
+#19 CACHED
+
+#20 [app deps  1/10] RUN apk add --no-cache libc6-compat openssl
+#20 CACHED
+
+#21 [app deps  5/10] COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json ./
+#21 CACHED
+
+#22 [app deps  6/10] COPY apps/web/package.json ./apps/web/package.json
+#22 CACHED
+
+#23 [app builder  4/11] COPY --from=deps /app/node_modules ./node_modules
+#23 CACHED
+
+#24 [app builder  7/11] COPY --from=deps /app/packages/database/node_modules ./packages/database/node_modules
+#24 CACHED
+
+#25 [app deps  2/10] WORKDIR /app
+#25 CACHED
+
+#26 [app deps  4/10] RUN npm install -g turbo
+#26 CACHED
+
+#27 [app builder  6/11] COPY --from=deps /app/packages/calculator-engine/node_modules ./packages/calculator-engine/node_modules
+#27 CACHED
+
+#28 [app builder  5/11] COPY --from=deps /app/apps/web/node_modules ./apps/web/node_modules
+#28 CACHED
+
+#29 [app deps  3/10] RUN corepack enable
+#29 CACHED
+
+#30 [app deps  8/10] COPY packages/database/package.json ./packages/database/package.json
+#30 CACHED
+
+#31 [app builder  8/11] COPY --from=deps /app/packages/shared-types/node_modules ./packages/shared-types/node_modules
+#31 CACHED
+
+#32 [prisma-studio] exporting to image
+#32 exporting layers done
+#32 writing image sha256:d457e5d7255bef6d889bf07e7209d6eb46324a9ff13f3d0e23267ba10aa0f068 done
+#32 naming to docker.io/library/cushionguru-prisma-studio done
+#32 DONE 0.0s
+
+#33 [app builder  9/11] COPY . .
+#33 DONE 0.2s
+
+#34 [app builder 10/11] RUN cd packages/database && pnpm exec prisma generate
+#34 0.713 ! Corepack is about to download https://registry.npmjs.org/pnpm/-/pnpm-10.30.3.tgz
+#34 2.645 Prisma schema loaded from prisma/schema.prisma
+#34 3.477 
+#34 3.477 ✔ Generated Prisma Client (v5.22.0) to ./../../node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client in 243ms
+#34 3.477 
+#34 3.477 Start by importing your Prisma Client (See: https://pris.ly/d/importing-client)
+#34 3.477 
+#34 3.477 Tip: Want to react to database changes in your app as they happen? Discover how with Pulse: https://pris.ly/tip-1-pulse
+#34 3.477 
+#34 DONE 3.8s
+
+#35 [app builder 11/11] RUN pnpm turbo run build --filter=web...
+#35 0.643 
+#35 0.643 Attention:
+#35 0.643 Turborepo now collects completely anonymous telemetry regarding usage.
+#35 0.643 This information is used to shape the Turborepo roadmap and prioritize features.
+#35 0.643 You can learn more, including how to opt-out if you'd not like to participate in this anonymous program, by visiting the following URL:
+#35 0.643 https://turbo.build/repo/docs/telemetry
+#35 0.643 
+#35 0.694 • Packages in scope: @cushion-saas/calculator-engine, @cushion-saas/database, @cushion-saas/shared-types, @cushion-saas/web
+#35 0.694 • Running build in 4 packages
+#35 0.694 • Remote caching disabled
+#35 0.714 @cushion-saas/shared-types:build: cache miss, executing 05ed8648fec07a73
+#35 0.714 @cushion-saas/database:build: cache miss, executing 8f471f46a31512fc
+#35 1.052 @cushion-saas/database:build: 
+#35 1.052 @cushion-saas/database:build: > @cushion-saas/database@1.0.0 build /app/packages/database
+#35 1.052 @cushion-saas/database:build: > tsc -b
+#35 1.052 @cushion-saas/database:build: 
+#35 1.053 @cushion-saas/shared-types:build: 
+#35 1.053 @cushion-saas/shared-types:build: > @cushion-saas/shared-types@1.0.0 build /app/packages/shared-types
+#35 1.053 @cushion-saas/shared-types:build: > tsc -b
+#35 1.053 @cushion-saas/shared-types:build: 
+#35 3.781 @cushion-saas/calculator-engine:build: cache miss, executing 72b81e9316b7178d
+#35 4.145 @cushion-saas/calculator-engine:build: 
+#35 4.145 @cushion-saas/calculator-engine:build: > @cushion-saas/calculator-engine@1.0.0 build /app/packages/calculator-engine
+#35 4.146 @cushion-saas/calculator-engine:build: > tsc -b
+#35 4.146 @cushion-saas/calculator-engine:build: 
+#35 6.284 @cushion-saas/web:build: cache miss, executing 535e4dbef0b6f6e4
+#35 6.604 @cushion-saas/web:build: 
+#35 6.604 @cushion-saas/web:build: > @cushion-saas/web@1.0.0 build /app/apps/web
+#35 6.604 @cushion-saas/web:build: > dotenv -e ../../.env -- next build
+#35 6.604 @cushion-saas/web:build: 
+#35 6.733 @cushion-saas/web:build:  ⚠ You are using a non-standard "NODE_ENV" value in your environment. This creates inconsistencies in the project and is strongly advised against. Read more: https://nextjs.org/docs/messages/non-standard-node-env
+#35 7.529 @cushion-saas/web:build:    ▲ Next.js 14.0.4
+#35 7.530 @cushion-saas/web:build: 
+#35 7.531 @cushion-saas/web:build:    Creating an optimized production build ...
+#35 33.70 @cushion-saas/web:build:  ✓ Compiled successfully
+#35 33.70 @cushion-saas/web:build:    Linting and checking validity of types ...
+#35 46.35 @cushion-saas/web:build:    Collecting page data ...
+#35 47.78 @cushion-saas/web:build:    Generating static pages (0/36) ...
+#35 49.37 @cushion-saas/web:build: Error: <Html> should not be imported outside of pages/_document.
+#35 49.37 @cushion-saas/web:build: Read more: https://nextjs.org/docs/messages/no-document-import-in-page
+#35 49.37 @cushion-saas/web:build:     at ed (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/pages.runtime.prod.js:16:5484)
+#35 49.37 @cushion-saas/web:build:     at y (/app/apps/web/.next/server/chunks/4026.js:6:1299)
+#35 49.37 @cushion-saas/web:build:     at renderWithHooks (/app/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5658:16)
+#35 49.37 @cushion-saas/web:build:     at renderIndeterminateComponent (/app/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5732:15)
+#35 49.37 @cushion-saas/web:build:     at renderElement (/app/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5957:7)
+#35 49.37 @cushion-saas/web:build:     at renderNodeDestructiveImpl (/app/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6115:11)
+#35 49.37 @cushion-saas/web:build:     at renderNodeDestructive (/app/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6087:14)
+#35 49.37 @cushion-saas/web:build:     at finishClassComponent (/app/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5688:3)
+#35 49.37 @cushion-saas/web:build:     at renderClassComponent (/app/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5696:3)
+#35 49.37 @cushion-saas/web:build:     at renderElement (/app/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5954:7)
+#35 49.37 @cushion-saas/web:build: 
+#35 49.37 @cushion-saas/web:build: Error occurred prerendering page "/404". Read more: https://nextjs.org/docs/messages/prerender-error
+#35 49.37 @cushion-saas/web:build: Error: <Html> should not be imported outside of pages/_document.
+#35 49.37 @cushion-saas/web:build: Read more: https://nextjs.org/docs/messages/no-document-import-in-page
+#35 49.37 @cushion-saas/web:build:     at ed (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/pages.runtime.prod.js:16:5484)
+#35 49.37 @cushion-saas/web:build:     at y (/app/apps/web/.next/server/chunks/4026.js:6:1299)
+#35 49.37 @cushion-saas/web:build:     at renderWithHooks (/app/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5658:16)
+#35 49.37 @cushion-saas/web:build:     at renderIndeterminateComponent (/app/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5732:15)
+#35 49.37 @cushion-saas/web:build:     at renderElement (/app/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5957:7)
+#35 49.37 @cushion-saas/web:build:     at renderNodeDestructiveImpl (/app/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6115:11)
+#35 49.37 @cushion-saas/web:build:     at renderNodeDestructive (/app/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6087:14)
+#35 49.37 @cushion-saas/web:build:     at finishClassComponent (/app/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5688:3)
+#35 49.37 @cushion-saas/web:build:     at renderClassComponent (/app/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5696:3)
+#35 49.37 @cushion-saas/web:build:     at renderElement (/app/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5954:7)
+#35 49.42 @cushion-saas/web:build: Error: <Html> should not be imported outside of pages/_document.
+#35 49.42 @cushion-saas/web:build: Read more: https://nextjs.org/docs/messages/no-document-import-in-page
+#35 49.42 @cushion-saas/web:build:     at ed (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/pages.runtime.prod.js:16:5484)
+#35 49.42 @cushion-saas/web:build:     at y (/app/apps/web/.next/server/chunks/4026.js:6:1299)
+#35 49.42 @cushion-saas/web:build:     at renderWithHooks (/app/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5658:16)
+#35 49.42 @cushion-saas/web:build:     at renderIndeterminateComponent (/app/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5732:15)
+#35 49.42 @cushion-saas/web:build:     at renderElement (/app/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5957:7)
+#35 49.42 @cushion-saas/web:build:     at renderNodeDestructiveImpl (/app/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6115:11)
+#35 49.42 @cushion-saas/web:build:     at renderNodeDestructive (/app/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6087:14)
+#35 49.42 @cushion-saas/web:build:     at finishClassComponent (/app/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5688:3)
+#35 49.42 @cushion-saas/web:build:     at renderClassComponent (/app/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5696:3)
+#35 49.42 @cushion-saas/web:build:     at renderElement (/app/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5954:7)
+#35 49.42 @cushion-saas/web:build: 
+#35 49.42 @cushion-saas/web:build: Error occurred prerendering page "/500". Read more: https://nextjs.org/docs/messages/prerender-error
+#35 49.42 @cushion-saas/web:build: Error: <Html> should not be imported outside of pages/_document.
+#35 49.42 @cushion-saas/web:build: Read more: https://nextjs.org/docs/messages/no-document-import-in-page
+#35 49.42 @cushion-saas/web:build:     at ed (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/pages.runtime.prod.js:16:5484)
+#35 49.42 @cushion-saas/web:build:     at y (/app/apps/web/.next/server/chunks/4026.js:6:1299)
+#35 49.42 @cushion-saas/web:build:     at renderWithHooks (/app/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5658:16)
+#35 49.42 @cushion-saas/web:build:     at renderIndeterminateComponent (/app/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5732:15)
+#35 49.42 @cushion-saas/web:build:     at renderElement (/app/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5957:7)
+#35 49.42 @cushion-saas/web:build:     at renderNodeDestructiveImpl (/app/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6115:11)
+#35 49.42 @cushion-saas/web:build:     at renderNodeDestructive (/app/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6087:14)
+#35 49.42 @cushion-saas/web:build:     at finishClassComponent (/app/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5688:3)
+#35 49.42 @cushion-saas/web:build:     at renderClassComponent (/app/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5696:3)
+#35 49.42 @cushion-saas/web:build:     at renderElement (/app/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5954:7)
+#35 49.86 @cushion-saas/web:build: Failed to verify invitation: ew [Error]: Dynamic server usage: Page couldn't be rendered statically because it used `request.url`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+#35 49.86 @cushion-saas/web:build:     at Object.eP [as staticGenerationBailout] (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:29225)
+#35 49.86 @cushion-saas/web:build:     at i (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:34633)
+#35 49.86 @cushion-saas/web:build:     at Object.get (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:34729)
+#35 49.86 @cushion-saas/web:build:     at p (/app/apps/web/.next/server/app/api/auth/verify-invitation/route.js:1:866)
+#35 49.86 @cushion-saas/web:build:     at /app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:41966
+#35 49.86 @cushion-saas/web:build:     at /app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/lib/trace/tracer.js:133:36
+#35 49.86 @cushion-saas/web:build:     at NoopContextManager.with (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/@opentelemetry/api/index.js:1:7062)
+#35 49.86 @cushion-saas/web:build:     at ContextAPI.with (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/@opentelemetry/api/index.js:1:518)
+#35 49.86 @cushion-saas/web:build:     at NoopTracer.startActiveSpan (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/@opentelemetry/api/index.js:1:18093)
+#35 49.86 @cushion-saas/web:build:     at ProxyTracer.startActiveSpan (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/@opentelemetry/api/index.js:1:18854) {
+#35 49.86 @cushion-saas/web:build:   digest: 'DYNAMIC_SERVER_USAGE'
+#35 49.86 @cushion-saas/web:build: }
+#35 49.86 @cushion-saas/web:build: @cushion-saas/web:build:    Generating static pages (9/36) 
+#35 50.27 @cushion-saas/web:build:  ⨯ TypeError: Cannot read properties of null (reading 'useContext')
+#35 50.27 @cushion-saas/web:build:     at _ (/app/apps/web/.next/server/chunks/3398.js:1:20827)
+#35 50.27 @cushion-saas/web:build:     at c (/app/apps/web/.next/server/chunks/3398.js:1:12232)
+#35 50.27 @cushion-saas/web:build: TypeError: Cannot read properties of null (reading 'useContext')
+#35 50.27 @cushion-saas/web:build:     at t.useContext (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:106142)
+#35 50.27 @cushion-saas/web:build:     at _ (/app/apps/web/.next/server/chunks/3398.js:1:20827)
+#35 50.27 @cushion-saas/web:build:     at c (/app/apps/web/.next/server/chunks/3398.js:1:12232)
+#35 50.27 @cushion-saas/web:build:     at ai (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:6505)
+#35 50.27 @cushion-saas/web:build:     at /app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:11284
+#35 50.27 @cushion-saas/web:build:     at ab (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:13038)
+#35 50.27 @cushion-saas/web:build:     at e (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:46298)
+#35 50.27 @cushion-saas/web:build:     at aS (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:48276)
+#35 50.27 @cushion-saas/web:build:     at ag (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:7923)
+#35 50.27 @cushion-saas/web:build:     at /app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:13014
+#35 50.27 @cushion-saas/web:build: 
+#35 50.27 @cushion-saas/web:build: Error occurred prerendering page "/_not-found". Read more: https://nextjs.org/docs/messages/prerender-error
+#35 50.27 @cushion-saas/web:build: TypeError: Cannot read properties of null (reading 'useContext')
+#35 50.27 @cushion-saas/web:build:     at t.useContext (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:106142)
+#35 50.27 @cushion-saas/web:build:     at _ (/app/apps/web/.next/server/chunks/3398.js:1:20827)
+#35 50.27 @cushion-saas/web:build:     at c (/app/apps/web/.next/server/chunks/3398.js:1:12232)
+#35 50.27 @cushion-saas/web:build:     at ai (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:6505)
+#35 50.27 @cushion-saas/web:build:     at /app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:11284
+#35 50.27 @cushion-saas/web:build:     at ab (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:13038)
+#35 50.27 @cushion-saas/web:build:     at e (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:46298)
+#35 50.27 @cushion-saas/web:build:     at aS (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:48276)
+#35 50.27 @cushion-saas/web:build:     at ag (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:7923)
+#35 50.27 @cushion-saas/web:build:     at /app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:13014
+#35 50.30 @cushion-saas/web:build:  ⨯ TypeError: Cannot read properties of null (reading 'useContext')
+#35 50.30 @cushion-saas/web:build:     at _ (/app/apps/web/.next/server/chunks/3398.js:1:20827)
+#35 50.30 @cushion-saas/web:build:     at c (/app/apps/web/.next/server/chunks/3398.js:1:12232)
+#35 50.30 @cushion-saas/web:build: TypeError: Cannot read properties of null (reading 'useContext')
+#35 50.30 @cushion-saas/web:build:     at t.useContext (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:106142)
+#35 50.30 @cushion-saas/web:build:     at _ (/app/apps/web/.next/server/chunks/3398.js:1:20827)
+#35 50.30 @cushion-saas/web:build:     at c (/app/apps/web/.next/server/chunks/3398.js:1:12232)
+#35 50.30 @cushion-saas/web:build:     at ai (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:6505)
+#35 50.30 @cushion-saas/web:build:     at /app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:11284
+#35 50.30 @cushion-saas/web:build:     at ab (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:13038)
+#35 50.30 @cushion-saas/web:build:     at e (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:46298)
+#35 50.30 @cushion-saas/web:build:     at aS (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:48276)
+#35 50.30 @cushion-saas/web:build:     at ag (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:7923)
+#35 50.30 @cushion-saas/web:build:     at /app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:13014
+#35 50.30 @cushion-saas/web:build: 
+#35 50.30 @cushion-saas/web:build: Error occurred prerendering page "/invite/accept". Read more: https://nextjs.org/docs/messages/prerender-error
+#35 50.30 @cushion-saas/web:build: TypeError: Cannot read properties of null (reading 'useContext')
+#35 50.30 @cushion-saas/web:build:     at t.useContext (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:106142)
+#35 50.30 @cushion-saas/web:build:     at _ (/app/apps/web/.next/server/chunks/3398.js:1:20827)
+#35 50.30 @cushion-saas/web:build:     at c (/app/apps/web/.next/server/chunks/3398.js:1:12232)
+#35 50.30 @cushion-saas/web:build:     at ai (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:6505)
+#35 50.30 @cushion-saas/web:build:     at /app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:11284
+#35 50.30 @cushion-saas/web:build:     at ab (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:13038)
+#35 50.30 @cushion-saas/web:build:     at e (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:46298)
+#35 50.30 @cushion-saas/web:build:     at aS (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:48276)
+#35 50.30 @cushion-saas/web:build:     at ag (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:7923)
+#35 50.30 @cushion-saas/web:build:     at /app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:13014
+#35 50.32 @cushion-saas/web:build: @cushion-saas/web:build:    Generating static pages (18/36) 
+#35 50.36 @cushion-saas/web:build:  ⨯ TypeError: Cannot read properties of null (reading 'useContext')
+#35 50.36 @cushion-saas/web:build:     at _ (/app/apps/web/.next/server/chunks/3398.js:1:20827)
+#35 50.36 @cushion-saas/web:build:     at c (/app/apps/web/.next/server/chunks/3398.js:1:12232)
+#35 50.36 @cushion-saas/web:build: TypeError: Cannot read properties of null (reading 'useContext')
+#35 50.36 @cushion-saas/web:build:     at t.useContext (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:106142)
+#35 50.36 @cushion-saas/web:build:     at _ (/app/apps/web/.next/server/chunks/3398.js:1:20827)
+#35 50.36 @cushion-saas/web:build:     at c (/app/apps/web/.next/server/chunks/3398.js:1:12232)
+#35 50.36 @cushion-saas/web:build:     at ai (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:6505)
+#35 50.36 @cushion-saas/web:build:     at /app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:11284
+#35 50.36 @cushion-saas/web:build:     at ab (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:13038)
+#35 50.36 @cushion-saas/web:build:     at e (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:46298)
+#35 50.36 @cushion-saas/web:build:     at aS (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:48276)
+#35 50.36 @cushion-saas/web:build:     at ag (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:7923)
+#35 50.36 @cushion-saas/web:build:     at /app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:13014
+#35 50.36 @cushion-saas/web:build: 
+#35 50.36 @cushion-saas/web:build: Error occurred prerendering page "/login". Read more: https://nextjs.org/docs/messages/prerender-error
+#35 50.36 @cushion-saas/web:build: TypeError: Cannot read properties of null (reading 'useContext')
+#35 50.36 @cushion-saas/web:build:     at t.useContext (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:106142)
+#35 50.36 @cushion-saas/web:build:     at _ (/app/apps/web/.next/server/chunks/3398.js:1:20827)
+#35 50.36 @cushion-saas/web:build:     at c (/app/apps/web/.next/server/chunks/3398.js:1:12232)
+#35 50.36 @cushion-saas/web:build:     at ai (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:6505)
+#35 50.36 @cushion-saas/web:build:     at /app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:11284
+#35 50.36 @cushion-saas/web:build:     at ab (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:13038)
+#35 50.36 @cushion-saas/web:build:     at e (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:46298)
+#35 50.36 @cushion-saas/web:build:     at aS (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:48276)
+#35 50.36 @cushion-saas/web:build:     at ag (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:7923)
+#35 50.36 @cushion-saas/web:build:     at /app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:13014
+#35 50.46 @cushion-saas/web:build:  ⨯ TypeError: Cannot read properties of null (reading 'useContext')
+#35 50.46 @cushion-saas/web:build:     at _ (/app/apps/web/.next/server/chunks/3398.js:1:20827)
+#35 50.46 @cushion-saas/web:build:     at c (/app/apps/web/.next/server/chunks/3398.js:1:12232)
+#35 50.46 @cushion-saas/web:build: TypeError: Cannot read properties of null (reading 'useContext')
+#35 50.46 @cushion-saas/web:build:     at t.useContext (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:106142)
+#35 50.46 @cushion-saas/web:build:     at _ (/app/apps/web/.next/server/chunks/3398.js:1:20827)
+#35 50.46 @cushion-saas/web:build:     at c (/app/apps/web/.next/server/chunks/3398.js:1:12232)
+#35 50.46 @cushion-saas/web:build:     at ai (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:6505)
+#35 50.46 @cushion-saas/web:build:     at /app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:11284
+#35 50.46 @cushion-saas/web:build:     at ab (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:13038)
+#35 50.46 @cushion-saas/web:build:     at e (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:46298)
+#35 50.46 @cushion-saas/web:build:     at aS (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:48276)
+#35 50.46 @cushion-saas/web:build:     at ag (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:7923)
+#35 50.46 @cushion-saas/web:build:     at /app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:13014
+#35 50.46 @cushion-saas/web:build: 
+#35 50.46 @cushion-saas/web:build: Error occurred prerendering page "/admin/analytics". Read more: https://nextjs.org/docs/messages/prerender-error
+#35 50.46 @cushion-saas/web:build: TypeError: Cannot read properties of null (reading 'useContext')
+#35 50.46 @cushion-saas/web:build:     at t.useContext (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:106142)
+#35 50.46 @cushion-saas/web:build:     at _ (/app/apps/web/.next/server/chunks/3398.js:1:20827)
+#35 50.46 @cushion-saas/web:build:     at c (/app/apps/web/.next/server/chunks/3398.js:1:12232)
+#35 50.46 @cushion-saas/web:build:     at ai (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:6505)
+#35 50.46 @cushion-saas/web:build:     at /app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:11284
+#35 50.46 @cushion-saas/web:build:     at ab (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:13038)
+#35 50.46 @cushion-saas/web:build:     at e (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:46298)
+#35 50.46 @cushion-saas/web:build:     at aS (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:48276)
+#35 50.46 @cushion-saas/web:build:     at ag (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:7923)
+#35 50.46 @cushion-saas/web:build:     at /app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:13014
+#35 50.55 @cushion-saas/web:build:  ⨯ TypeError: Cannot read properties of null (reading 'useContext')
+#35 50.55 @cushion-saas/web:build:     at _ (/app/apps/web/.next/server/chunks/3398.js:1:20827)
+#35 50.55 @cushion-saas/web:build:     at c (/app/apps/web/.next/server/chunks/3398.js:1:12232)
+#35 50.55 @cushion-saas/web:build: TypeError: Cannot read properties of null (reading 'useContext')
+#35 50.55 @cushion-saas/web:build:     at t.useContext (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:106142)
+#35 50.55 @cushion-saas/web:build:     at _ (/app/apps/web/.next/server/chunks/3398.js:1:20827)
+#35 50.55 @cushion-saas/web:build:     at c (/app/apps/web/.next/server/chunks/3398.js:1:12232)
+#35 50.55 @cushion-saas/web:build:     at ai (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:6505)
+#35 50.55 @cushion-saas/web:build:     at /app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:11284
+#35 50.55 @cushion-saas/web:build:     at ab (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:13038)
+#35 50.55 @cushion-saas/web:build:     at e (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:46298)
+#35 50.55 @cushion-saas/web:build:     at aS (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:48276)
+#35 50.55 @cushion-saas/web:build:     at ag (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:7923)
+#35 50.55 @cushion-saas/web:build:     at /app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:13014
+#35 50.55 @cushion-saas/web:build: 
+#35 50.55 @cushion-saas/web:build: Error occurred prerendering page "/admin/assets". Read more: https://nextjs.org/docs/messages/prerender-error
+#35 50.55 @cushion-saas/web:build: TypeError: Cannot read properties of null (reading 'useContext')
+#35 50.55 @cushion-saas/web:build:     at t.useContext (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:106142)
+#35 50.55 @cushion-saas/web:build:     at _ (/app/apps/web/.next/server/chunks/3398.js:1:20827)
+#35 50.55 @cushion-saas/web:build:     at c (/app/apps/web/.next/server/chunks/3398.js:1:12232)
+#35 50.55 @cushion-saas/web:build:     at ai (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:6505)
+#35 50.55 @cushion-saas/web:build:     at /app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:11284
+#35 50.55 @cushion-saas/web:build:     at ab (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:13038)
+#35 50.55 @cushion-saas/web:build:     at e (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:46298)
+#35 50.55 @cushion-saas/web:build:     at aS (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:48276)
+#35 50.55 @cushion-saas/web:build:     at ag (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:7923)
+#35 50.55 @cushion-saas/web:build:     at /app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:13014
+#35 50.63 @cushion-saas/web:build:  ⨯ TypeError: Cannot read properties of null (reading 'useContext')
+#35 50.63 @cushion-saas/web:build:     at _ (/app/apps/web/.next/server/chunks/3398.js:1:20827)
+#35 50.63 @cushion-saas/web:build:     at c (/app/apps/web/.next/server/chunks/3398.js:1:12232)
+#35 50.63 @cushion-saas/web:build: TypeError: Cannot read properties of null (reading 'useContext')
+#35 50.63 @cushion-saas/web:build:     at t.useContext (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:106142)
+#35 50.63 @cushion-saas/web:build:     at _ (/app/apps/web/.next/server/chunks/3398.js:1:20827)
+#35 50.63 @cushion-saas/web:build:     at c (/app/apps/web/.next/server/chunks/3398.js:1:12232)
+#35 50.63 @cushion-saas/web:build:     at ai (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:6505)
+#35 50.63 @cushion-saas/web:build:     at /app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:11284
+#35 50.63 @cushion-saas/web:build:     at ab (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:13038)
+#35 50.63 @cushion-saas/web:build:     at e (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:46298)
+#35 50.63 @cushion-saas/web:build:     at aS (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:48276)
+#35 50.63 @cushion-saas/web:build:     at ag (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:7923)
+#35 50.63 @cushion-saas/web:build:     at /app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:13014
+#35 50.63 @cushion-saas/web:build: 
+#35 50.63 @cushion-saas/web:build: Error occurred prerendering page "/admin/calculators/new". Read more: https://nextjs.org/docs/messages/prerender-error
+#35 50.63 @cushion-saas/web:build: TypeError: Cannot read properties of null (reading 'useContext')
+#35 50.63 @cushion-saas/web:build:     at t.useContext (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:106142)
+#35 50.63 @cushion-saas/web:build:     at _ (/app/apps/web/.next/server/chunks/3398.js:1:20827)
+#35 50.63 @cushion-saas/web:build:     at c (/app/apps/web/.next/server/chunks/3398.js:1:12232)
+#35 50.63 @cushion-saas/web:build:     at ai (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:6505)
+#35 50.63 @cushion-saas/web:build:     at /app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:11284
+#35 50.63 @cushion-saas/web:build:     at ab (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:13038)
+#35 50.63 @cushion-saas/web:build:     at e (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:46298)
+#35 50.63 @cushion-saas/web:build:     at aS (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:48276)
+#35 50.63 @cushion-saas/web:build:     at ag (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:7923)
+#35 50.63 @cushion-saas/web:build:     at /app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:13014
+#35 50.67 @cushion-saas/web:build:  ⨯ TypeError: Cannot read properties of null (reading 'useContext')
+#35 50.67 @cushion-saas/web:build:     at _ (/app/apps/web/.next/server/chunks/3398.js:1:20827)
+#35 50.67 @cushion-saas/web:build:     at c (/app/apps/web/.next/server/chunks/3398.js:1:12232)
+#35 50.67 @cushion-saas/web:build: TypeError: Cannot read properties of null (reading 'useContext')
+#35 50.67 @cushion-saas/web:build:     at t.useContext (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:106142)
+#35 50.67 @cushion-saas/web:build:     at _ (/app/apps/web/.next/server/chunks/3398.js:1:20827)
+#35 50.67 @cushion-saas/web:build:     at c (/app/apps/web/.next/server/chunks/3398.js:1:12232)
+#35 50.67 @cushion-saas/web:build:     at ai (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:6505)
+#35 50.67 @cushion-saas/web:build:     at /app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:11284
+#35 50.67 @cushion-saas/web:build:     at ab (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:13038)
+#35 50.67 @cushion-saas/web:build:     at e (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:46298)
+#35 50.67 @cushion-saas/web:build:     at aS (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:48276)
+#35 50.67 @cushion-saas/web:build:     at ag (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:7923)
+#35 50.67 @cushion-saas/web:build:     at /app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:13014
+#35 50.67 @cushion-saas/web:build: 
+#35 50.67 @cushion-saas/web:build: Error occurred prerendering page "/admin/calculators". Read more: https://nextjs.org/docs/messages/prerender-error
+#35 50.67 @cushion-saas/web:build: TypeError: Cannot read properties of null (reading 'useContext')
+#35 50.67 @cushion-saas/web:build:     at t.useContext (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:106142)
+#35 50.67 @cushion-saas/web:build:     at _ (/app/apps/web/.next/server/chunks/3398.js:1:20827)
+#35 50.67 @cushion-saas/web:build:     at c (/app/apps/web/.next/server/chunks/3398.js:1:12232)
+#35 50.67 @cushion-saas/web:build:     at ai (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:6505)
+#35 50.67 @cushion-saas/web:build:     at /app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:11284
+#35 50.67 @cushion-saas/web:build:     at ab (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:13038)
+#35 50.67 @cushion-saas/web:build:     at e (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:46298)
+#35 50.67 @cushion-saas/web:build:     at aS (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:48276)
+#35 50.67 @cushion-saas/web:build:     at ag (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:7923)
+#35 50.67 @cushion-saas/web:build:     at /app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:13014
+#35 50.74 @cushion-saas/web:build:  ⨯ TypeError: Cannot read properties of null (reading 'useContext')
+#35 50.74 @cushion-saas/web:build:     at _ (/app/apps/web/.next/server/chunks/3398.js:1:20827)
+#35 50.74 @cushion-saas/web:build:     at c (/app/apps/web/.next/server/chunks/3398.js:1:12232)
+#35 50.74 @cushion-saas/web:build: TypeError: Cannot read properties of null (reading 'useContext')
+#35 50.74 @cushion-saas/web:build:     at t.useContext (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:106142)
+#35 50.74 @cushion-saas/web:build:     at _ (/app/apps/web/.next/server/chunks/3398.js:1:20827)
+#35 50.74 @cushion-saas/web:build:     at c (/app/apps/web/.next/server/chunks/3398.js:1:12232)
+#35 50.74 @cushion-saas/web:build:     at ai (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:6505)
+#35 50.74 @cushion-saas/web:build:     at /app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:11284
+#35 50.74 @cushion-saas/web:build:     at ab (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:13038)
+#35 50.74 @cushion-saas/web:build:     at e (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:46298)
+#35 50.74 @cushion-saas/web:build:     at aS (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:48276)
+#35 50.74 @cushion-saas/web:build:     at ag (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:7923)
+#35 50.74 @cushion-saas/web:build:     at /app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:13014
+#35 50.74 @cushion-saas/web:build: 
+#35 50.74 @cushion-saas/web:build: Error occurred prerendering page "/admin/dashboard". Read more: https://nextjs.org/docs/messages/prerender-error
+#35 50.74 @cushion-saas/web:build: TypeError: Cannot read properties of null (reading 'useContext')
+#35 50.74 @cushion-saas/web:build:     at t.useContext (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:106142)
+#35 50.74 @cushion-saas/web:build:     at _ (/app/apps/web/.next/server/chunks/3398.js:1:20827)
+#35 50.74 @cushion-saas/web:build:     at c (/app/apps/web/.next/server/chunks/3398.js:1:12232)
+#35 50.74 @cushion-saas/web:build:     at ai (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:6505)
+#35 50.74 @cushion-saas/web:build:     at /app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:11284
+#35 50.74 @cushion-saas/web:build:     at ab (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:13038)
+#35 50.74 @cushion-saas/web:build:     at e (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:46298)
+#35 50.74 @cushion-saas/web:build:     at aS (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:48276)
+#35 50.74 @cushion-saas/web:build:     at ag (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:7923)
+#35 50.74 @cushion-saas/web:build:     at /app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:13014
+#35 50.93 @cushion-saas/web:build:  ⨯ TypeError: Cannot read properties of null (reading 'useContext')
+#35 50.93 @cushion-saas/web:build:     at _ (/app/apps/web/.next/server/chunks/3398.js:1:20827)
+#35 50.93 @cushion-saas/web:build:     at c (/app/apps/web/.next/server/chunks/3398.js:1:12232)
+#35 50.93 @cushion-saas/web:build: TypeError: Cannot read properties of null (reading 'useContext')
+#35 50.93 @cushion-saas/web:build:     at t.useContext (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:106142)
+#35 50.93 @cushion-saas/web:build:     at _ (/app/apps/web/.next/server/chunks/3398.js:1:20827)
+#35 50.93 @cushion-saas/web:build:     at c (/app/apps/web/.next/server/chunks/3398.js:1:12232)
+#35 50.93 @cushion-saas/web:build:     at ai (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:6505)
+#35 50.93 @cushion-saas/web:build:     at /app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:11284
+#35 50.93 @cushion-saas/web:build:     at ab (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:13038)
+#35 50.93 @cushion-saas/web:build:     at e (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:46298)
+#35 50.93 @cushion-saas/web:build:     at aS (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:48276)
+#35 50.93 @cushion-saas/web:build:     at ag (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:7923)
+#35 50.93 @cushion-saas/web:build:     at /app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:13014
+#35 50.93 @cushion-saas/web:build: 
+#35 50.93 @cushion-saas/web:build: Error occurred prerendering page "/admin/orders". Read more: https://nextjs.org/docs/messages/prerender-error
+#35 50.93 @cushion-saas/web:build: TypeError: Cannot read properties of null (reading 'useContext')
+#35 50.93 @cushion-saas/web:build:     at t.useContext (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:106142)
+#35 50.93 @cushion-saas/web:build:     at _ (/app/apps/web/.next/server/chunks/3398.js:1:20827)
+#35 50.93 @cushion-saas/web:build:     at c (/app/apps/web/.next/server/chunks/3398.js:1:12232)
+#35 50.93 @cushion-saas/web:build:     at ai (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:6505)
+#35 50.93 @cushion-saas/web:build:     at /app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:11284
+#35 50.93 @cushion-saas/web:build:     at ab (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:13038)
+#35 50.93 @cushion-saas/web:build:     at e (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:46298)
+#35 50.93 @cushion-saas/web:build:     at aS (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:48276)
+#35 50.93 @cushion-saas/web:build:     at ag (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:7923)
+#35 50.93 @cushion-saas/web:build:     at /app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:13014
+#35 50.95 @cushion-saas/web:build:  ⨯ TypeError: Cannot read properties of null (reading 'useContext')
+#35 50.95 @cushion-saas/web:build:     at _ (/app/apps/web/.next/server/chunks/3398.js:1:20827)
+#35 50.95 @cushion-saas/web:build:     at c (/app/apps/web/.next/server/chunks/3398.js:1:12232)
+#35 50.95 @cushion-saas/web:build: TypeError: Cannot read properties of null (reading 'useContext')
+#35 50.95 @cushion-saas/web:build:     at t.useContext (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:106142)
+#35 50.95 @cushion-saas/web:build:     at _ (/app/apps/web/.next/server/chunks/3398.js:1:20827)
+#35 50.95 @cushion-saas/web:build:     at c (/app/apps/web/.next/server/chunks/3398.js:1:12232)
+#35 50.95 @cushion-saas/web:build:     at ai (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:6505)
+#35 50.95 @cushion-saas/web:build:     at /app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:11284
+#35 50.95 @cushion-saas/web:build:     at ab (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:13038)
+#35 50.95 @cushion-saas/web:build:     at e (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:46298)
+#35 50.95 @cushion-saas/web:build:     at aS (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:48276)
+#35 50.95 @cushion-saas/web:build:     at ag (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:7923)
+#35 50.95 @cushion-saas/web:build:     at /app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:13014
+#35 50.95 @cushion-saas/web:build: 
+#35 50.95 @cushion-saas/web:build: Error occurred prerendering page "/admin/quotes/new". Read more: https://nextjs.org/docs/messages/prerender-error
+#35 50.95 @cushion-saas/web:build: TypeError: Cannot read properties of null (reading 'useContext')
+#35 50.95 @cushion-saas/web:build:     at t.useContext (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:106142)
+#35 50.95 @cushion-saas/web:build:     at _ (/app/apps/web/.next/server/chunks/3398.js:1:20827)
+#35 50.95 @cushion-saas/web:build:     at c (/app/apps/web/.next/server/chunks/3398.js:1:12232)
+#35 50.95 @cushion-saas/web:build:     at ai (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:6505)
+#35 50.95 @cushion-saas/web:build:     at /app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:11284
+#35 50.95 @cushion-saas/web:build:     at ab (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:13038)
+#35 50.95 @cushion-saas/web:build:     at e (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:46298)
+#35 50.95 @cushion-saas/web:build:     at aS (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:48276)
+#35 50.95 @cushion-saas/web:build:     at ag (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:7923)
+#35 50.95 @cushion-saas/web:build:     at /app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:13014
+#35 51.04 @cushion-saas/web:build:  ⨯ TypeError: Cannot read properties of null (reading 'useContext')
+#35 51.04 @cushion-saas/web:build:     at _ (/app/apps/web/.next/server/chunks/3398.js:1:20827)
+#35 51.04 @cushion-saas/web:build:     at c (/app/apps/web/.next/server/chunks/3398.js:1:12232)
+#35 51.04 @cushion-saas/web:build: TypeError: Cannot read properties of null (reading 'useContext')
+#35 51.04 @cushion-saas/web:build:     at t.useContext (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:106142)
+#35 51.04 @cushion-saas/web:build:     at _ (/app/apps/web/.next/server/chunks/3398.js:1:20827)
+#35 51.04 @cushion-saas/web:build:     at c (/app/apps/web/.next/server/chunks/3398.js:1:12232)
+#35 51.04 @cushion-saas/web:build:     at ai (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:6505)
+#35 51.04 @cushion-saas/web:build:     at /app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:11284
+#35 51.04 @cushion-saas/web:build:     at ab (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:13038)
+#35 51.04 @cushion-saas/web:build:     at e (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:46298)
+#35 51.04 @cushion-saas/web:build:     at aS (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:48276)
+#35 51.04 @cushion-saas/web:build:     at ag (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:7923)
+#35 51.04 @cushion-saas/web:build:     at /app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:13014
+#35 51.04 @cushion-saas/web:build: 
+#35 51.04 @cushion-saas/web:build: Error occurred prerendering page "/admin/quotes". Read more: https://nextjs.org/docs/messages/prerender-error
+#35 51.04 @cushion-saas/web:build: TypeError: Cannot read properties of null (reading 'useContext')
+#35 51.04 @cushion-saas/web:build:     at t.useContext (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:106142)
+#35 51.04 @cushion-saas/web:build:     at _ (/app/apps/web/.next/server/chunks/3398.js:1:20827)
+#35 51.04 @cushion-saas/web:build:     at c (/app/apps/web/.next/server/chunks/3398.js:1:12232)
+#35 51.04 @cushion-saas/web:build:     at ai (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:6505)
+#35 51.04 @cushion-saas/web:build:     at /app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:11284
+#35 51.04 @cushion-saas/web:build:     at ab (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:13038)
+#35 51.04 @cushion-saas/web:build:     at e (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:46298)
+#35 51.04 @cushion-saas/web:build:     at aS (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:48276)
+#35 51.04 @cushion-saas/web:build:     at ag (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:7923)
+#35 51.04 @cushion-saas/web:build:     at /app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:13014
+#35 51.04 @cushion-saas/web:build: @cushion-saas/web:build:    Generating static pages (27/36) 
+#35 51.10 @cushion-saas/web:build:  ⨯ TypeError: Cannot read properties of null (reading 'useContext')
+#35 51.10 @cushion-saas/web:build:     at _ (/app/apps/web/.next/server/chunks/3398.js:1:20827)
+#35 51.10 @cushion-saas/web:build:     at c (/app/apps/web/.next/server/chunks/3398.js:1:12232)
+#35 51.10 @cushion-saas/web:build: TypeError: Cannot read properties of null (reading 'useContext')
+#35 51.10 @cushion-saas/web:build:     at t.useContext (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:106142)
+#35 51.10 @cushion-saas/web:build:     at _ (/app/apps/web/.next/server/chunks/3398.js:1:20827)
+#35 51.10 @cushion-saas/web:build:     at c (/app/apps/web/.next/server/chunks/3398.js:1:12232)
+#35 51.10 @cushion-saas/web:build:     at ai (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:6505)
+#35 51.10 @cushion-saas/web:build:     at /app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:11284
+#35 51.10 @cushion-saas/web:build:     at ab (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:13038)
+#35 51.10 @cushion-saas/web:build:     at e (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:46298)
+#35 51.10 @cushion-saas/web:build:     at aS (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:48276)
+#35 51.10 @cushion-saas/web:build:     at ag (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:7923)
+#35 51.10 @cushion-saas/web:build:     at /app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:13014
+#35 51.10 @cushion-saas/web:build: 
+#35 51.10 @cushion-saas/web:build: Error occurred prerendering page "/admin/retailers/new". Read more: https://nextjs.org/docs/messages/prerender-error
+#35 51.10 @cushion-saas/web:build: TypeError: Cannot read properties of null (reading 'useContext')
+#35 51.10 @cushion-saas/web:build:     at t.useContext (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:106142)
+#35 51.10 @cushion-saas/web:build:     at _ (/app/apps/web/.next/server/chunks/3398.js:1:20827)
+#35 51.10 @cushion-saas/web:build:     at c (/app/apps/web/.next/server/chunks/3398.js:1:12232)
+#35 51.10 @cushion-saas/web:build:     at ai (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:6505)
+#35 51.10 @cushion-saas/web:build:     at /app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:11284
+#35 51.10 @cushion-saas/web:build:     at ab (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:13038)
+#35 51.10 @cushion-saas/web:build:     at e (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:46298)
+#35 51.10 @cushion-saas/web:build:     at aS (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:48276)
+#35 51.10 @cushion-saas/web:build:     at ag (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:7923)
+#35 51.10 @cushion-saas/web:build:     at /app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:13014
+#35 51.13 @cushion-saas/web:build:  ⨯ TypeError: Cannot read properties of null (reading 'useContext')
+#35 51.13 @cushion-saas/web:build:     at _ (/app/apps/web/.next/server/chunks/3398.js:1:20827)
+#35 51.13 @cushion-saas/web:build:     at c (/app/apps/web/.next/server/chunks/3398.js:1:12232)
+#35 51.13 @cushion-saas/web:build: TypeError: Cannot read properties of null (reading 'useContext')
+#35 51.14 @cushion-saas/web:build:     at t.useContext (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:106142)
+#35 51.14 @cushion-saas/web:build:     at _ (/app/apps/web/.next/server/chunks/3398.js:1:20827)
+#35 51.14 @cushion-saas/web:build:     at c (/app/apps/web/.next/server/chunks/3398.js:1:12232)
+#35 51.14 @cushion-saas/web:build:     at ai (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:6505)
+#35 51.14 @cushion-saas/web:build:     at /app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:11284
+#35 51.14 @cushion-saas/web:build:     at ab (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:13038)
+#35 51.14 @cushion-saas/web:build:     at e (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:46298)
+#35 51.14 @cushion-saas/web:build:     at aS (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:48276)
+#35 51.14 @cushion-saas/web:build:     at ag (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:7923)
+#35 51.14 @cushion-saas/web:build:     at /app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:13014
+#35 51.14 @cushion-saas/web:build: 
+#35 51.14 @cushion-saas/web:build: Error occurred prerendering page "/admin/retailers". Read more: https://nextjs.org/docs/messages/prerender-error
+#35 51.14 @cushion-saas/web:build: TypeError: Cannot read properties of null (reading 'useContext')
+#35 51.14 @cushion-saas/web:build:     at t.useContext (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:106142)
+#35 51.14 @cushion-saas/web:build:     at _ (/app/apps/web/.next/server/chunks/3398.js:1:20827)
+#35 51.14 @cushion-saas/web:build:     at c (/app/apps/web/.next/server/chunks/3398.js:1:12232)
+#35 51.14 @cushion-saas/web:build:     at ai (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:6505)
+#35 51.14 @cushion-saas/web:build:     at /app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:11284
+#35 51.14 @cushion-saas/web:build:     at ab (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:13038)
+#35 51.14 @cushion-saas/web:build:     at e (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:46298)
+#35 51.14 @cushion-saas/web:build:     at aS (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:48276)
+#35 51.14 @cushion-saas/web:build:     at ag (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:7923)
+#35 51.14 @cushion-saas/web:build:     at /app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:13014
+#35 51.16 @cushion-saas/web:build:  ⨯ TypeError: Cannot read properties of null (reading 'useContext')
+#35 51.16 @cushion-saas/web:build:     at _ (/app/apps/web/.next/server/chunks/3398.js:1:20827)
+#35 51.16 @cushion-saas/web:build:     at c (/app/apps/web/.next/server/chunks/3398.js:1:12232)
+#35 51.16 @cushion-saas/web:build: TypeError: Cannot read properties of null (reading 'useContext')
+#35 51.16 @cushion-saas/web:build:     at t.useContext (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:106142)
+#35 51.16 @cushion-saas/web:build:     at _ (/app/apps/web/.next/server/chunks/3398.js:1:20827)
+#35 51.16 @cushion-saas/web:build:     at c (/app/apps/web/.next/server/chunks/3398.js:1:12232)
+#35 51.16 @cushion-saas/web:build:     at ai (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:6505)
+#35 51.16 @cushion-saas/web:build:     at /app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:11284
+#35 51.16 @cushion-saas/web:build:     at ab (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:13038)
+#35 51.16 @cushion-saas/web:build:     at e (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:46298)
+#35 51.16 @cushion-saas/web:build:     at aS (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:48276)
+#35 51.16 @cushion-saas/web:build:     at ag (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:7923)
+#35 51.16 @cushion-saas/web:build:     at /app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:13014
+#35 51.16 @cushion-saas/web:build: 
+#35 51.16 @cushion-saas/web:build: Error occurred prerendering page "/admin/settings". Read more: https://nextjs.org/docs/messages/prerender-error
+#35 51.16 @cushion-saas/web:build: TypeError: Cannot read properties of null (reading 'useContext')
+#35 51.16 @cushion-saas/web:build:     at t.useContext (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:106142)
+#35 51.16 @cushion-saas/web:build:     at _ (/app/apps/web/.next/server/chunks/3398.js:1:20827)
+#35 51.16 @cushion-saas/web:build:     at c (/app/apps/web/.next/server/chunks/3398.js:1:12232)
+#35 51.16 @cushion-saas/web:build:     at ai (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:6505)
+#35 51.16 @cushion-saas/web:build:     at /app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:11284
+#35 51.16 @cushion-saas/web:build:     at ab (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:13038)
+#35 51.16 @cushion-saas/web:build:     at e (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:46298)
+#35 51.16 @cushion-saas/web:build:     at aS (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:48276)
+#35 51.16 @cushion-saas/web:build:     at ag (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:7923)
+#35 51.16 @cushion-saas/web:build:     at /app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:13014
+#35 51.19 @cushion-saas/web:build:  ⨯ TypeError: Cannot read properties of null (reading 'useContext')
+#35 51.19 @cushion-saas/web:build:     at _ (/app/apps/web/.next/server/chunks/3398.js:1:20827)
+#35 51.19 @cushion-saas/web:build:     at c (/app/apps/web/.next/server/chunks/3398.js:1:12232)
+#35 51.19 @cushion-saas/web:build: TypeError: Cannot read properties of null (reading 'useContext')
+#35 51.19 @cushion-saas/web:build:     at t.useContext (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:106142)
+#35 51.19 @cushion-saas/web:build:     at _ (/app/apps/web/.next/server/chunks/3398.js:1:20827)
+#35 51.19 @cushion-saas/web:build:     at c (/app/apps/web/.next/server/chunks/3398.js:1:12232)
+#35 51.19 @cushion-saas/web:build:     at ai (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:6505)
+#35 51.19 @cushion-saas/web:build:     at /app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:11284
+#35 51.19 @cushion-saas/web:build:     at ab (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:13038)
+#35 51.19 @cushion-saas/web:build:     at e (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:46298)
+#35 51.19 @cushion-saas/web:build:     at aS (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:48276)
+#35 51.19 @cushion-saas/web:build:     at ag (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:7923)
+#35 51.19 @cushion-saas/web:build:     at /app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:13014
+#35 51.19 @cushion-saas/web:build: 
+#35 51.19 @cushion-saas/web:build: Error occurred prerendering page "/retailer/dashboard". Read more: https://nextjs.org/docs/messages/prerender-error
+#35 51.19 @cushion-saas/web:build: TypeError: Cannot read properties of null (reading 'useContext')
+#35 51.19 @cushion-saas/web:build:     at t.useContext (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:106142)
+#35 51.19 @cushion-saas/web:build:     at _ (/app/apps/web/.next/server/chunks/3398.js:1:20827)
+#35 51.19 @cushion-saas/web:build:     at c (/app/apps/web/.next/server/chunks/3398.js:1:12232)
+#35 51.19 @cushion-saas/web:build:     at ai (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:6505)
+#35 51.19 @cushion-saas/web:build:     at /app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:11284
+#35 51.19 @cushion-saas/web:build:     at ab (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:13038)
+#35 51.19 @cushion-saas/web:build:     at e (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:46298)
+#35 51.19 @cushion-saas/web:build:     at aS (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:48276)
+#35 51.19 @cushion-saas/web:build:     at ag (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:7923)
+#35 51.19 @cushion-saas/web:build:     at /app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:13014
+#35 51.21 @cushion-saas/web:build:  ⨯ TypeError: Cannot read properties of null (reading 'useContext')
+#35 51.21 @cushion-saas/web:build:     at _ (/app/apps/web/.next/server/chunks/3398.js:1:20827)
+#35 51.21 @cushion-saas/web:build:     at c (/app/apps/web/.next/server/chunks/3398.js:1:12232)
+#35 51.22 @cushion-saas/web:build: TypeError: Cannot read properties of null (reading 'useContext')
+#35 51.22 @cushion-saas/web:build:     at t.useContext (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:106142)
+#35 51.23 @cushion-saas/web:build:     at _ (/app/apps/web/.next/server/chunks/3398.js:1:20827)
+#35 51.23 @cushion-saas/web:build:     at c (/app/apps/web/.next/server/chunks/3398.js:1:12232)
+#35 51.23 @cushion-saas/web:build:     at ai (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:6505)
+#35 51.23 @cushion-saas/web:build:     at /app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:11284
+#35 51.23 @cushion-saas/web:build:     at ab (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:13038)
+#35 51.23 @cushion-saas/web:build:     at e (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:46298)
+#35 51.23 @cushion-saas/web:build:     at aS (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:48276)
+#35 51.23 @cushion-saas/web:build:     at ag (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:7923)
+#35 51.23 @cushion-saas/web:build:     at /app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:13014
+#35 51.23 @cushion-saas/web:build: 
+#35 51.23 @cushion-saas/web:build: Error occurred prerendering page "/retailer/orders". Read more: https://nextjs.org/docs/messages/prerender-error
+#35 51.23 @cushion-saas/web:build: TypeError: Cannot read properties of null (reading 'useContext')
+#35 51.23 @cushion-saas/web:build:     at t.useContext (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:106142)
+#35 51.23 @cushion-saas/web:build:     at _ (/app/apps/web/.next/server/chunks/3398.js:1:20827)
+#35 51.23 @cushion-saas/web:build:     at c (/app/apps/web/.next/server/chunks/3398.js:1:12232)
+#35 51.23 @cushion-saas/web:build:     at ai (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:6505)
+#35 51.23 @cushion-saas/web:build:     at /app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:11284
+#35 51.23 @cushion-saas/web:build:     at ab (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:13038)
+#35 51.23 @cushion-saas/web:build:     at e (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:46298)
+#35 51.23 @cushion-saas/web:build:     at aS (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:48276)
+#35 51.23 @cushion-saas/web:build:     at ag (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:7923)
+#35 51.23 @cushion-saas/web:build:     at /app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:13014
+#35 51.25 @cushion-saas/web:build:  ⨯ TypeError: Cannot read properties of null (reading 'useContext')
+#35 51.25 @cushion-saas/web:build:     at _ (/app/apps/web/.next/server/chunks/3398.js:1:20827)
+#35 51.25 @cushion-saas/web:build:     at c (/app/apps/web/.next/server/chunks/3398.js:1:12232)
+#35 51.25 @cushion-saas/web:build: TypeError: Cannot read properties of null (reading 'useContext')
+#35 51.25 @cushion-saas/web:build:     at t.useContext (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:106142)
+#35 51.25 @cushion-saas/web:build:     at _ (/app/apps/web/.next/server/chunks/3398.js:1:20827)
+#35 51.25 @cushion-saas/web:build:     at c (/app/apps/web/.next/server/chunks/3398.js:1:12232)
+#35 51.25 @cushion-saas/web:build:     at ai (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:6505)
+#35 51.25 @cushion-saas/web:build:     at /app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:11284
+#35 51.25 @cushion-saas/web:build:     at ab (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:13038)
+#35 51.25 @cushion-saas/web:build:     at e (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:46298)
+#35 51.25 @cushion-saas/web:build:     at aS (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:48276)
+#35 51.25 @cushion-saas/web:build:     at ag (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:7923)
+#35 51.25 @cushion-saas/web:build:     at /app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:13014
+#35 51.25 @cushion-saas/web:build: 
+#35 51.25 @cushion-saas/web:build: Error occurred prerendering page "/retailer". Read more: https://nextjs.org/docs/messages/prerender-error
+#35 51.25 @cushion-saas/web:build: TypeError: Cannot read properties of null (reading 'useContext')
+#35 51.25 @cushion-saas/web:build:     at t.useContext (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:106142)
+#35 51.25 @cushion-saas/web:build:     at _ (/app/apps/web/.next/server/chunks/3398.js:1:20827)
+#35 51.25 @cushion-saas/web:build:     at c (/app/apps/web/.next/server/chunks/3398.js:1:12232)
+#35 51.25 @cushion-saas/web:build:     at ai (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:6505)
+#35 51.25 @cushion-saas/web:build:     at /app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:11284
+#35 51.25 @cushion-saas/web:build:     at ab (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:13038)
+#35 51.25 @cushion-saas/web:build:     at e (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:46298)
+#35 51.25 @cushion-saas/web:build:     at aS (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:48276)
+#35 51.25 @cushion-saas/web:build:     at ag (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:7923)
+#35 51.25 @cushion-saas/web:build:     at /app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:13014
+#35 51.29 @cushion-saas/web:build:  ⨯ TypeError: Cannot read properties of null (reading 'useContext')
+#35 51.29 @cushion-saas/web:build:     at _ (/app/apps/web/.next/server/chunks/3398.js:1:20827)
+#35 51.29 @cushion-saas/web:build:     at c (/app/apps/web/.next/server/chunks/3398.js:1:12232)
+#35 51.29 @cushion-saas/web:build: TypeError: Cannot read properties of null (reading 'useContext')
+#35 51.29 @cushion-saas/web:build:     at t.useContext (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:106142)
+#35 51.29 @cushion-saas/web:build:     at _ (/app/apps/web/.next/server/chunks/3398.js:1:20827)
+#35 51.29 @cushion-saas/web:build:     at c (/app/apps/web/.next/server/chunks/3398.js:1:12232)
+#35 51.29 @cushion-saas/web:build:     at ai (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:6505)
+#35 51.29 @cushion-saas/web:build:     at /app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:11284
+#35 51.29 @cushion-saas/web:build:     at ab (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:13038)
+#35 51.29 @cushion-saas/web:build:     at e (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:46298)
+#35 51.29 @cushion-saas/web:build:     at aS (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:48276)
+#35 51.29 @cushion-saas/web:build:     at ag (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:7923)
+#35 51.29 @cushion-saas/web:build:     at /app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:13014
+#35 51.29 @cushion-saas/web:build: 
+#35 51.29 @cushion-saas/web:build: Error occurred prerendering page "/retailer/quotes/new". Read more: https://nextjs.org/docs/messages/prerender-error
+#35 51.29 @cushion-saas/web:build: TypeError: Cannot read properties of null (reading 'useContext')
+#35 51.29 @cushion-saas/web:build:     at t.useContext (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:106142)
+#35 51.29 @cushion-saas/web:build:     at _ (/app/apps/web/.next/server/chunks/3398.js:1:20827)
+#35 51.29 @cushion-saas/web:build:     at c (/app/apps/web/.next/server/chunks/3398.js:1:12232)
+#35 51.29 @cushion-saas/web:build:     at ai (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:6505)
+#35 51.29 @cushion-saas/web:build:     at /app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:11284
+#35 51.29 @cushion-saas/web:build:     at ab (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:13038)
+#35 51.29 @cushion-saas/web:build:     at e (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:46298)
+#35 51.29 @cushion-saas/web:build:     at aS (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:48276)
+#35 51.29 @cushion-saas/web:build:     at ag (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:7923)
+#35 51.29 @cushion-saas/web:build:     at /app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:13014
+#35 51.31 @cushion-saas/web:build:  ⨯ TypeError: Cannot read properties of null (reading 'useContext')
+#35 51.31 @cushion-saas/web:build:     at _ (/app/apps/web/.next/server/chunks/3398.js:1:20827)
+#35 51.31 @cushion-saas/web:build:     at c (/app/apps/web/.next/server/chunks/3398.js:1:12232)
+#35 51.31 @cushion-saas/web:build: TypeError: Cannot read properties of null (reading 'useContext')
+#35 51.31 @cushion-saas/web:build:     at t.useContext (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:106142)
+#35 51.31 @cushion-saas/web:build:     at _ (/app/apps/web/.next/server/chunks/3398.js:1:20827)
+#35 51.31 @cushion-saas/web:build:     at c (/app/apps/web/.next/server/chunks/3398.js:1:12232)
+#35 51.31 @cushion-saas/web:build:     at ai (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:6505)
+#35 51.31 @cushion-saas/web:build:     at /app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:11284
+#35 51.31 @cushion-saas/web:build:     at ab (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:13038)
+#35 51.31 @cushion-saas/web:build:     at e (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:46298)
+#35 51.31 @cushion-saas/web:build:     at aS (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:48276)
+#35 51.31 @cushion-saas/web:build:     at ag (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:7923)
+#35 51.31 @cushion-saas/web:build:     at /app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:13014
+#35 51.31 @cushion-saas/web:build: 
+#35 51.31 @cushion-saas/web:build: Error occurred prerendering page "/retailer/quotes". Read more: https://nextjs.org/docs/messages/prerender-error
+#35 51.31 @cushion-saas/web:build: TypeError: Cannot read properties of null (reading 'useContext')
+#35 51.31 @cushion-saas/web:build:     at t.useContext (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:106142)
+#35 51.31 @cushion-saas/web:build:     at _ (/app/apps/web/.next/server/chunks/3398.js:1:20827)
+#35 51.31 @cushion-saas/web:build:     at c (/app/apps/web/.next/server/chunks/3398.js:1:12232)
+#35 51.31 @cushion-saas/web:build:     at ai (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:6505)
+#35 51.31 @cushion-saas/web:build:     at /app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:11284
+#35 51.31 @cushion-saas/web:build:     at ab (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:13038)
+#35 51.31 @cushion-saas/web:build:     at e (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:46298)
+#35 51.31 @cushion-saas/web:build:     at aS (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:48276)
+#35 51.31 @cushion-saas/web:build:     at ag (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:7923)
+#35 51.31 @cushion-saas/web:build:     at /app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:13014
+#35 51.33 @cushion-saas/web:build:  ⨯ TypeError: Cannot read properties of null (reading 'useContext')
+#35 51.33 @cushion-saas/web:build:     at _ (/app/apps/web/.next/server/chunks/3398.js:1:20827)
+#35 51.33 @cushion-saas/web:build:     at c (/app/apps/web/.next/server/chunks/3398.js:1:12232)
+#35 51.33 @cushion-saas/web:build: TypeError: Cannot read properties of null (reading 'useContext')
+#35 51.33 @cushion-saas/web:build:     at t.useContext (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:106142)
+#35 51.33 @cushion-saas/web:build:     at _ (/app/apps/web/.next/server/chunks/3398.js:1:20827)
+#35 51.33 @cushion-saas/web:build:     at c (/app/apps/web/.next/server/chunks/3398.js:1:12232)
+#35 51.33 @cushion-saas/web:build:     at ai (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:6505)
+#35 51.33 @cushion-saas/web:build:     at /app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:11284
+#35 51.33 @cushion-saas/web:build:     at ab (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:13038)
+#35 51.33 @cushion-saas/web:build:     at e (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:46298)
+#35 51.33 @cushion-saas/web:build:     at aS (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:48276)
+#35 51.33 @cushion-saas/web:build:     at ag (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:7923)
+#35 51.33 @cushion-saas/web:build:     at /app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:13014
+#35 51.33 @cushion-saas/web:build: 
+#35 51.33 @cushion-saas/web:build: Error occurred prerendering page "/retailer/settings". Read more: https://nextjs.org/docs/messages/prerender-error
+#35 51.33 @cushion-saas/web:build: TypeError: Cannot read properties of null (reading 'useContext')
+#35 51.33 @cushion-saas/web:build:     at t.useContext (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:106142)
+#35 51.33 @cushion-saas/web:build:     at _ (/app/apps/web/.next/server/chunks/3398.js:1:20827)
+#35 51.33 @cushion-saas/web:build:     at c (/app/apps/web/.next/server/chunks/3398.js:1:12232)
+#35 51.33 @cushion-saas/web:build:     at ai (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:6505)
+#35 51.33 @cushion-saas/web:build:     at /app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:11284
+#35 51.33 @cushion-saas/web:build:     at ab (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:13038)
+#35 51.33 @cushion-saas/web:build:     at e (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:46298)
+#35 51.33 @cushion-saas/web:build:     at aS (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:48276)
+#35 51.33 @cushion-saas/web:build:     at ag (/app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:7923)
+#35 51.33 @cushion-saas/web:build:     at /app/node_modules/.pnpm/next@14.0.4_@babel+core@7.29.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:13014
+#35 51.33 @cushion-saas/web:build: @cushion-saas/web:build:  ✓ Generating static pages (36/36) 
+#35 51.34 @cushion-saas/web:build: 
+#35 51.34 @cushion-saas/web:build: > Export encountered errors on following paths:
+#35 51.34 @cushion-saas/web:build: 	/(auth)/invite/accept/page: /invite/accept
+#35 51.34 @cushion-saas/web:build: 	/(auth)/login/page: /login
+#35 51.34 @cushion-saas/web:build: 	/_error: /404
+#35 51.34 @cushion-saas/web:build: 	/_error: /500
+#35 51.34 @cushion-saas/web:build: 	/_not-found
+#35 51.34 @cushion-saas/web:build: 	/admin/analytics/page: /admin/analytics
+#35 51.34 @cushion-saas/web:build: 	/admin/assets/page: /admin/assets
+#35 51.34 @cushion-saas/web:build: 	/admin/calculators/new/page: /admin/calculators/new
+#35 51.34 @cushion-saas/web:build: 	/admin/calculators/page: /admin/calculators
+#35 51.34 @cushion-saas/web:build: 	/admin/dashboard/page: /admin/dashboard
+#35 51.34 @cushion-saas/web:build: 	/admin/orders/page: /admin/orders
+#35 51.34 @cushion-saas/web:build: 	/admin/quotes/new/page: /admin/quotes/new
+#35 51.34 @cushion-saas/web:build: 	/admin/quotes/page: /admin/quotes
+#35 51.34 @cushion-saas/web:build: 	/admin/retailers/new/page: /admin/retailers/new
+#35 51.34 @cushion-saas/web:build: 	/admin/retailers/page: /admin/retailers
+#35 51.34 @cushion-saas/web:build: 	/admin/settings/page: /admin/settings
+#35 51.34 @cushion-saas/web:build: 	/retailer/dashboard/page: /retailer/dashboard
+#35 51.34 @cushion-saas/web:build: 	/retailer/orders/page: /retailer/orders
+#35 51.34 @cushion-saas/web:build: 	/retailer/page: /retailer
+#35 51.34 @cushion-saas/web:build: 	/retailer/quotes/new/page: /retailer/quotes/new
+#35 51.34 @cushion-saas/web:build: 	/retailer/quotes/page: /retailer/quotes
+#35 51.34 @cushion-saas/web:build: 	/retailer/settings/page: /retailer/settings
+#35 51.43 @cushion-saas/web:build:  ELIFECYCLE  Command failed with exit code 1.
+#35 51.44 @cushion-saas/web:build: ERROR: command finished with error: command (/app/apps/web) /usr/local/bin/pnpm run build exited (1)
+#35 51.44 @cushion-saas/web#build: command (/app/apps/web) /usr/local/bin/pnpm run build exited (1)
+#35 51.44 
+#35 51.44  Tasks:    3 successful, 4 total
+#35 51.44 Cached:    0 cached, 4 total
+#35 51.44   Time:    50.794s 
+#35 51.44 Failed:    @cushion-saas/web#build
+#35 51.44 
+#35 51.45  ERROR  run failed: command  exited (1)
+#35 ERROR: process "/bin/sh -c pnpm turbo run build --filter=web..." did not complete successfully: exit code: 1
+------
+ > [app builder 11/11] RUN pnpm turbo run build --filter=web...:
+51.43 @cushion-saas/web:build:  ELIFECYCLE  Command failed with exit code 1.
+51.44 @cushion-saas/web:build: ERROR: command finished with error: command (/app/apps/web) /usr/local/bin/pnpm run build exited (1)
+51.44 @cushion-saas/web#build: command (/app/apps/web) /usr/local/bin/pnpm run build exited (1)
+51.44 
+51.44  Tasks:    3 successful, 4 total
+51.44 Cached:    0 cached, 4 total
+51.44   Time:    50.794s 
+51.44 Failed:    @cushion-saas/web#build
+51.44 
+51.45  ERROR  run failed: command  exited (1)
+------
+failed to solve: process "/bin/sh -c pnpm turbo run build --filter=web..." did not complete successfully: exit code: 1

@@ -44,7 +44,9 @@ export const authOptions: NextAuthOptions = {
           retailerId: user.retailerId || undefined,
           retailer: user.retailer ? {
             businessName: user.retailer.businessName,
-            status: user.retailer.status
+            status: user.retailer.status,
+            markupType: user.retailer.markupType,
+            markupValue: user.retailer.markupValue
           } : undefined,
         }
       },
