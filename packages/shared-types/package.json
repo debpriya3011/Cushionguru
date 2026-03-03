@@ -5,7 +5,10 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "tsc",
+    // building with `-b` is harmless here and keeps the pattern
+    // consistent across all packages. it also generates the tsbuildinfo
+    // that TypeScript uses to validate referenced consumers.
+    "build": "tsc -b",
     "dev": "tsc --watch",
     "lint": "eslint src/**/*.ts"
   },

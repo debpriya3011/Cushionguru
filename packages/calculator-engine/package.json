@@ -5,7 +5,11 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "tsc",
+    // use the build mode which understands project references so that
+    // dependencies like @cushion-saas/shared-types are automatically
+    // compiled when the engine is built. this avoids TS6305 errors when
+    // a consuming package hasn't been compiled yet.
+    "build": "tsc -b",
     "dev": "tsc --watch",
     "test": "jest",
     "lint": "eslint src/**/*.ts"
