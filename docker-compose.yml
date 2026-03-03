@@ -1,0 +1,70 @@
+version: '3.8'
+
+services:
+  # Next.js Application
+  app:
+    build:
+      context: .
+      dockerfile: ./apps/web/Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/cushion_saas?schema=public
+      - NEXTAUTH_SECRET=superlongrandomsecretkey123456789
+      - NEXTAUTH_URL=http://localhost:3000
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_S3_BUCKET=${AWS_S3_BUCKET}
+      - AWS_REGION=${AWS_REGION}
+      - RESEND_API_KEY=${RESEND_API_KEY}
+    depends_on:
+      - db
+      - redis
+    volumes:
+      - ./apps/web:/app/apps/web
+      - ./packages:/app/packages
+      - /app/node_modules
+      - /app/apps/web/node_modules
+      - /app/apps/web/.next
+
+  # PostgreSQL Database
+  db:
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=cushion_saas
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+  # Prisma Studio (Optional - for development)
+  prisma-studio:
+    build:
+      context: .
+      dockerfile: ./packages/database/Dockerfile
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/cushion_saas?schema=public
+    ports:
+      - "5555:5555"
+    depends_on:
+      - db
+    command: npx prisma studio --host 0.0.0.0
+
+volumes:
+  postgres_data:
+  redis_data:

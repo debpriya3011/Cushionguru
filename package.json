@@ -1,0 +1,43 @@
+{
+  "name": "cushion-saas",
+  "version": "1.0.0",
+  "description": "Multi-Tenant SaaS Platform for Cushion Quoting & Management",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "lint": "turbo run lint",
+    "test": "turbo run test",
+    "db:generate": "turbo run db:generate",
+    "db:push": "turbo run db:push",
+    "db:migrate": "turbo run db:migrate",
+    "db:studio": "turbo run db:studio",
+    "clean": "turbo run clean && rm -rf node_modules",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\""
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "dotenv": "^16.6.1",
+    "dotenv-cli": "^11.0.0",
+    "eslint": "^8.0.0",
+    "prettier": "^3.0.0",
+    "turbo": "^1.10.0",
+    "typescript": "^5.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "autoprefixer": "^10.4.24",
+    "next": "^16.1.6",
+    "postcss": "^8.5.6",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "tailwindcss": "^3.4.19",
+    "tailwindcss-animate": "^1.0.7"
+  }
+}

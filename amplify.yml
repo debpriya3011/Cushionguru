@@ -1,0 +1,25 @@
+version: 1
+applications:
+  - frontend:
+      phases:
+        preBuild:
+          commands:
+            - npm install -g pnpm
+            - pnpm install --frozen-lockfile
+        build:
+          commands:
+            # First, generate Prisma client so that the Next.js build has database access
+            - cd packages/database && pnpm exec prisma generate
+            - cd ../.. 
+            # Build the web application via Turbo (or standard next build)
+            - pnpm run build --filter=web...
+      artifacts:
+        baseDirectory: apps/web/.next
+        files:
+          - '**/*'
+      cache:
+        paths:
+          - node_modules/**/*
+          - .pnpm-store/**/*
+          - apps/web/.next/cache/**/*
+    appRoot: apps/web
