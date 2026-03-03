@@ -4,7 +4,8 @@
   "description": "Express.js API for Cushion SaaS",
   "main": "dist/index.js",
   "scripts": {
-    "build": "tsc",
+    
+    "build": "tsc -b",
     "dev": "dotenv -e ../../.env -- tsx watch src/index.ts",
     "start": "dotenv -e ../../.env -- node dist/index.js",
     "lint": "eslint src/**/*.ts"
