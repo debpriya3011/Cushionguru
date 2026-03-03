@@ -9,7 +9,7 @@ WORKDIR /app
 RUN corepack enable
 
 # Install turbo
-RUN pnpm install -g turbo
+RUN npm install -g turbo
 
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json ./
 COPY apps/web/package.json ./apps/web/package.json
