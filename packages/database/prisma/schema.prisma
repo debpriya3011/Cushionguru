@@ -274,6 +274,7 @@ enum QuoteStatus {
 
 enum PaymentStatus {
   PENDING
+  UNPAID   // kept for backwards compatibility with existing DB rows
   SUCCESS
   FAILED
   REFUNDED
