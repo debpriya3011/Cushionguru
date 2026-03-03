@@ -1,0 +1,153 @@
+'use client'
+
+import { useState, useEffect } from 'react'
+import { useParams, useRouter } from 'next/navigation'
+import Link from 'next/link'
+import { ArrowLeft, CheckCircle, Store, Send, ShoppingCart, Download } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { toast } from '@/components/ui/use-toast'
+
+export default function AdminQuoteDetailsPage() {
+    const params = useParams()
+    const router = useRouter()
+    const [quote, setQuote] = useState<any>(null)
+    const [loading, setLoading] = useState(true)
+
+    useEffect(() => {
+        fetchQuote()
+    }, [params.id])
+
+    const fetchQuote = async () => {
+        try {
+            const res = await fetch(`/api/quotes/${params.id}`)
+            if (res.ok) {
+                const data = await res.json()
+                setQuote(data)
+            }
+        } catch (error) {
+            console.error('Failed to fetch quote:', error)
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    const handleUpdateStatus = async (newStatus: string) => {
+        try {
+            const res = await fetch(`/api/quotes/${params.id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ status: newStatus }),
+            })
+
+            if (res.ok) {
+                toast({ title: 'Success', description: `Quote status updated to ${newStatus}` })
+                fetchQuote()
+            } else {
+                toast({ title: 'Error', description: 'Failed to update status', variant: 'destructive' })
+            }
+        } catch (error) {
+            toast({ title: 'Error', description: 'Failed to update status', variant: 'destructive' })
+        }
+    }
+
+    if (loading) return <div className="p-8 text-center">Loading...</div>
+    if (!quote) return <div className="p-8 text-center">Quote not found</div>
+
+    const formatCurrency = (amount: number) => {
+        return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount)
+    }
+
+    return (
+        <div className="space-y-6 max-w-5xl mx-auto">
+            <div className="flex justify-between items-center">
+                <div className="flex items-center gap-4">
+                    <Link href="/admin/quotes">
+                        <Button variant="outline" size="icon"><ArrowLeft className="h-4 w-4" /></Button>
+                    </Link>
+                    <div>
+                        <h1 className="text-2xl font-bold flex items-center gap-3">
+                            {quote.quoteNumber} <Badge className="ml-2">{quote.status}</Badge>
+                        </h1>
+                        <p className="text-gray-500 text-sm">Created on {new Date(quote.createdAt).toLocaleDateString()}</p>
+                    </div>
+                </div>
+                <div className="flex gap-3">
+                    <Button variant="outline" onClick={() => window.open(`/api/quotes/${quote.id}/pdf`, '_blank')}>
+                        <Download className="w-4 h-4 mr-2" /> Download PDF
+                    </Button>
+                    {quote.status !== 'ACCEPTED' && quote.status !== 'CONVERTED' && (
+                        <Button className="bg-green-600 hover:bg-green-700" onClick={() => handleUpdateStatus('ACCEPTED')}>
+                            <CheckCircle className="w-4 h-4 mr-2" /> Approve Quote
+                        </Button>
+                    )}
+                    {(quote.status === 'ACCEPTED') && (
+                        <Button className="bg-purple-600 hover:bg-purple-700" onClick={() => handleUpdateStatus('CONVERTED')}>
+                            <ShoppingCart className="w-4 h-4 mr-2" /> Convert to Order
+                        </Button>
+                    )}
+                </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <Card className="col-span-2">
+                    <CardHeader>
+                        <CardTitle>Hardware & Materials ({quote.items?.length || 0} items)</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                        {quote.items?.map((item: any, i: number) => (
+                            <div key={item.id} className="p-4 border rounded-lg bg-gray-50">
+                                <div className="flex justify-between items-start">
+                                    <div>
+                                        <h3 className="font-bold">{item.productType} • {item.shape}</h3>
+                                        <p className="text-sm text-gray-500 mt-1">
+                                            Fabric: {item.fabricCode} | Fill: {item.foamType}
+                                        </p>
+                                        <p className="text-sm text-gray-500">Qty: {item.quantity}</p>
+                                    </div>
+                                    <div className="text-right">
+                                        <p className="text-sm font-semibold text-gray-400">Retailer Map: {formatCurrency(item.totalPrice)}</p>
+                                        <p className="text-lg font-bold text-blue-800">Base Cost: {formatCurrency(item.baseSubtotal)}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </CardContent>
+                </Card>
+
+                <div className="space-y-6">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="text-base flex items-center gap-2 text-gray-700"><Store className="w-4 h-4" /> Retailer Details</CardTitle>
+                        </CardHeader>
+                        <CardContent className="space-y-2 text-sm">
+                            <p className="font-semibold text-gray-900 border-b pb-2 mb-2">{quote.retailer?.businessName}</p>
+                            <p><strong>Customer:</strong> {quote.customerName}</p>
+                            <p><strong>Email:</strong> {quote.customerEmail}</p>
+                            {quote.customerPhone && <p><strong>Phone:</strong> {quote.customerPhone}</p>}
+                        </CardContent>
+                    </Card>
+
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Financial Summary</CardTitle>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                            <div className="flex justify-between border-b pb-4">
+                                <span className="text-gray-600">Base Cost Processing</span>
+                                <span className="font-medium text-blue-700">
+                                    {formatCurrency(quote.items?.map((i: any) => i.baseSubtotal).reduce((a: number, b: number) => a + b, 0))}
+                                </span>
+                            </div>
+                            <div className="flex justify-between">
+                                <span className="font-bold text-lg">Total to Customer</span>
+                                <span className="font-bold text-lg text-green-700">{formatCurrency(quote.total)}</span>
+                            </div>
+                        </CardContent>
+                    </Card>
+                </div>
+            </div>
+        </div>
+    )
+}

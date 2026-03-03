@@ -1,0 +1,17 @@
+{
+  "name": "@cushion-saas/shared-types",
+  "version": "1.0.0",
+  "description": "Shared TypeScript types for Cushion SaaS",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "lint": "eslint src/**/*.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0",
+    "eslint": "^8.0.0"
+  }
+}
