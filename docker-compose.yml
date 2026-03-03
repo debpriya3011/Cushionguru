@@ -20,12 +20,6 @@ services:
     depends_on:
       - db
       - redis
-    volumes:
-      - ./apps/web:/app/apps/web
-      - ./packages:/app/packages
-      - /app/node_modules
-      - /app/apps/web/node_modules
-      - /app/apps/web/.next
 
   # PostgreSQL Database
   db:
