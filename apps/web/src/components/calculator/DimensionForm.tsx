@@ -98,17 +98,17 @@ export function DimensionForm({ shape, dimensions, ranges, onChange }: Dimension
         })}
 
         {/* Fabric Meters - Calculated (Read-only) */}
-        <div className="space-y-2">
-          <label className="block text-sm font-medium text-gray-700">
+        {/* <div className="space-y-2"> */}
+        {/* <label className="block text-sm font-medium text-gray-700">
             Fabric Meters <span className="text-xs text-gray-500">(auto)</span>
-          </label>
-          <input
+          </label> */}
+        {/* <input
             type="text"
             value={fabricMeters.toFixed(4)}
             readOnly
             className="w-full p-3 border border-gray-200 rounded-lg bg-gray-100 text-gray-600"
-          />
-        </div>
+          /> */}
+        {/* </div> */}
       </div>
 
       {/* Dimension Info */}
