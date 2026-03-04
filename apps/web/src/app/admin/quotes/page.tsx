@@ -139,7 +139,7 @@ export default function AdminQuotesPage() {
                                             <p className="text-sm text-gray-500">{quote.customerEmail}</p>
                                         </TableCell>
                                         <TableCell className="font-medium">
-                                            {formatCurrency(Number(quote.finalTotal) || 0)}
+                                            {formatCurrency(Number(quote.total) || 0)}
                                         </TableCell>
                                         <TableCell>
                                             <Badge variant="secondary" className={statusColors[quote.status] || 'bg-gray-100'}>
