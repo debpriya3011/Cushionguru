@@ -121,7 +121,7 @@ export function PriceDisplay({
 
       <div className="p-4 space-y-4">
         {/* Quick Stats */}
-        <div className="grid grid-cols-2 gap-3">
+        {/* <div className="grid grid-cols-2 gap-3">
           <div className="bg-gray-50 p-3 rounded-lg">
             <p className="text-xs text-gray-500">Fabric Meters</p>
             <p className="text-lg font-semibold text-gray-900">{fabricMeters.toFixed(4)}m</p>
@@ -132,7 +132,7 @@ export function PriceDisplay({
               Tier {fabricTier}
             </span>
           </div>
-        </div>
+        </div> */}
 
         {/* Breakdown Toggle */}
         {(showBreakdown && allowBreakdown) && (
