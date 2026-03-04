@@ -19,9 +19,13 @@ export async function GET(
       where: { id: params.id },
       include: {
         items: true,
-        retailer: session.user.role === 'SUPER_ADMIN' ? {
-          select: { businessName: true },
-        } : false,
+        retailer: {
+          select: {
+            businessName: true,
+            labelPreference: true,
+            pdfPreference: true,
+          }
+        },
       },
     })
 
@@ -37,7 +41,20 @@ export async function GET(
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
 
-    return NextResponse.json(quote)
+    // Compute finalTotal server-side — single source of truth used by list and detail
+    const pdfPref = quote.pdfPreference ?? (quote as any).retailer?.pdfPreference
+    const labelPref = quote.labelPreference ?? (quote as any).retailer?.labelPreference
+    let pdfFee = 0
+    if (pdfPref === 'ALWAYS' || quote.isCustomized) { pdfFee = 10 }
+    else if (pdfPref === 'PER_ORDER' && quote.status === 'DRAFT') { pdfFee = 10 }
+    let fabricFee = 0
+    if (labelPref === 'ALWAYS' && quote.paymentStatus !== 'SUCCESS') {
+      const qty = (quote.items ?? []).reduce((acc: number, i: any) => acc + i.quantity, 0)
+      fabricFee = 8 * qty
+    }
+    const finalTotal = parseFloat(quote.total?.toString() || '0') + pdfFee + fabricFee
+
+    return NextResponse.json({ ...quote, finalTotal })
   } catch (error) {
     console.error('Failed to fetch quote:', error)
     return NextResponse.json(

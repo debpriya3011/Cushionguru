@@ -134,16 +134,62 @@ export default function AdminQuoteDetailsPage() {
                             <CardTitle>Financial Summary</CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-4">
-                            <div className="flex justify-between border-b pb-4">
-                                <span className="text-gray-600">Base Cost Processing</span>
-                                <span className="font-medium text-blue-700">
-                                    {formatCurrency(quote.items?.map((i: any) => i.baseSubtotal).reduce((a: number, b: number) => a + b, 0))}
-                                </span>
-                            </div>
-                            <div className="flex justify-between">
-                                <span className="font-bold text-lg">Total to Customer</span>
-                                <span className="font-bold text-lg text-green-700">{formatCurrency(quote.total)}</span>
-                            </div>
+                            {(() => {
+                                const subtotal = parseFloat(quote.subtotal?.toString() || '0')
+                                const markup = parseFloat(quote.markupAmount?.toString() || '0')
+                                const baseTotal = parseFloat(quote.total?.toString() || '0')
+
+                                // PDF fee — uses quote's snapshotted pdfPreference (immune to settings changes)
+                                let pdfFee = 0
+                                if (quote.pdfPreference === 'ALWAYS') {
+                                    pdfFee = 10
+                                } else if (quote.isCustomized) {
+                                    pdfFee = 10
+                                }
+
+                                // Fabric label fee — uses quote's snapshotted labelPreference
+                                let fabricFee = 0
+                                if (
+                                    quote.labelPreference === 'ALWAYS' &&
+                                    quote.paymentStatus !== 'SUCCESS'
+                                ) {
+                                    const qty = quote.items?.reduce((i: any, item: any) => i + item.quantity, 0) || 0
+                                    fabricFee = 8 * qty
+                                }
+
+                                const grandTotal = baseTotal + pdfFee + fabricFee
+
+                                return (
+                                    <>
+                                        <div className="flex justify-between border-b pb-3 text-gray-600 text-sm">
+                                            <span>Subtotal (Base Cost)</span>
+                                            <span className="font-medium text-blue-700">{formatCurrency(subtotal)}</span>
+                                        </div>
+                                        {markup > 0 && (
+                                            <div className="flex justify-between border-b pb-3 text-gray-600 text-sm">
+                                                <span>Retailer Margin</span>
+                                                <span className="font-medium text-emerald-600">+{formatCurrency(markup)}</span>
+                                            </div>
+                                        )}
+                                        {pdfFee > 0 && (
+                                            <div className="flex justify-between border-b pb-3 text-gray-600 text-sm">
+                                                <span>PDF Customization</span>
+                                                <span className="font-medium text-blue-600">+{formatCurrency(pdfFee)}</span>
+                                            </div>
+                                        )}
+                                        {fabricFee > 0 && (
+                                            <div className="flex justify-between border-b pb-3 text-gray-600 text-sm">
+                                                <span>Brand Label (Fabric)</span>
+                                                <span className="font-medium text-blue-600">+{formatCurrency(fabricFee)}</span>
+                                            </div>
+                                        )}
+                                        <div className="flex justify-between pt-1">
+                                            <span className="font-bold text-lg">Total to Customer</span>
+                                            <span className="font-bold text-lg text-green-700">{formatCurrency(grandTotal)}</span>
+                                        </div>
+                                    </>
+                                )
+                            })()}
                         </CardContent>
                     </Card>
                 </div>

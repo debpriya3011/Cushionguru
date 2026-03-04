@@ -35,7 +35,7 @@ export default function AdminQuotesPage() {
 
     const fetchQuotes = async () => {
         try {
-            const res = await fetch('/api/quotes')
+            const res = await fetch(`/api/quotes?_=${Date.now()}`, { cache: 'no-store' })
             if (res.ok) {
                 const data = await res.json()
                 setQuotes(data)
@@ -46,6 +46,12 @@ export default function AdminQuotesPage() {
             setLoading(false)
         }
     }
+
+    useEffect(() => {
+        const onFocus = () => fetchQuotes()
+        window.addEventListener('focus', onFocus)
+        return () => window.removeEventListener('focus', onFocus)
+    }, [])
 
     const filteredQuotes = quotes.filter(quote =>
         quote.quoteNumber?.toLowerCase().includes(search.toLowerCase()) ||
@@ -59,6 +65,7 @@ export default function AdminQuotesPage() {
             currency: 'USD'
         }).format(amount)
     }
+
 
     const formatDate = (date: string) => {
         return new Intl.DateTimeFormat('en-US', {
@@ -132,7 +139,7 @@ export default function AdminQuotesPage() {
                                             <p className="text-sm text-gray-500">{quote.customerEmail}</p>
                                         </TableCell>
                                         <TableCell className="font-medium">
-                                            {formatCurrency(Number(quote.total) || 0)}
+                                            {formatCurrency(Number(quote.finalTotal) || 0)}
                                         </TableCell>
                                         <TableCell>
                                             <Badge variant="secondary" className={statusColors[quote.status] || 'bg-gray-100'}>

@@ -5,7 +5,7 @@ import { useParams, useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { useSession } from 'next-auth/react'
 import { loadStripe } from '@stripe/stripe-js'
-import { ArrowLeft, CheckCircle, Send, Download, Tag, FileText, Package } from 'lucide-react'
+import { ArrowLeft, Send, Download, CreditCard, FileText, Package } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -43,6 +43,7 @@ export default function RetailerQuoteDetailsPage() {
     const [debouncedFooterContact, setDebouncedFooterContact] = useState('')
     const [debouncedLabelText, setDebouncedLabelText] = useState('')
     const [isCustomizationLocked, setIsCustomizationLocked] = useState(false)
+    const [wantCustomPdf, setWantCustomPdf] = useState(true)
 
     useEffect(() => {
         const timer = setTimeout(() => {
@@ -191,14 +192,19 @@ export default function RetailerQuoteDetailsPage() {
     };
 
 
-    const downloadPDF = () => {
+    const downloadPDF = async () => {
         if (!quote) return;
 
-        // Simply download the PDF without customization
+        // Trigger the plain PDF download
         const link = document.createElement('a');
-        link.href = `/api/quotes/${quote.id}/pdf`; // endpoint that serves the PDF
-        link.download = `${quote.quoteNumber}.pdf`; // suggested filename
+        link.href = `/api/quotes/${quote.id}/pdf`;
+        link.download = `${quote.quoteNumber}.pdf`;
         link.click();
+
+        // Auto-mark as SENT when PDF is downloaded in DRAFT stage
+        if (quote.status === 'DRAFT') {
+            await handleUpdateStatus('SENT');
+        }
     }
 
     const downloadCustomPDF = async () => {
@@ -247,7 +253,7 @@ export default function RetailerQuoteDetailsPage() {
 
             setIsCustomizationLocked(true)
 
-            // Refresh quote data to get the stored customization
+            // Refresh quote data (customize API has already set status=SENT and total+=10)
             await fetchData()
 
             // Open finalized PDF
@@ -255,7 +261,7 @@ export default function RetailerQuoteDetailsPage() {
 
             toast({
                 title: "Customization Finalized",
-                description: "Quote locked and sent to admin."
+                description: "Quote locked, PDF generated, and marked as Sent."
             })
 
         } catch (error) {
@@ -274,8 +280,7 @@ export default function RetailerQuoteDetailsPage() {
         return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount)
     }
 
-    const isPerOrder = retailer?.pdfPreference === 'PER_ORDER'
-    const isAlways = retailer?.pdfPreference === 'ALWAYS'
+    const isAlways = quote.pdfPreference === 'ALWAYS'
 
     return (
         <div className="space-y-6 max-w-5xl mx-auto">
@@ -302,12 +307,13 @@ export default function RetailerQuoteDetailsPage() {
                     </Button>
 
                     {!isAlways && (
-                        <Dialog>
+                        <Dialog onOpenChange={(open) => { if (open) setWantCustomPdf(true) }}>
                             <DialogTrigger asChild>
                                 <Button
                                     variant="outline"
-                                    disabled={isCustomizationLocked}
+                                    disabled={isCustomizationLocked || quote.status !== 'DRAFT'}
                                     className="border-blue-200 text-blue-700 hover:bg-blue-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                                    title={quote.status !== 'DRAFT' ? 'PDF customization is only allowed while quote is in DRAFT status' : undefined}
                                 >
                                     <FileText className="w-4 h-4 mr-2" />
                                     Customize PDF
@@ -320,13 +326,47 @@ export default function RetailerQuoteDetailsPage() {
                                         Further customization is not allowed and the data has been sent to admin.
                                     </div>
                                 )}
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 py-4">
+
+                                {/* $10 fee notice + opt-out toggle */}
+                                <div className={`flex items-center justify-between px-4 py-3 rounded-lg border ${wantCustomPdf
+                                    ? 'bg-amber-50 border-amber-200'
+                                    : 'bg-gray-50 border-gray-200'
+                                    }`}>
+                                    <div>
+                                        {wantCustomPdf ? (
+                                            <p className="text-sm font-semibold text-amber-800">
+                                                📄 PDF Customization Fee: <span className="text-amber-600">+$10.00</span>
+                                            </p>
+                                        ) : (
+                                            <p className="text-sm font-medium text-gray-500">
+                                                PDF customization skipped — no extra fee.
+                                            </p>
+                                        )}
+                                        <p className="text-xs text-gray-400 mt-0.5">
+                                            {wantCustomPdf ? 'Toggle off to skip branding and save $10.' : 'Toggle on to add your branding for $10.'}
+                                        </p>
+                                    </div>
+                                    <button
+                                        type="button"
+                                        onClick={() => setWantCustomPdf(v => !v)}
+                                        className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors focus:outline-none ${wantCustomPdf ? 'bg-amber-500' : 'bg-gray-300'
+                                            }`}
+                                        aria-label="Toggle PDF customization"
+                                    >
+                                        <span className={`pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow transform transition-transform ${wantCustomPdf ? 'translate-x-5' : 'translate-x-0'
+                                            }`} />
+                                    </button>
+                                </div>
+
+                                <div className={`grid grid-cols-1 md:grid-cols-2 gap-6 py-4 ${!wantCustomPdf ? 'opacity-40 pointer-events-none select-none' : ''
+                                    }`}>
                                     <div className="space-y-6">
                                         <div className="flex flex-col space-y-3 p-4 border rounded-lg bg-gray-50">
                                             <div className="flex items-start space-x-3 pb-2 border-b border-gray-200">
                                                 <Checkbox
                                                     id="brand-logo"
                                                     checked={includeLogo}
+                                                    disabled={!wantCustomPdf}
                                                     onCheckedChange={(c) => setIncludeLogo(c as boolean)}
                                                 />
                                                 <div className="space-y-1">
@@ -338,6 +378,7 @@ export default function RetailerQuoteDetailsPage() {
                                                 <Checkbox
                                                     id="brand-label"
                                                     checked={includeLabel}
+                                                    disabled={!wantCustomPdf}
                                                     onCheckedChange={(c) => setIncludeLabel(c as boolean)}
                                                 />
                                                 <div className="space-y-1">
@@ -354,6 +395,7 @@ export default function RetailerQuoteDetailsPage() {
                                                     value={labelText}
                                                     onChange={(e) => setLabelText(e.target.value)}
                                                     placeholder="[ BRAND LABEL APPLIED ]"
+                                                    disabled={!wantCustomPdf}
                                                 />
                                             </div>
                                             <div className="space-y-2">
@@ -362,6 +404,7 @@ export default function RetailerQuoteDetailsPage() {
                                                     value={headerText}
                                                     onChange={(e) => setHeaderText(e.target.value)}
                                                     placeholder="Your business name to appear at the top"
+                                                    disabled={!wantCustomPdf}
                                                 />
                                             </div>
                                             <div className="space-y-2">
@@ -370,6 +413,7 @@ export default function RetailerQuoteDetailsPage() {
                                                     value={footerContact}
                                                     onChange={(e) => setFooterContact(e.target.value)}
                                                     placeholder="Website, Phone, or Legal tagline..."
+                                                    disabled={!wantCustomPdf}
                                                 />
                                             </div>
                                         </div>
@@ -379,17 +423,18 @@ export default function RetailerQuoteDetailsPage() {
                                             Live PDF Preview
                                         </div>
                                         <iframe
-                                            src={`/api/quotes/${quote.id}/pdf?inline=true&pdfPreference=${includeLabel || includeLogo || isAlways ? 'ALWAYS' : 'NONE'}&includeLogo=${includeLogo}&includeLabel=${includeLabel}&headerText=${encodeURIComponent(debouncedHeaderText || '')}&footerContact=${encodeURIComponent(debouncedFooterContact || '')}&labelText=${encodeURIComponent(debouncedLabelText || '')}#toolbar=0&navpanes=0`}
+                                            src={`/api/quotes/${quote.id}/pdf?inline=true&pdfPreference=${wantCustomPdf && (includeLabel || includeLogo || isAlways) ? 'ALWAYS' : 'NONE'}&includeLogo=${wantCustomPdf && includeLogo}&includeLabel=${wantCustomPdf && includeLabel}&headerText=${encodeURIComponent(wantCustomPdf ? (debouncedHeaderText || '') : '')}&footerContact=${encodeURIComponent(wantCustomPdf ? (debouncedFooterContact || '') : '')}&labelText=${encodeURIComponent(wantCustomPdf ? (debouncedLabelText || '') : '')}#toolbar=0&navpanes=0`}
                                             className="w-full h-full min-h-[400px]"
                                         />
                                     </div>
                                 </div>
                                 <DialogFooter>
-                                    <Button onClick={downloadCustomPDF} className="w-full">
-                                        <Download className="w-4 h-4 mr-2" /> Generate & Download
-                                    </Button>
-                                    <Button onClick={() => handlePayment()} className="w-full">
-                                        <Tag className="w-4 h-4 mr-2" /> Pay for PDF Customization
+                                    <Button
+                                        onClick={wantCustomPdf ? downloadCustomPDF : downloadPDF}
+                                        className="w-full"
+                                    >
+                                        <Download className="w-4 h-4 mr-2" />
+                                        {wantCustomPdf ? 'Generate & Download (Final)' : 'Download Plain PDF'}
                                     </Button>
                                 </DialogFooter>
                             </DialogContent>
@@ -401,14 +446,9 @@ export default function RetailerQuoteDetailsPage() {
                             <Send className="w-4 h-4 mr-2" /> Mark as Sent
                         </Button>
                     )}
-                    {quote.status === 'SENT' && (
-                        <Button className="bg-green-600 hover:bg-green-700" onClick={() => handleUpdateStatus('ACCEPTED')}>
-                            <CheckCircle className="w-4 h-4 mr-2" /> Mark as Accepted
-                        </Button>
-                    )}
                     {quote.status === 'ACCEPTED' && quote.paymentStatus !== 'SUCCESS' && (
                         <Button className="bg-purple-600 hover:bg-purple-700" onClick={() => handlePayment()}>
-                            <Tag className="w-4 h-4 mr-2" /> Pay Now
+                            <CreditCard className="w-4 h-4 mr-2" /> Pay Now
                         </Button>
                     )}
                 </div>
@@ -480,49 +520,67 @@ export default function RetailerQuoteDetailsPage() {
                             )}
 
                             {(() => {
-                                let fees = 0;
+                                // ─── Fee Rules ─────────────────────────────────────────────
+                                // quote.total (DB) = subtotal + retailer markup — NEVER changes.
+                                // pdfFee and fabricFee are computed add-ons shown on top.
+                                //
+                                // PDF fee ($10):
+                                //   • pdfPreference ALWAYS → always $10
+                                //   • DRAFT + not yet locked → live toggle (wantCustomPdf)
+                                //   • After DRAFT → frozen: $10 if isCustomized, $0 if plain download
+                                //
+                                // Fabric label fee ($8/qty):
+                                //   • labelPreference ALWAYS AND status DRAFT AND not yet paid
+                                // ────────────────────────────────────────────────────────────
+
                                 let pdfFee = 0;
-                                let fabricFee = 0;
-                                if (retailer?.pdfPreference === 'ALWAYS') {
+                                if (quote.pdfPreference === 'ALWAYS') {
                                     pdfFee = 10;
-                                    fees += pdfFee;
+                                } else if (quote.isCustomized) {
+                                    // Locked after customized PDF was downloaded
+                                    pdfFee = 10;
+                                } else if (quote.status === 'DRAFT') {
+                                    // Live toggle — user can see the cost change in real-time
+                                    pdfFee = wantCustomPdf ? 10 : 0;
                                 }
-                                if (retailer?.labelPreference === 'ALWAYS') {
+                                // If status is SENT and NOT isCustomized → plain PDF downloaded → $0
+
+                                let fabricFee = 0;
+                                if (
+                                    quote.labelPreference === 'ALWAYS' &&
+                                    quote.paymentStatus !== 'SUCCESS'
+                                ) {
                                     const qty = quote.items?.reduce((acc: number, item: any) => acc + item.quantity, 0) || 0;
                                     fabricFee = 8 * qty;
-                                    fees += fabricFee;
                                 }
 
-                                const parsedTotal = parseFloat(quote.total) || 0;
-
-                                if (fees > 0) {
-                                    return (
-                                        <>
-                                            {pdfFee > 0 && (
-                                                <div className="flex justify-between border-b pb-3 text-gray-600">
-                                                    <span>Brand Label (PDF)</span>
-                                                    <span className="font-medium text-blue-600">+{formatCurrency(pdfFee)}</span>
-                                                </div>
-                                            )}
-                                            {fabricFee > 0 && (
-                                                <div className="flex justify-between border-b pb-3 text-gray-600">
-                                                    <span>Brand Label (Fabric)</span>
-                                                    <span className="font-medium text-blue-600">+{formatCurrency(fabricFee)}</span>
-                                                </div>
-                                            )}
-                                            <div className="flex justify-between pt-2">
-                                                <span className="font-bold text-lg text-gray-900">Final Total</span>
-                                                <span className="font-bold text-xl text-blue-600">{formatCurrency(parsedTotal + fees)}</span>
-                                            </div>
-                                        </>
-                                    );
-                                }
+                                const baseTotal = parseFloat(quote.total?.toString() || '0');
+                                const grandTotal = baseTotal + pdfFee + fabricFee;
 
                                 return (
-                                    <div className="flex justify-between pt-2">
-                                        <span className="font-bold text-lg text-gray-900">Final Total</span>
-                                        <span className="font-bold text-xl text-blue-600">{formatCurrency(parsedTotal)}</span>
-                                    </div>
+                                    <>
+                                        {pdfFee > 0 && (
+                                            <div className="flex justify-between border-b pb-3 text-gray-600">
+                                                <span className="flex items-center gap-1">
+                                                    PDF Customization Fee
+                                                    {quote.status === 'DRAFT' && !quote.isCustomized && (
+                                                        <span className="text-xs text-amber-500 ml-1">(preview)</span>
+                                                    )}
+                                                </span>
+                                                <span className="font-medium text-blue-600">+{formatCurrency(pdfFee)}</span>
+                                            </div>
+                                        )}
+                                        {fabricFee > 0 && (
+                                            <div className="flex justify-between border-b pb-3 text-gray-600">
+                                                <span>Brand Label (Fabric)</span>
+                                                <span className="font-medium text-blue-600">+{formatCurrency(fabricFee)}</span>
+                                            </div>
+                                        )}
+                                        <div className="flex justify-between pt-2">
+                                            <span className="font-bold text-lg text-gray-900">Final Total</span>
+                                            <span className="font-bold text-xl text-blue-600">{formatCurrency(grandTotal)}</span>
+                                        </div>
+                                    </>
                                 );
                             })()}
                         </CardContent>
