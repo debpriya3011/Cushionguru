@@ -14,9 +14,13 @@ interface Quote {
 }
 
 interface QuoteItem {
+  productType: string
   shape: string
+  dimensions: any
   foamType: string
   fabricCode: string
+  fabricName?: string
+  zipperPosition: string
   quantity: number
   unitPrice: { toNumber: () => number }
   totalPrice: { toNumber: () => number }
@@ -159,6 +163,22 @@ export async function generateQuotePDF(
     y -= 15
     page.drawText(quote.customerPhone, { x: 50, y, size: 10, font })
   }
+  if (quote.customerAddress) {
+    const addr = typeof quote.customerAddress === 'string' ? JSON.parse(quote.customerAddress) : quote.customerAddress
+    if (addr.line1) {
+      y -= 15
+      page.drawText(addr.line1, { x: 50, y, size: 10, font })
+    }
+    if (addr.line2) {
+      y -= 15
+      page.drawText(addr.line2, { x: 50, y, size: 10, font })
+    }
+    const cityStateZip = [addr.city, addr.state, addr.zip].filter(Boolean).join(', ')
+    if (cityStateZip) {
+      y -= 15
+      page.drawText(cityStateZip, { x: 50, y, size: 10, font })
+    }
+  }
   y -= 30
 
   // Items Table Header
@@ -215,15 +235,39 @@ export async function generateQuotePDF(
     page.drawText(`$${displayTotal.toFixed(2)}`, { x: 500, y, size: 9, font })
     y -= 15
 
-    // Details
-    page.drawText(`  ${item.foamType} | ${item.piping} | ${item.ties}`, {
+    // Details line 1: Category, Shape, Dimensions
+    const dims = (item as any).dimensions || {}
+    const dimParts: string[] = []
+    if (dims.length) dimParts.push(`L:${dims.length}"`)
+    if (dims.width) dimParts.push(`W:${dims.width}"`)
+    if (dims.thickness) dimParts.push(`T:${dims.thickness}"`)
+    if (dims.diameter) dimParts.push(`Dia:${dims.diameter}"`)
+    if (dims.bottomWidth) dimParts.push(`BW:${dims.bottomWidth}"`)
+    if (dims.topWidth) dimParts.push(`TW:${dims.topWidth}"`)
+    if (dims.ear) dimParts.push(`Ear:${dims.ear}"`)
+    const dimStr = dimParts.length > 0 ? dimParts.join(' x ') : ''
+
+    const detailLine1 = `  ${(item as any).productType || ''} | ${item.shape}${dimStr ? ' | ' + dimStr : ''}`
+    page.drawText(detailLine1, {
       x: 60,
       y,
-      size: 8,
+      size: 7,
       font,
       color: rgb(0.4, 0.4, 0.4),
     })
-    y -= 20
+    y -= 12
+
+    // Details line 2: Foam, Fabric, Zipper, Piping, Ties
+    const fabricLabel = (item as any).fabricName ? `${item.fabricCode} (${(item as any).fabricName})` : item.fabricCode
+    const detailLine2 = `  ${item.foamType} | ${fabricLabel} | Zip: ${(item as any).zipperPosition || 'N/A'} | ${item.piping} | ${item.ties}`
+    page.drawText(detailLine2, {
+      x: 60,
+      y,
+      size: 7,
+      font,
+      color: rgb(0.4, 0.4, 0.4),
+    })
+    y -= 18
 
     // New page if needed
     if (y < 100) {
@@ -388,6 +432,22 @@ export async function generateOrderPDF(
     y -= 15
     page.drawText(order.customerPhone, { x: 50, y, size: 10, font })
   }
+  if (order.customerAddress) {
+    const oAddr = typeof order.customerAddress === 'string' ? JSON.parse(order.customerAddress) : order.customerAddress
+    if (oAddr.line1) {
+      y -= 15
+      page.drawText(oAddr.line1, { x: 50, y, size: 10, font })
+    }
+    if (oAddr.line2) {
+      y -= 15
+      page.drawText(oAddr.line2, { x: 50, y, size: 10, font })
+    }
+    const oCityStateZip = [oAddr.city, oAddr.state, oAddr.zip].filter(Boolean).join(', ')
+    if (oCityStateZip) {
+      y -= 15
+      page.drawText(oCityStateZip, { x: 50, y, size: 10, font })
+    }
+  }
   y -= 30
 
   const drawTableHeader = () => {
@@ -442,14 +502,39 @@ export async function generateOrderPDF(
     page.drawText(`$${displayTotal.toFixed(2)}`, { x: 500, y, size: 9, font })
     y -= 15
 
-    page.drawText(`  ${item.foamType} | ${item.piping} | ${item.ties}`, {
+    // Details line 1: Category, Shape, Dimensions
+    const oDims = (item as any).dimensions || {}
+    const oDimParts: string[] = []
+    if (oDims.length) oDimParts.push(`L:${oDims.length}"`)
+    if (oDims.width) oDimParts.push(`W:${oDims.width}"`)
+    if (oDims.thickness) oDimParts.push(`T:${oDims.thickness}"`)
+    if (oDims.diameter) oDimParts.push(`Dia:${oDims.diameter}"`)
+    if (oDims.bottomWidth) oDimParts.push(`BW:${oDims.bottomWidth}"`)
+    if (oDims.topWidth) oDimParts.push(`TW:${oDims.topWidth}"`)
+    if (oDims.ear) oDimParts.push(`Ear:${oDims.ear}"`)
+    const oDimStr = oDimParts.length > 0 ? oDimParts.join(' x ') : ''
+
+    const oDetailLine1 = `  ${(item as any).productType || ''} | ${item.shape}${oDimStr ? ' | ' + oDimStr : ''}`
+    page.drawText(oDetailLine1, {
       x: 60,
       y,
-      size: 8,
+      size: 7,
       font,
       color: rgb(0.4, 0.4, 0.4),
     })
-    y -= 20
+    y -= 12
+
+    // Details line 2: Foam, Fabric, Zipper, Piping, Ties
+    const oFabricLabel = (item as any).fabricName ? `${item.fabricCode} (${(item as any).fabricName})` : item.fabricCode
+    const oDetailLine2 = `  ${item.foamType} | ${oFabricLabel} | Zip: ${(item as any).zipperPosition || 'N/A'} | ${item.piping} | ${item.ties}`
+    page.drawText(oDetailLine2, {
+      x: 60,
+      y,
+      size: 7,
+      font,
+      color: rgb(0.4, 0.4, 0.4),
+    })
+    y -= 18
 
     if (y < 100) {
       const newPage = pdfDoc.addPage([612, 792])

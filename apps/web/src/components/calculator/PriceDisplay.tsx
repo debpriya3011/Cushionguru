@@ -114,7 +114,7 @@ export function PriceDisplay({
 
         {markup && markup.value > 0 && (
           <p className="text-xs opacity-70 mt-2">
-            Includes {markup.type === 'PERCENTAGE' ? `${markup.value}%` : formatPrice(markup.value)} markup
+            Includes  Markup
           </p>
         )}
       </div>

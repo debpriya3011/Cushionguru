@@ -96,23 +96,63 @@ export default function AdminQuoteDetailsPage() {
                         <CardTitle>Hardware & Materials ({quote.items?.length || 0} items)</CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-4">
-                        {quote.items?.map((item: any, i: number) => (
-                            <div key={item.id} className="p-4 border rounded-lg bg-gray-50">
-                                <div className="flex justify-between items-start">
-                                    <div>
-                                        <h3 className="font-bold">{item.productType} • {item.shape}</h3>
-                                        <p className="text-sm text-gray-500 mt-1">
-                                            Fabric: {item.fabricCode} | Fill: {item.foamType}
-                                        </p>
-                                        <p className="text-sm text-gray-500">Qty: {item.quantity}</p>
+                        {quote.items?.map((item: any, i: number) => {
+                            const dims = item.dimensions || {}
+                            const dimParts: string[] = []
+                            if (dims.length) dimParts.push(`L: ${dims.length}"`)
+                            if (dims.width) dimParts.push(`W: ${dims.width}"`)
+                            if (dims.thickness) dimParts.push(`T: ${dims.thickness}"`)
+                            if (dims.diameter) dimParts.push(`Dia: ${dims.diameter}"`)
+                            if (dims.bottomWidth) dimParts.push(`Bottom W: ${dims.bottomWidth}"`)
+                            if (dims.topWidth) dimParts.push(`Top W: ${dims.topWidth}"`)
+                            if (dims.ear) dimParts.push(`Ear: ${dims.ear}"`)
+
+                            return (
+                                <div key={item.id} className="p-4 border rounded-lg bg-gray-50">
+                                    <div className="flex justify-between items-start">
+                                        <div>
+                                            <h3 className="font-bold">{item.productType} • {item.shape}</h3>
+                                        </div>
+                                        <div className="text-right">
+                                            <p className="text-sm font-semibold text-gray-400">Retailer Map: {formatCurrency(item.totalPrice)}</p>
+                                            <p className="text-lg font-bold text-blue-800">Base Cost: {formatCurrency(item.baseSubtotal)}</p>
+                                        </div>
                                     </div>
-                                    <div className="text-right">
-                                        <p className="text-sm font-semibold text-gray-400">Retailer Map: {formatCurrency(item.totalPrice)}</p>
-                                        <p className="text-lg font-bold text-blue-800">Base Cost: {formatCurrency(item.baseSubtotal)}</p>
+                                    <div className="mt-3 grid grid-cols-2 gap-x-6 gap-y-1.5 text-sm">
+                                        {dimParts.length > 0 && (
+                                            <div className="col-span-2">
+                                                <span className="text-gray-400 font-medium">Dimensions:</span>{' '}
+                                                <span className="text-gray-700">{dimParts.join(' × ')}</span>
+                                            </div>
+                                        )}
+                                        <div>
+                                            <span className="text-gray-400 font-medium">Foam/Fill:</span>{' '}
+                                            <span className="text-gray-700">{item.foamType}</span>
+                                        </div>
+                                        <div>
+                                            <span className="text-gray-400 font-medium">Fabric:</span>{' '}
+                                            <span className="text-gray-700">{item.fabricCode}{item.fabricName ? ` (${item.fabricName})` : ''}</span>
+                                        </div>
+                                        <div>
+                                            <span className="text-gray-400 font-medium">Zipper:</span>{' '}
+                                            <span className="text-gray-700">{item.zipperPosition}</span>
+                                        </div>
+                                        <div>
+                                            <span className="text-gray-400 font-medium">Piping:</span>{' '}
+                                            <span className="text-gray-700">{item.piping}</span>
+                                        </div>
+                                        <div>
+                                            <span className="text-gray-400 font-medium">Ties:</span>{' '}
+                                            <span className="text-gray-700">{item.ties}</span>
+                                        </div>
+                                        <div>
+                                            <span className="text-gray-400 font-medium">Quantity:</span>{' '}
+                                            <span className="text-gray-700">{item.quantity}</span>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        ))}
+                            )
+                        })}
                     </CardContent>
                 </Card>
 
