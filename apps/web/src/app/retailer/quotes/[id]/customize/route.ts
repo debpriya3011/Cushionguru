@@ -4,22 +4,24 @@ import { NextRequest, NextResponse } from 'next/server'
 export async function POST(req: NextRequest, { params }: any) {
   try {
     const body = await req.json()
-    console.log("Customize POST body:", body)
-    console.log("Quote ID param:", params.id)
 
     const quote = await prisma.quote.findUnique({
-      where: { id: params.id }
+      where: { id: params.id },
+      include: { retailer: true }
     })
 
     if (!quote) {
-      console.log("Quote not found")
       return NextResponse.json({ error: "Quote not found" }, { status: 404 })
     }
 
     if (quote.isCustomized) {
-      console.log("Quote already customized")
       return NextResponse.json({ error: "Already customized" }, { status: 400 })
     }
+
+    // Add $10 PDF customization fee to the stored total
+    const currentTotal = parseFloat(quote.total?.toString() || '0')
+    const PDF_CUSTOMIZATION_FEE = 10
+    const newTotal = currentTotal + PDF_CUSTOMIZATION_FEE
 
     const updatedQuote = await prisma.quote.update({
       where: { id: params.id },
@@ -27,11 +29,11 @@ export async function POST(req: NextRequest, { params }: any) {
         isCustomized: true,
         customizationSentAt: new Date(),
         pdfCustomization: body,
-        status: "SENT"
+        status: "SENT",
+        // NOTE: quote.total is intentionally NOT modified here.
+        // The $10 PDF customization fee is added as a computed add-on at display and checkout time.
       }
     })
-
-    console.log("Quote updated:", updatedQuote)
 
     return NextResponse.json({ success: true })
 

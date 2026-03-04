@@ -23,19 +23,23 @@ export async function POST(req: Request) {
 
         if (!quote) return new NextResponse('Not found', { status: 404 })
 
-        let totalAmount = parseFloat(quote.total.toString())
+        // Charge = (total - retailer margin) + service fees
+        // Uses snapshotted quote preferences — immune to later settings changes
+        const markupAmount = parseFloat(quote.markupAmount?.toString() || '0')
+        let totalAmount = parseFloat(quote.total.toString()) - markupAmount
 
-        // Add possible fees
-        let fees = 0
-        if (quote.retailer?.pdfPreference === 'ALWAYS') fees += 10
-
-        if (quote.retailer?.labelPreference === 'ALWAYS') {
-            const qty =
-                quote.items?.reduce((acc, item) => acc + item.quantity, 0) || 0
-            fees += 8 * qty
+        // PDF fee ($10)
+        if (quote.pdfPreference === 'ALWAYS') {
+            totalAmount += 10
+        } else if (quote.isCustomized) {
+            totalAmount += 10
         }
 
-        totalAmount += fees
+        // Fabric label fee ($8 × total qty)
+        if (quote.labelPreference === 'ALWAYS') {
+            const qty = quote.items?.reduce((acc, item) => acc + item.quantity, 0) || 0
+            totalAmount += 8 * qty
+        }
 
         const base_url = process.env.NEXTAUTH_URL as string
 

@@ -12,6 +12,31 @@ function generateQuoteNumber(): string {
   return `${prefix}-${year}-${random}`
 }
 
+// Single source of truth for the final displayed total
+// Use quote's snapshotted preferences; fall back to live retailer prefs for old quotes
+function computeFinalTotal(quote: any): number {
+  const base = parseFloat(quote.total?.toString() || '0')
+  const pdfPref = quote.pdfPreference ?? quote.retailer?.pdfPreference
+  const labelPref = quote.labelPreference ?? quote.retailer?.labelPreference
+
+  // PDF fee ($10)
+  let pdfFee = 0
+  if (pdfPref === 'ALWAYS' || quote.isCustomized) {
+    pdfFee = 10
+  } else if (pdfPref === 'PER_ORDER' && quote.status === 'DRAFT') {
+    pdfFee = 10  // Default toggle is ON in the detail page
+  }
+
+  // Fabric label fee ($8 × qty) — shown until paid
+  let fabricFee = 0
+  if (labelPref === 'ALWAYS' && quote.paymentStatus !== 'SUCCESS') {
+    const qty = (quote.items ?? []).reduce((acc: number, i: any) => acc + i.quantity, 0)
+    fabricFee = 8 * qty
+  }
+
+  return base + pdfFee + fabricFee
+}
+
 // GET - List quotes for retailer
 export async function GET(req: NextRequest) {
   const session = await getServerSession(authOptions)
@@ -38,9 +63,13 @@ export async function GET(req: NextRequest) {
       where,
       include: {
         items: true,
-        retailer: session.user.role === 'SUPER_ADMIN' ? {
-          select: { businessName: true },
-        } : false,
+        retailer: {
+          select: {
+            businessName: true,
+            pdfPreference: true,
+            labelPreference: true,
+          }
+        },
         _count: {
           select: { items: true },
         },
@@ -48,7 +77,9 @@ export async function GET(req: NextRequest) {
       orderBy: { createdAt: 'desc' },
     })
 
-    return NextResponse.json(quotes)
+    // Attach server-computed finalTotal to every quote so clients need no fee logic
+    const result = quotes.map((q: any) => ({ ...q, finalTotal: computeFinalTotal(q) }))
+    return NextResponse.json(result)
   } catch (error) {
     console.error('Failed to fetch quotes:', error)
     return NextResponse.json(
@@ -154,6 +185,9 @@ export async function POST(req: NextRequest) {
         markupAmount,
         total: finalCalculatedTotal,
         status: 'DRAFT',
+        // Snapshot preferences at creation time — settings changes won't affect existing quotes
+        labelPreference: retailer.labelPreference,
+        pdfPreference: retailer.pdfPreference,
       },
       include: {
         items: true,
