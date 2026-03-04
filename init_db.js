@@ -1,7 +1,7 @@
 const { Pool } = require('pg');
 
 const pool = new Pool({
-    connectionString: 'postgresql://postgres:Gurunewyork1313@cushion-saas.chkwesk4oxhc.eu-north-1.rds.amazonaws.com:5432/postgres'
+    connectionString: ''
 });
 
 async function seed() {
