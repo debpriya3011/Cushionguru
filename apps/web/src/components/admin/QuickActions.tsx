@@ -25,27 +25,27 @@ export function QuickActions() {
       <DropdownMenuContent align="end" className="w-56">
         <DropdownMenuLabel>Create New</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        
+
         <Link href="/admin/retailers/new">
           <DropdownMenuItem>
             <Users className="mr-2 h-4 w-4" />
             Add Retailer
           </DropdownMenuItem>
         </Link>
-        
+
         <Link href="/admin/calculators/new">
           <DropdownMenuItem>
             <Calculator className="mr-2 h-4 w-4" />
             Create Calculator
           </DropdownMenuItem>
         </Link>
-        
-        <Link href="/admin/quotes/new">
+
+        {/* <Link href="/admin/quotes/new">
           <DropdownMenuItem>
             <FileText className="mr-2 h-4 w-4" />
             Create Quote
           </DropdownMenuItem>
-        </Link>
+        </Link> */}
       </DropdownMenuContent>
     </DropdownMenu>
   )
