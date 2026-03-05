@@ -63,10 +63,10 @@ export default function RetailerSettingsPage() {
             </div>
 
             <Tabs defaultValue="general" className="w-full">
-                <TabsList className="grid w-full grid-cols-5 bg-white border h-12 rounded-lg p-1 justify-start">
+                <TabsList className="grid w-full grid-cols-4 bg-white border h-12 rounded-lg p-1 justify-start">
                     <TabsTrigger value="general" className="data-[state=active]:bg-gray-100 rounded-md">General</TabsTrigger>
                     <TabsTrigger value="brand" className="data-[state=active]:bg-gray-100 rounded-md">Label & Brand</TabsTrigger>
-                    <TabsTrigger value="pdf" className="data-[state=active]:bg-gray-100 rounded-md">PDF Customization</TabsTrigger>
+                    {/* <TabsTrigger value="pdf" className="data-[state=active]:bg-gray-100 rounded-md">PDF Customization</TabsTrigger> */}
                     <TabsTrigger value="shipping" className="data-[state=active]:bg-gray-100 rounded-md">Shipping & Margins</TabsTrigger>
                     <TabsTrigger value="security" className="data-[state=active]:bg-gray-100 rounded-md">Security</TabsTrigger>
                 </TabsList>
