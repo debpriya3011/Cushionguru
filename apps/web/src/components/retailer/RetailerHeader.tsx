@@ -91,7 +91,7 @@ export function RetailerHeader({ user }: RetailerHeaderProps) {
 
           {/* Logo */}
           <Link href="/retailer/dashboard" className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center overflow-hidden">
+            <div className={`w-10 h-10 flex items-center justify-center overflow-hidden ${branding.logoUrl ? '' : 'bg-blue-600 rounded-lg'}`}>
               {branding.logoUrl ? (
                 <img src={branding.logoUrl} alt="Logo" className="w-full h-full object-contain" />
               ) : (
