@@ -44,6 +44,9 @@ const categories = [
   { id: 'all', name: 'All Assets' },
   { id: 'SHAPE_IMAGE', name: 'Shapes' },
   { id: 'FOAM_IMAGE', name: 'Foam Types' },
+  { id: 'ZIPPER_IMAGE', name: 'Zippers' },
+  { id: 'PIPING_IMAGE', name: 'Piping' },
+  { id: 'TIES_IMAGE', name: 'Ties' },
   { id: 'FABRIC_IMAGE', name: 'Fabrics' },
   { id: 'LOGO', name: 'Logos' },
   { id: 'DOCUMENT', name: 'Documents' },
@@ -147,6 +150,18 @@ export default function AssetsPage() {
     asset.tags.some(tag => tag.toLowerCase().includes(search.toLowerCase()))
   )
 
+  // human-readable labels for categories
+  const categoryLabels: Record<string, string> = {
+    SHAPE_IMAGE: 'Shape',
+    FOAM_IMAGE: 'Foam',
+    FABRIC_IMAGE: 'Fabric',
+    LOGO: 'Logo',
+    DOCUMENT: 'Document',
+    ZIPPER_IMAGE: 'Zipper',
+    PIPING_IMAGE: 'Piping',
+    TIES_IMAGE: 'Ties',
+  }
+
   const formatFileSize = (bytes: number) => {
     if (bytes === 0) return '0 Bytes'
     const k = 1024
@@ -179,7 +194,7 @@ export default function AssetsPage() {
               <DialogHeader>
                 <DialogTitle>Upload Individual Asset</DialogTitle>
                 <DialogDescription>
-                  Upload a shape, foam, zipper, or piping image
+                  Upload a shape, foam, zipper, piping or ties image
                 </DialogDescription>
               </DialogHeader>
 
@@ -195,7 +210,8 @@ export default function AssetsPage() {
                     <option value="SHAPE_IMAGE">Shape</option>
                     <option value="FOAM_IMAGE">Foam Type</option>
                     <option value="ZIPPER_IMAGE">Zipper</option>
-                    <option value="PIPING_IMAGE">Piping / Ties</option>
+                    <option value="PIPING_IMAGE">Piping</option>
+                    <option value="TIES_IMAGE">Ties</option>
                     <option value="FABRIC_IMAGE">Fabric</option>
                     <option value="OTHER">Other</option>
                   </select>
@@ -373,7 +389,7 @@ export default function AssetsPage() {
                     <div>
                       <p className="font-medium">{asset.originalName}</p>
                       <div className="flex items-center gap-2 text-sm text-gray-500">
-                        <Badge variant="secondary">{asset.category}</Badge>
+                        <Badge variant="secondary">{categoryLabels[asset.category] || asset.category}</Badge>
                         <span>{formatFileSize(asset.size)}</span>
                         <span>{new Date(asset.createdAt).toLocaleDateString()}</span>
                       </div>

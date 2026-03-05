@@ -67,11 +67,20 @@ export async function GET(
 
     // Attach all assets dynamically to the config based on fixed labels
     const allAssets = await prisma.asset.findMany();
-    const findAssetUrl = (name: string) => {
-      const found = allAssets.find(a =>
-        a.originalName.toLowerCase().includes(name.toLowerCase()) ||
-        a.tags.some((t: string) => t.toLowerCase() === name.toLowerCase())
-      );
+    /**
+     * Attempt to locate an asset by label or tag.  If a category is provided we
+     * restrict to that category which is helpful for zipper/piping/ties images
+     * so they don't accidentally match a fabric or shape with a similar name.
+     */
+    const findAssetUrl = (name: string, category?: string) => {
+      const lower = name.toLowerCase();
+      const found = allAssets.find(a => {
+        if (category && a.category !== category) return false;
+        return (
+          a.originalName.toLowerCase().includes(lower) ||
+          a.tags.some((t: string) => t.toLowerCase() === lower)
+        );
+      });
       return found ? found.url : '';
     };
 
@@ -82,13 +91,22 @@ export async function GET(
       config.foamTypes = config.foamTypes.map((f: any) => ({ ...f, imageUrl: findAssetUrl(f.name) || f.imageUrl || '' }));
     }
     if (config.zipperPositions) {
-      config.zipperPositions = config.zipperPositions.map((z: any) => ({ ...z, imageUrl: findAssetUrl(z.name) || z.imageUrl || '' }));
+      config.zipperPositions = config.zipperPositions.map((z: any) => ({
+        ...z,
+        imageUrl: findAssetUrl(z.name, 'ZIPPER_IMAGE') || z.imageUrl || ''
+      }));
     }
     if (config.pipingOptions) {
-      config.pipingOptions = config.pipingOptions.map((p: any) => ({ ...p, imageUrl: findAssetUrl(p.name) || p.imageUrl || '' }));
+      config.pipingOptions = config.pipingOptions.map((p: any) => ({
+        ...p,
+        imageUrl: findAssetUrl(p.name, 'PIPING_IMAGE') || p.imageUrl || ''
+      }));
     }
     if (config.tiesOptions) {
-      config.tiesOptions = config.tiesOptions.map((t: any) => ({ ...t, imageUrl: findAssetUrl(t.name) || t.imageUrl || '' }));
+      config.tiesOptions = config.tiesOptions.map((t: any) => ({
+        ...t,
+        imageUrl: findAssetUrl(t.name, 'TIES_IMAGE') || t.imageUrl || ''
+      }));
     }
 
     // Merge with custom pricing if detached

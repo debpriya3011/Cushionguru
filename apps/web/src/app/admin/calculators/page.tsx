@@ -72,7 +72,7 @@ export default function CalculatorsPage() {
     try {
       const res = await fetch('/api/calculators')
       const data = await res.json()
-      setCalculators(data)
+      setCalculators(Array.isArray(data) ? data : [])
     } catch (error) {
       console.error('Failed to fetch calculators:', error)
     } finally {

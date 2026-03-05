@@ -16,36 +16,38 @@ interface TiesSelectorProps {
 
 export function TiesSelector({ options, selected, onSelect }: TiesSelectorProps) {
   return (
-    <div className="flex flex-wrap gap-4">
+    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
       {options.map((option) => (
         <button
           key={option.id}
           onClick={() => onSelect(option.id)}
-          className={`flex flex-col items-center p-4 rounded-lg border-2 transition-all min-w-[100px] ${
-            selected === option.id
-              ? 'border-blue-500 bg-blue-50'
-              : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
-          }`}
+          className={`group relative flex flex-col items-center p-4 rounded-xl border-2 transition-all duration-200 ${selected === option.id
+              ? 'border-blue-500 bg-blue-50 shadow-md ring-2 ring-blue-200'
+              : 'border-gray-200 hover:border-gray-300 hover:shadow-md hover:bg-gray-50'
+            }`}
         >
-          {option.imageUrl ? (
-            <div className="relative w-12 h-12 mb-2">
+          <div className="relative w-full h-24 mb-3 overflow-hidden rounded-lg flex items-center justify-center">
+            {option.imageUrl ? (
               <Image
                 src={option.imageUrl}
                 alt={option.name}
                 fill
-                className="object-contain"
+                className="object-cover"
               />
-            </div>
-          ) : (
-            <TiesIcon type={option.id} />
-          )}
-          <span className={`text-sm font-medium text-center ${selected === option.id ? 'text-blue-700' : 'text-gray-700'}`}>
+            ) : (
+              <TiesIcon type={option.id} />
+            )}
+          </div>
+          <span className={`text-sm font-medium text-center ${selected === option.id ? 'text-blue-700' : 'text-gray-700'
+            }`}>
             {option.name}
           </span>
           {selected === option.id && (
-            <svg className="w-5 h-5 text-blue-500 mt-2" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-            </svg>
+            <div className="absolute top-2 right-2 w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center">
+              <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+              </svg>
+            </div>
           )}
         </button>
       ))}
@@ -66,21 +68,21 @@ function TiesIcon({ type }: { type: string }) {
   const positions = tiePositions[type] || [];
 
   return (
-    <svg className="w-12 h-12 text-gray-400" viewBox="0 0 48 48">
+    <svg className="w-16 h-16 text-gray-400" viewBox="0 0 48 48">
       {/* Cushion base */}
       <rect x="8" y="8" width="32" height="32" rx="4" fill="none" stroke="currentColor" strokeWidth="2" />
-      
+
       {/* Ties */}
       {positions.map((pos, i) => (
         <g key={i}>
           <circle cx={pos.x} cy={pos.y} r="3" fill="#92400e" />
-          <line 
-            x1={pos.x} 
-            y1={pos.y} 
-            x2={pos.x + (pos.x < 24 ? -6 : 6)} 
-            y2={pos.y + (pos.y < 24 ? -6 : 6)} 
-            stroke="#92400e" 
-            strokeWidth="2" 
+          <line
+            x1={pos.x}
+            y1={pos.y}
+            x2={pos.x + (pos.x < 24 ? -6 : 6)}
+            y2={pos.y + (pos.y < 24 ? -6 : 6)}
+            stroke="#92400e"
+            strokeWidth="2"
           />
         </g>
       ))}

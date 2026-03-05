@@ -1,3 +1,5 @@
+const path = require('path')
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
@@ -16,6 +18,9 @@ const nextConfig = {
         hostname: 'cushion-saas-images.s3.eu-north-1.amazonaws.com',
       },
     ],
+  },
+  experimental: {
+    outputFileTracingRoot: path.join(__dirname, '../../'),
   },
   // Rewrites removed as they proxy internal API calls to a non-existent server
   async redirects() {

@@ -29,13 +29,13 @@ export function ShapeSelector({ shapes, selected, onSelect }: ShapeSelectorProps
               : 'border-gray-200 hover:border-gray-300 hover:shadow-md hover:bg-gray-50'
           }`}
         >
-          <div className="relative w-20 h-20 mb-3">
+          <div className="relative w-full h-24 mb-3 overflow-hidden rounded-lg">
             {shape.imageUrl ? (
               <Image
                 src={shape.imageUrl}
                 alt={shape.name}
                 fill
-                className="object-contain"
+                className="object-cover"
               />
             ) : (
               <ShapePlaceholder shape={shape.id} />
