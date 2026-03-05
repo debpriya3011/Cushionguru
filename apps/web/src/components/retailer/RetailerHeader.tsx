@@ -39,6 +39,7 @@ interface RetailerHeaderProps {
 }
 
 export function RetailerHeader({ user }: RetailerHeaderProps) {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [branding, setBranding] = useState<{ logoUrl: string; companyName: string }>({
     logoUrl: '',
     companyName: 'Cushion Quoting',
@@ -56,6 +57,7 @@ export function RetailerHeader({ user }: RetailerHeaderProps) {
     { name: 'New Quote', href: '/retailer/quotes/new', icon: Plus },
     { name: 'Quotes', href: '/retailer/quotes', icon: FileText },
     { name: 'Orders', href: '/retailer/orders', icon: ShoppingCart },
+    { name: 'Settings', href: '/retailer/settings', icon: Settings },
   ]
 
   return (
@@ -64,7 +66,7 @@ export function RetailerHeader({ user }: RetailerHeaderProps) {
         {/* Left - Logo & Mobile Menu */}
         <div className="flex items-center gap-4">
           {/* Mobile Menu */}
-          <Sheet>
+          <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
             <SheetTrigger asChild className="md:hidden">
               <Button variant="ghost" size="icon">
                 <Menu className="h-5 w-5" />
@@ -78,6 +80,7 @@ export function RetailerHeader({ user }: RetailerHeaderProps) {
                     <Link
                       key={item.name}
                       href={item.href}
+                      onClick={() => setMobileMenuOpen(false)}
                       className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-100"
                     >
                       <Icon className="h-5 w-5" />

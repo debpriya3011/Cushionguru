@@ -284,25 +284,25 @@ export default function RetailerQuoteDetailsPage() {
 
     return (
         <div className="space-y-6 max-w-5xl mx-auto">
-            <div className="flex justify-between items-center bg-white p-6 border rounded-xl shadow-sm">
-                <div className="flex items-center gap-4">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center bg-white p-4 sm:p-6 border rounded-xl shadow-sm gap-4">
+                <div className="flex items-center gap-3 sm:gap-4">
                     <Link href="/retailer/quotes">
-                        <Button variant="outline" size="icon"><ArrowLeft className="h-4 w-4" /></Button>
+                        <Button variant="outline" size="icon" className="shrink-0"><ArrowLeft className="h-4 w-4" /></Button>
                     </Link>
                     <div>
-                        <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-3">
+                        <h1 className="text-xl sm:text-2xl font-bold text-gray-900 flex flex-wrap items-center gap-2 sm:gap-3">
                             {quote.quoteNumber}
-                            <Badge className="bg-blue-100 text-blue-800 ml-2">{quote.status}</Badge>
+                            <Badge className="bg-blue-100 text-blue-800 ml-0 sm:ml-2">{quote.status}</Badge>
                             {quote.paymentStatus === 'SUCCESS' && (
-                                <Badge className="bg-green-100 text-green-800 ml-2">PAID</Badge>
+                                <Badge className="bg-green-100 text-green-800">PAID</Badge>
                             )}
                         </h1>
-                        <p className="text-gray-500 text-sm mt-1">Generated on {new Date(quote.createdAt).toLocaleDateString()}</p>
+                        <p className="text-gray-500 text-xs sm:text-sm mt-1">Generated on {new Date(quote.createdAt).toLocaleDateString()}</p>
                     </div>
                 </div>
-                <div className="flex gap-3">
+                <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 w-full md:w-auto mt-2 md:mt-0">
 
-                    <Button variant="outline" onClick={downloadPDF}>
+                    <Button variant="outline" className="w-full sm:w-auto" onClick={downloadPDF}>
                         <Download className="w-4 h-4 mr-2" /> Download PDF
                     </Button>
 
@@ -312,10 +312,10 @@ export default function RetailerQuoteDetailsPage() {
                                 <Button
                                     variant="outline"
                                     disabled={isCustomizationLocked || quote.status !== 'DRAFT'}
-                                    className="border-blue-200 text-blue-700 hover:bg-blue-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                                    className="w-full sm:w-auto border-blue-200 text-blue-700 hover:bg-blue-50 disabled:opacity-50 disabled:cursor-not-allowed"
                                     title={quote.status !== 'DRAFT' ? 'PDF customization is only allowed while quote is in DRAFT status' : undefined}
                                 >
-                                    <FileText className="w-4 h-4 mr-2" />
+                                    <FileText className="w-4 h-4 mr-2 shrink-0" />
                                     Customize PDF
                                 </Button>
                             </DialogTrigger>
@@ -442,13 +442,13 @@ export default function RetailerQuoteDetailsPage() {
                     )}
 
                     {quote.status === 'DRAFT' && (
-                        <Button className="bg-blue-600 hover:bg-blue-700" onClick={() => handleUpdateStatus('SENT')}>
-                            <Send className="w-4 h-4 mr-2" /> Mark as Sent
+                        <Button className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 mt-2 sm:mt-0" onClick={() => handleUpdateStatus('SENT')}>
+                            <Send className="w-4 h-4 mr-2 shrink-0" /> Mark as Sent
                         </Button>
                     )}
                     {quote.status === 'ACCEPTED' && quote.paymentStatus !== 'SUCCESS' && (
-                        <Button className="bg-purple-600 hover:bg-purple-700" onClick={() => handlePayment()}>
-                            <CreditCard className="w-4 h-4 mr-2" /> Pay Now
+                        <Button className="w-full sm:w-auto bg-purple-600 hover:bg-purple-700 mt-2 sm:mt-0" onClick={() => handlePayment()}>
+                            <CreditCard className="w-4 h-4 mr-2 shrink-0" /> Pay Now
                         </Button>
                     )}
                 </div>
@@ -473,22 +473,22 @@ export default function RetailerQuoteDetailsPage() {
 
                             return (
                                 <div key={item.id} className="p-4 border rounded-lg bg-gray-50">
-                                    <div className="flex justify-between items-start">
-                                        <div className="flex-1">
-                                            <h3 className="font-bold flex items-center gap-2">
-                                                <Package className="w-4 h-4 text-gray-400" /> {item.productType} • {item.shape}
+                                    <div className="flex flex-col sm:flex-row justify-between items-start gap-2">
+                                        <div className="flex-1 w-full sm:w-auto">
+                                            <h3 className="font-bold flex items-center gap-2 text-base sm:text-lg leading-tight break-words">
+                                                <Package className="w-4 h-4 text-gray-400 shrink-0" /> <span className="truncate-mobile sm:truncate-none">{item.productType} • {item.shape}</span>
                                             </h3>
                                         </div>
-                                        <div className="text-right">
-                                            <p className="font-bold text-lg text-gray-900">{formatCurrency(item.totalPrice)}</p>
-                                            <p className="text-sm text-gray-500">{formatCurrency(item.unitPrice)} ea</p>
+                                        <div className="text-left sm:text-right mt-1 sm:mt-0 shrink-0">
+                                            <p className="font-bold text-base sm:text-lg text-gray-900">{formatCurrency(item.totalPrice)}</p>
+                                            <p className="text-xs sm:text-sm text-gray-500">{formatCurrency(item.unitPrice)} ea</p>
                                         </div>
                                     </div>
-                                    <div className="mt-3 grid grid-cols-2 gap-x-6 gap-y-1.5 text-sm">
+                                    <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2 text-sm text-gray-600">
                                         {dimParts.length > 0 && (
-                                            <div className="col-span-2">
+                                            <div className="col-span-1 sm:col-span-2">
                                                 <span className="text-gray-400 font-medium">Dimensions:</span>{' '}
-                                                <span className="text-gray-700">{dimParts.join(' × ')}</span>
+                                                <span className="text-gray-900 font-medium break-words leading-relaxed">{dimParts.join(' × ')}</span>
                                             </div>
                                         )}
                                         <div>

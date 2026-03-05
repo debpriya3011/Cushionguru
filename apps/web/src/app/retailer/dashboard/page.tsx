@@ -5,11 +5,11 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { 
-  Plus, 
-  FileText, 
-  ShoppingCart, 
-  TrendingUp, 
+import {
+  Plus,
+  FileText,
+  ShoppingCart,
+  TrendingUp,
   DollarSign,
   Clock,
   CheckCircle
@@ -32,19 +32,19 @@ async function getRetailerStats(retailerId: string) {
     pendingQuotes,
   ] = await Promise.all([
     prisma.quote.count({ where: { retailerId } }),
-    prisma.quote.count({ 
-      where: { retailerId, createdAt: { gte: thirtyDaysAgo } } 
+    prisma.quote.count({
+      where: { retailerId, createdAt: { gte: thirtyDaysAgo } }
     }),
     prisma.order.count({ where: { retailerId } }),
-    prisma.order.count({ 
-      where: { retailerId, createdAt: { gte: thirtyDaysAgo } } 
+    prisma.order.count({
+      where: { retailerId, createdAt: { gte: thirtyDaysAgo } }
     }),
-    prisma.order.aggregate({ 
+    prisma.order.aggregate({
       _sum: { total: true },
       where: { retailerId, status: { not: 'CANCELLED' } }
     }),
-    prisma.quote.count({ 
-      where: { retailerId, status: 'DRAFT' } 
+    prisma.quote.count({
+      where: { retailerId, status: 'DRAFT' }
     }),
   ])
 
@@ -126,7 +126,7 @@ export default async function RetailerDashboardPage() {
       {/* Welcome & Quick Actions */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-900">
             Welcome back, {session.user.name?.split(' ')[0] || 'Retailer'}
           </h1>
           <p className="text-gray-600 mt-1">

@@ -77,9 +77,9 @@ export default function AdminQuotesPage() {
 
     return (
         <div className="space-y-6">
-            <div className="flex justify-between items-center">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-900">Quotes</h1>
+                    <h1 className="text-xl md:text-2xl font-bold text-gray-900">Quotes</h1>
                     <p className="text-sm text-gray-500 mt-1">Manage and track all generated quotes</p>
                 </div>
                 {/* <Link href="/admin/quotes/new">
@@ -92,7 +92,7 @@ export default function AdminQuotesPage() {
 
             <div className="bg-white rounded-xl shadow-sm border border-gray-100">
                 <div className="p-4 border-b border-gray-100 flex justify-between items-center">
-                    <div className="relative w-72">
+                    <div className="relative w-full sm:w-72">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                         <Input
                             placeholder="Search quotes..."

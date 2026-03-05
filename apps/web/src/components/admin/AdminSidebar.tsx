@@ -29,7 +29,7 @@ export function AdminSidebar() {
   const pathname = usePathname()
 
   return (
-    <aside className="w-64 bg-white border-r h-[calc(100vh-4rem)] sticky top-16 overflow-y-auto">
+    <aside className="hidden md:block w-64 bg-white border-r h-[calc(100vh-4rem)] sticky top-16 overflow-y-auto">
       <nav className="p-4 space-y-1">
         {navigation.map((item) => {
           const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`)

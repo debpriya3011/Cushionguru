@@ -77,13 +77,13 @@ export default function RetailerQuotesPage() {
 
     return (
         <div className="space-y-6 max-w-7xl mx-auto">
-            <div className="flex justify-between items-center">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-900">My Quotes</h1>
+                    <h1 className="text-xl md:text-2xl font-bold text-gray-900">My Quotes</h1>
                     <p className="text-sm text-gray-500 mt-1">Manage all your generated quotes</p>
                 </div>
                 <Link href="/retailer/quotes/new">
-                    <Button className="bg-blue-600 hover:bg-blue-700 text-white">
+                    <Button className="bg-blue-600 hover:bg-blue-700 text-white w-full sm:w-auto">
                         <Plus className="mr-2 h-4 w-4" />
                         New Quote
                     </Button>
@@ -92,7 +92,7 @@ export default function RetailerQuotesPage() {
 
             <div className="bg-white rounded-xl shadow-sm border border-gray-100">
                 <div className="p-4 border-b border-gray-100 flex justify-between items-center">
-                    <div className="relative w-72">
+                    <div className="relative w-full sm:w-72">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                         <Input
                             placeholder="Search quotes..."

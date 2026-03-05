@@ -88,24 +88,24 @@ export default function AdminOrderDetailsPage() {
 
     return (
         <div className="space-y-6 max-w-5xl mx-auto">
-            <div className="flex justify-between items-center">
-                <div className="flex items-center space-x-4">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div className="flex items-center space-x-3 sm:space-x-4">
                     <Link href="/admin/orders">
-                        <Button variant="outline" size="icon">
+                        <Button variant="outline" size="icon" className="shrink-0">
                             <ArrowLeft className="h-4 w-4" />
                         </Button>
                     </Link>
                     <div>
-                        <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-3">
+                        <h1 className="text-xl sm:text-2xl font-bold text-gray-900 flex items-center gap-3">
                             Order {order.orderNumber}
                         </h1>
-                        <p className="text-gray-500 mt-1 flex items-center gap-2">
-                            From Retailer: {order.retailer?.businessName}
+                        <p className="text-sm sm:text-base text-gray-500 mt-1 flex items-center gap-2">
+                            From Retailer: <span className="truncate">{order.retailer?.businessName}</span>
                         </p>
                     </div>
                 </div>
-                <div className="bg-white px-4 py-2 border rounded-lg shadow-sm">
-                    <span className="text-sm font-medium text-gray-500 mr-2">Status:</span>
+                <div className="bg-white px-4 py-2 border rounded-lg shadow-sm w-full md:w-auto flex justify-between md:justify-start items-center">
+                    <span className="text-sm font-medium text-gray-500 mr-2 shrink-0">Status:</span>
                     <Badge variant="secondary" className="bg-blue-100 text-blue-800">{order.status}</Badge>
                 </div>
             </div>
@@ -167,7 +167,7 @@ export default function AdminOrderDetailsPage() {
                             <CardTitle>Shipping & Estimates</CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-4">
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div className="space-y-2">
                                     <Label>Estimated Delivery Date</Label>
                                     <Input
@@ -186,7 +186,7 @@ export default function AdminOrderDetailsPage() {
                                     />
                                 </div>
                             </div>
-                            <Button variant="secondary" onClick={saveShippingDetails}>Save Estimates</Button>
+                            <Button className="w-full sm:w-auto" variant="secondary" onClick={saveShippingDetails}>Save Estimates</Button>
                         </CardContent>
                     </Card>
                 </div>

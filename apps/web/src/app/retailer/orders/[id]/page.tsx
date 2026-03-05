@@ -45,28 +45,28 @@ export default function RetailerOrderTrackerPage() {
 
     return (
         <div className="space-y-6 max-w-4xl mx-auto">
-            <div className="flex justify-between items-center bg-white p-6 border rounded-xl shadow-sm">
-                <div className="flex items-center space-x-4">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center bg-white p-4 sm:p-6 border rounded-xl shadow-sm gap-4">
+                <div className="flex items-center space-x-3 sm:space-x-4">
                     <Link href="/retailer/orders">
-                        <Button variant="outline" size="icon">
+                        <Button variant="outline" size="icon" className="shrink-0">
                             <ArrowLeft className="h-4 w-4" />
                         </Button>
                     </Link>
                     <div>
-                        <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-3">
+                        <h1 className="text-xl sm:text-2xl font-bold text-gray-900 flex items-center gap-3">
                             Order {order.orderNumber}
                         </h1>
-                        <p className="text-gray-500 mt-1 flex items-center gap-2">
-                            Customer: {order.customerName}
+                        <p className="text-sm sm:text-base text-gray-500 mt-1 flex items-center gap-2">
+                            Customer: <span className="truncate">{order.customerName}</span>
                         </p>
                     </div>
                 </div>
-                <div className="flex gap-3 items-center">
-                    <Button variant="outline" onClick={() => window.open(`/api/orders/${order.id}/pdf`, '_blank')}>
-                        <Download className="w-4 h-4 mr-2" /> Download PDF
+                <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center w-full md:w-auto">
+                    <Button variant="outline" className="w-full sm:w-auto" onClick={() => window.open(`/api/orders/${order.id}/pdf`, '_blank')}>
+                        <Download className="w-4 h-4 mr-2 shrink-0" /> Download PDF
                     </Button>
-                    <div className="flex flex-col items-end">
-                        <Badge variant="secondary" className="bg-blue-100 text-blue-800 text-sm py-1 px-3">
+                    <div className="flex flex-col items-start sm:items-end">
+                        <Badge variant="secondary" className="bg-blue-100 text-blue-800 text-sm py-1 px-3 w-full sm:w-auto text-center block">
                             {order.status.replace('_', ' ')}
                         </Badge>
                     </div>
@@ -103,7 +103,7 @@ export default function RetailerOrderTrackerPage() {
                 </CardContent>
             </Card>
 
-            <div className="grid grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <Card>
                     <CardHeader>
                         <CardTitle className="text-base">Shipping Metrics</CardTitle>

@@ -125,100 +125,102 @@ export function RetailersTable({ retailers }: RetailersTableProps) {
 
   return (
     <>
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Business</TableHead>
-            <TableHead>Contact</TableHead>
-            <TableHead>Markup</TableHead>
-            <TableHead>Activity</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Joined</TableHead>
-            <TableHead className="w-12"></TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {retailers.map((retailer) => (
-            <TableRow key={retailer.id}>
-              <TableCell>
-                <div>
-                  <p className="font-medium">{retailer.businessName}</p>
-                  <p className="text-sm text-gray-500">{retailer.email}</p>
-                </div>
-              </TableCell>
-              <TableCell>
-                <p className="text-sm">{retailer.contactName}</p>
-                {retailer.phone && (
-                  <p className="text-sm text-gray-500">{retailer.phone}</p>
-                )}
-              </TableCell>
-              <TableCell>
-                <span className="text-sm">
-                  {formatMarkup(retailer.markupType, typeof retailer.markupValue === 'object' && retailer.markupValue?.toNumber ? retailer.markupValue.toNumber() : Number(retailer.markupValue) || 0)}
-                </span>
-              </TableCell>
-              <TableCell>
-                <div className="flex gap-3 text-sm text-gray-600">
-                  <span>{retailer._count.quotes} quotes</span>
-                  <span>{retailer._count.orders} orders</span>
-                </div>
-              </TableCell>
-              <TableCell>
-                <Badge variant="secondary" className={statusColors[retailer.status]}>
-                  {retailer.status}
-                </Badge>
-              </TableCell>
-              <TableCell>
-                <span className="text-sm text-gray-600">
-                  {formatDate(retailer.createdAt)}
-                </span>
-              </TableCell>
-              <TableCell>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon">
-                      <MoreHorizontal className="h-4 w-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                    <DropdownMenuSeparator />
-
-                    <Link href={`/admin/retailers/${retailer.id}`}>
-                      <DropdownMenuItem>
-                        <Eye className="mr-2 h-4 w-4" />
-                        View Details
-                      </DropdownMenuItem>
-                    </Link>
-
-                    <Link href={`/admin/retailers/${retailer.id}/edit`}>
-                      <DropdownMenuItem>
-                        <Edit className="mr-2 h-4 w-4" />
-                        Edit
-                      </DropdownMenuItem>
-                    </Link>
-
-                    <DropdownMenuItem onClick={() => handleResendInvitation(retailer.id)}>
-                      <Mail className="mr-2 h-4 w-4" />
-                      Resend Invitation
-                    </DropdownMenuItem>
-
-                    <DropdownMenuSeparator />
-
-                    <DropdownMenuItem
-                      onClick={() => setDeleteId(retailer.id)}
-                      className="text-red-600"
-                    >
-                      <Trash2 className="mr-2 h-4 w-4" />
-                      Delete
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </TableCell>
+      <div className="overflow-x-auto">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Business</TableHead>
+              <TableHead>Contact</TableHead>
+              <TableHead>Markup</TableHead>
+              <TableHead>Activity</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Joined</TableHead>
+              <TableHead className="w-12"></TableHead>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+          </TableHeader>
+          <TableBody>
+            {retailers.map((retailer) => (
+              <TableRow key={retailer.id}>
+                <TableCell>
+                  <div>
+                    <p className="font-medium">{retailer.businessName}</p>
+                    <p className="text-sm text-gray-500">{retailer.email}</p>
+                  </div>
+                </TableCell>
+                <TableCell>
+                  <p className="text-sm">{retailer.contactName}</p>
+                  {retailer.phone && (
+                    <p className="text-sm text-gray-500">{retailer.phone}</p>
+                  )}
+                </TableCell>
+                <TableCell>
+                  <span className="text-sm">
+                    {formatMarkup(retailer.markupType, typeof retailer.markupValue === 'object' && retailer.markupValue?.toNumber ? retailer.markupValue.toNumber() : Number(retailer.markupValue) || 0)}
+                  </span>
+                </TableCell>
+                <TableCell>
+                  <div className="flex gap-3 text-sm text-gray-600">
+                    <span>{retailer._count.quotes} quotes</span>
+                    <span>{retailer._count.orders} orders</span>
+                  </div>
+                </TableCell>
+                <TableCell>
+                  <Badge variant="secondary" className={statusColors[retailer.status]}>
+                    {retailer.status}
+                  </Badge>
+                </TableCell>
+                <TableCell>
+                  <span className="text-sm text-gray-600">
+                    {formatDate(retailer.createdAt)}
+                  </span>
+                </TableCell>
+                <TableCell>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="icon">
+                        <MoreHorizontal className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                      <DropdownMenuSeparator />
+
+                      <Link href={`/admin/retailers/${retailer.id}`}>
+                        <DropdownMenuItem>
+                          <Eye className="mr-2 h-4 w-4" />
+                          View Details
+                        </DropdownMenuItem>
+                      </Link>
+
+                      <Link href={`/admin/retailers/${retailer.id}/edit`}>
+                        <DropdownMenuItem>
+                          <Edit className="mr-2 h-4 w-4" />
+                          Edit
+                        </DropdownMenuItem>
+                      </Link>
+
+                      <DropdownMenuItem onClick={() => handleResendInvitation(retailer.id)}>
+                        <Mail className="mr-2 h-4 w-4" />
+                        Resend Invitation
+                      </DropdownMenuItem>
+
+                      <DropdownMenuSeparator />
+
+                      <DropdownMenuItem
+                        onClick={() => setDeleteId(retailer.id)}
+                        className="text-red-600"
+                      >
+                        <Trash2 className="mr-2 h-4 w-4" />
+                        Delete
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
 
       <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
         <AlertDialogContent>

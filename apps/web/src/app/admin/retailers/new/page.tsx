@@ -84,7 +84,7 @@ export default function NewRetailerPage() {
             <p className="text-gray-600 mb-6">
               {formData.businessName} has been added successfully.
             </p>
-            
+
             <div className="bg-gray-50 p-4 rounded-lg mb-6 text-left">
               <p className="text-sm font-medium text-gray-700 mb-2">
                 Invitation Link:
@@ -141,7 +141,7 @@ export default function NewRetailerPage() {
         <CardHeader>
           <CardTitle>Add New Retailer</CardTitle>
         </CardHeader>
-        
+
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-6">
             {error && (
@@ -154,8 +154,8 @@ export default function NewRetailerPage() {
             {/* Business Info */}
             <div className="space-y-4">
               <h3 className="font-medium text-gray-900">Business Information</h3>
-              
-              <div className="grid grid-cols-2 gap-4">
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="businessName">Business Name *</Label>
                   <Input
@@ -176,7 +176,7 @@ export default function NewRetailerPage() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="email">Email *</Label>
                   <Input
@@ -202,7 +202,7 @@ export default function NewRetailerPage() {
             {/* Markup Settings */}
             <div className="space-y-4">
               <h3 className="font-medium text-gray-900">Pricing Settings</h3>
-              
+
               <RadioGroup
                 value={formData.markupType}
                 onValueChange={(value) => setFormData({ ...formData, markupType: value })}
@@ -236,7 +236,7 @@ export default function NewRetailerPage() {
             {/* Address */}
             <div className="space-y-4">
               <h3 className="font-medium text-gray-900">Address</h3>
-              
+
               <div className="space-y-2">
                 <Label htmlFor="addressLine1">Address Line 1</Label>
                 <Input
@@ -245,7 +245,7 @@ export default function NewRetailerPage() {
                   onChange={(e) => setFormData({ ...formData, addressLine1: e.target.value })}
                 />
               </div>
-              
+
               <div className="space-y-2">
                 <Label htmlFor="addressLine2">Address Line 2</Label>
                 <Input
@@ -255,7 +255,7 @@ export default function NewRetailerPage() {
                 />
               </div>
 
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="city">City</Label>
                   <Input
@@ -284,8 +284,8 @@ export default function NewRetailerPage() {
             </div>
 
             <div className="flex gap-4 pt-4">
-              <Button 
-                type="submit" 
+              <Button
+                type="submit"
                 className="flex-1"
                 disabled={loading}
               >

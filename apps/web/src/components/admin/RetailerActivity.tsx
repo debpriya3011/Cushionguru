@@ -31,7 +31,7 @@ export function RetailerActivity({ retailers }: RetailerActivityProps) {
 
   return (
     <Card>
-      <CardHeader className="flex flex-row items-center justify-between">
+      <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
         <div>
           <CardTitle className="text-lg">Retailer Activity</CardTitle>
           <p className="text-sm text-gray-500">Recent retailer performance</p>
@@ -59,24 +59,24 @@ export function RetailerActivity({ retailers }: RetailerActivityProps) {
             {retailers.map((retailer) => (
               <div
                 key={retailer.id}
-                className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors gap-3"
               >
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center text-white font-bold">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center text-white font-bold shrink-0">
                     {retailer.businessName.charAt(0)}
                   </div>
-                  <div>
-                    <p className="font-medium text-gray-900">
+                  <div className="min-w-0">
+                    <p className="font-medium text-gray-900 truncate">
                       {retailer.businessName}
                     </p>
-                    <p className="text-sm text-gray-500">{retailer.email}</p>
+                    <p className="text-sm text-gray-500 truncate">{retailer.email}</p>
                     <p className="text-xs text-gray-400">
                       Joined {formatDate(retailer.createdAt)}
                     </p>
                   </div>
                 </div>
-                
-                <div className="flex items-center gap-6">
+
+                <div className="flex items-center gap-3 sm:gap-6 ml-14 sm:ml-0">
                   <div className="flex items-center gap-4 text-sm">
                     <div className="flex items-center gap-1 text-gray-600">
                       <FileText className="h-4 w-4" />
@@ -87,17 +87,17 @@ export function RetailerActivity({ retailers }: RetailerActivityProps) {
                       <span>{retailer._count.orders}</span>
                     </div>
                   </div>
-                  
-                  <Badge 
-                    variant="secondary" 
-                    className={retailer.status === 'ACTIVE' 
-                      ? 'bg-green-100 text-green-700' 
+
+                  <Badge
+                    variant="secondary"
+                    className={retailer.status === 'ACTIVE'
+                      ? 'bg-green-100 text-green-700'
                       : 'bg-gray-100 text-gray-700'
                     }
                   >
                     {retailer.status}
                   </Badge>
-                  
+
                   <Link href={`/admin/retailers/${retailer.id}`}>
                     <Button variant="ghost" size="sm">
                       View

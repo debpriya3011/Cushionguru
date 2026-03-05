@@ -127,10 +127,10 @@ export default function CalculatorsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Calculators</h1>
-          <p className="text-gray-600 mt-1">
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Calculators</h1>
+          <p className="text-sm md:text-base text-gray-600 mt-1">
             Manage calculator templates and assign to retailers
           </p>
         </div>
@@ -143,9 +143,9 @@ export default function CalculatorsPage() {
       </div>
 
       <Card>
-        <CardHeader className="flex flex-row items-center justify-between">
+        <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
           <CardTitle className="text-lg">All Calculators</CardTitle>
-          <div className="relative w-72">
+          <div className="relative w-full sm:w-72">
             <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
             <Input
               placeholder="Search calculators..."
@@ -171,107 +171,109 @@ export default function CalculatorsPage() {
               </Link>
             </div>
           ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Type</TableHead>
-                  <TableHead>Version</TableHead>
-                  <TableHead>Assigned To</TableHead>
-                  <TableHead>Created</TableHead>
-                  <TableHead className="w-12"></TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredCalculators.map((calc) => (
-                  <TableRow key={calc.id}>
-                    <TableCell>
-                      <div>
-                        <p className="font-medium">{calc.name}</p>
-                        {calc.description && (
-                          <p className="text-sm text-gray-500 truncate max-w-xs">
-                            {calc.description}
-                          </p>
-                        )}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant="secondary" className={statusColors[calc.status]}>
-                        {calc.status}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      {calc.isMaster ? (
-                        <Badge variant="outline" className="border-blue-200 text-blue-700">
-                          Master
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Name</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Type</TableHead>
+                    <TableHead>Version</TableHead>
+                    <TableHead>Assigned To</TableHead>
+                    <TableHead>Created</TableHead>
+                    <TableHead className="w-12"></TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {filteredCalculators.map((calc) => (
+                    <TableRow key={calc.id}>
+                      <TableCell>
+                        <div>
+                          <p className="font-medium">{calc.name}</p>
+                          {calc.description && (
+                            <p className="text-sm text-gray-500 truncate max-w-xs">
+                              {calc.description}
+                            </p>
+                          )}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant="secondary" className={statusColors[calc.status]}>
+                          {calc.status}
                         </Badge>
-                      ) : (
-                        <span className="text-gray-500">-</span>
-                      )}
-                    </TableCell>
-                    <TableCell>v{calc.version}</TableCell>
-                    <TableCell>
-                      <span className="text-sm text-gray-600">
-                        {calc._count?.assignments || 0} retailers
-                      </span>
-                    </TableCell>
-                    <TableCell>
-                      {new Date(calc.createdAt).toLocaleDateString()}
-                    </TableCell>
-                    <TableCell>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon">
-                            <MoreHorizontal className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                          <DropdownMenuSeparator />
+                      </TableCell>
+                      <TableCell>
+                        {calc.isMaster ? (
+                          <Badge variant="outline" className="border-blue-200 text-blue-700">
+                            Master
+                          </Badge>
+                        ) : (
+                          <span className="text-gray-500">-</span>
+                        )}
+                      </TableCell>
+                      <TableCell>v{calc.version}</TableCell>
+                      <TableCell>
+                        <span className="text-sm text-gray-600">
+                          {calc._count?.assignments || 0} retailers
+                        </span>
+                      </TableCell>
+                      <TableCell>
+                        {new Date(calc.createdAt).toLocaleDateString()}
+                      </TableCell>
+                      <TableCell>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon">
+                              <MoreHorizontal className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                            <DropdownMenuSeparator />
 
-                          <Link href={`/admin/calculators/${calc.id}`}>
-                            <DropdownMenuItem>
-                              <Eye className="mr-2 h-4 w-4" />
-                              Preview
-                            </DropdownMenuItem>
-                          </Link>
+                            <Link href={`/admin/calculators/${calc.id}`}>
+                              <DropdownMenuItem>
+                                <Eye className="mr-2 h-4 w-4" />
+                                Preview
+                              </DropdownMenuItem>
+                            </Link>
 
-                          <Link href={`/admin/calculators/${calc.id}/edit`}>
-                            <DropdownMenuItem>
-                              <Edit className="mr-2 h-4 w-4" />
-                              Edit
-                            </DropdownMenuItem>
-                          </Link>
+                            <Link href={`/admin/calculators/${calc.id}/edit`}>
+                              <DropdownMenuItem>
+                                <Edit className="mr-2 h-4 w-4" />
+                                Edit
+                              </DropdownMenuItem>
+                            </Link>
 
-                          {/* <DropdownMenuItem onClick={() => handleDuplicate(calc.id)}>
+                            {/* <DropdownMenuItem onClick={() => handleDuplicate(calc.id)}>
                             <Copy className="mr-2 h-4 w-4" />
                             Duplicate
                           </DropdownMenuItem> */}
 
-                          <Link href={`/admin/calculators/${calc.id}/assign`}>
-                            <DropdownMenuItem>
-                              <CheckCircle className="mr-2 h-4 w-4" />
-                              Assign to Retailers
-                            </DropdownMenuItem>
-                          </Link>
+                            <Link href={`/admin/calculators/${calc.id}/assign`}>
+                              <DropdownMenuItem>
+                                <CheckCircle className="mr-2 h-4 w-4" />
+                                Assign to Retailers
+                              </DropdownMenuItem>
+                            </Link>
 
-                          <DropdownMenuSeparator />
+                            <DropdownMenuSeparator />
 
-                          {/* <DropdownMenuItem
+                            {/* <DropdownMenuItem
                             onClick={() => setDeleteId(calc.id)}
                             className="text-red-600"
                           >
                             <Trash2 className="mr-2 h-4 w-4" />
                             Delete
                           </DropdownMenuItem> */}
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
           )}
         </CardContent>
       </Card>
