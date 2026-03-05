@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { signOut } from 'next-auth/react'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -26,17 +26,32 @@ interface AdminHeaderProps {
 }
 
 export function AdminHeader({ user }: AdminHeaderProps) {
+  const [branding, setBranding] = useState<{ logoUrl: string; companyName: string }>({
+    logoUrl: '',
+    companyName: 'Cushion Quoting',
+  })
+
+  useEffect(() => {
+    fetch('/api/platform/branding')
+      .then(res => res.json())
+      .then(data => setBranding(data))
+      .catch(console.error)
+  }, [])
 
   return (
     <header className="bg-white border-b sticky top-0 z-50">
       <div className="px-8 h-16 flex items-center justify-between">
         {/* Logo */}
         <Link href="/admin/dashboard" className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
-            <span className="text-white font-bold text-lg">C</span>
+          <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center overflow-hidden">
+            {branding.logoUrl ? (
+              <img src={branding.logoUrl} alt="Logo" className="w-full h-full object-contain" />
+            ) : (
+              <span className="text-white font-bold text-lg">C</span>
+            )}
           </div>
           <div>
-            <h1 className="font-bold text-gray-900">Cushion Quoting</h1>
+            <h1 className="font-bold text-gray-900">{branding.companyName}</h1>
             <p className="text-xs text-gray-500">Admin Portal</p>
           </div>
         </Link>

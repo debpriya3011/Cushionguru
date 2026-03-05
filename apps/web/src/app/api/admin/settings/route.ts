@@ -19,6 +19,9 @@ export async function GET() {
         return NextResponse.json({
             showRetailerPriceBreakdown: config.showRetailerPriceBreakdown ?? false,
             autoApproveQuotes: config.autoApproveQuotes ?? false,
+            companyName: config.companyName ?? 'Cushion SaaS Admin',
+            supportEmail: config.supportEmail ?? 'support@yourcushiondomain.com',
+            logoUrl: config.logoUrl ?? '',
         })
     } catch (error) {
         console.error(error)
@@ -35,10 +38,17 @@ export async function POST(req: Request) {
 
         const body = await req.json()
 
+        // Merge with existing settings to avoid losing fields
+        const existing = await prisma.systemSetting.findUnique({
+            where: { key: 'general' }
+        })
+        const existingConfig = (existing?.value as Record<string, any>) || {}
+        const merged = { ...existingConfig, ...body }
+
         await prisma.systemSetting.upsert({
             where: { key: 'general' },
-            update: { value: body },
-            create: { key: 'general', value: body }
+            update: { value: merged },
+            create: { key: 'general', value: merged }
         })
 
         return NextResponse.json({ success: true })
