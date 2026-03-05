@@ -511,6 +511,9 @@ model OrderItem {
 enum AssetCategory {
   SHAPE_IMAGE
   FOAM_IMAGE
+  ZIPPER_IMAGE
+  PIPING_IMAGE
+  TIES_IMAGE
   FABRIC_IMAGE
   LOGO
   DOCUMENT
