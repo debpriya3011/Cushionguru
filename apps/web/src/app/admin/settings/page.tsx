@@ -122,11 +122,13 @@ export default function AdminSettingsPage() {
             </div>
 
             <Tabs defaultValue="general" className="w-full">
-                <TabsList className="mb-8">
-                    <TabsTrigger value="general">General</TabsTrigger>
-                    <TabsTrigger value="notifications">Emails & Notifications</TabsTrigger>
-                    <TabsTrigger value="billing">Billing</TabsTrigger>
-                </TabsList>
+                <div className="overflow-x-auto pb-2 mb-6 hide-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0">
+                    <TabsList className="inline-flex min-w-full sm:min-w-0">
+                        <TabsTrigger value="general" className="whitespace-nowrap">General</TabsTrigger>
+                        <TabsTrigger value="notifications" className="whitespace-nowrap">Emails & Notifications</TabsTrigger>
+                        <TabsTrigger value="billing" className="whitespace-nowrap">Billing</TabsTrigger>
+                    </TabsList>
+                </div>
                 <TabsContent value="general">
                     <Card>
                         <CardHeader>
@@ -153,7 +155,7 @@ export default function AdminSettingsPage() {
                                 <p className="text-xs text-gray-500">
                                     This logo will appear in the header of both admin and retailer portals.
                                 </p>
-                                <div className="flex items-center gap-4">
+                                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
                                     <div className={`w-16 h-16 flex items-center justify-center overflow-hidden relative ${settings.logoUrl ? '' : 'bg-blue-50 rounded-lg border border-blue-100'}`}>
                                         {settings.logoUrl ? (
                                             <>
@@ -235,7 +237,7 @@ export default function AdminSettingsPage() {
                                 </p>
                             </div>
 
-                            <Button onClick={handleSave} disabled={saving}>
+                            <Button onClick={handleSave} disabled={saving} className="w-full sm:w-auto">
                                 {saving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : 'Save Changes'}
                             </Button>
                         </CardContent>
@@ -259,7 +261,7 @@ export default function AdminSettingsPage() {
                             <CardDescription>Manage your active plan and payment methods.</CardDescription>
                         </CardHeader>
                         <CardContent>
-                            <div className="bg-blue-50 border border-blue-100 p-4 rounded-lg flex justify-between items-center">
+                            <div className="bg-blue-50 border border-blue-100 p-4 rounded-lg flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
                                 <div>
                                     <h4 className="font-semibold text-blue-900">Pro Plan</h4>
                                     <p className="text-sm text-blue-700">Unlimited retailers and quotes</p>

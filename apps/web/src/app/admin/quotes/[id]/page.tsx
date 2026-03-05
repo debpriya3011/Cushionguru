@@ -61,29 +61,29 @@ export default function AdminQuoteDetailsPage() {
 
     return (
         <div className="space-y-6 max-w-5xl mx-auto">
-            <div className="flex justify-between items-center">
-                <div className="flex items-center gap-4">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div className="flex items-center gap-3 sm:gap-4">
                     <Link href="/admin/quotes">
-                        <Button variant="outline" size="icon"><ArrowLeft className="h-4 w-4" /></Button>
+                        <Button variant="outline" size="icon" className="shrink-0"><ArrowLeft className="h-4 w-4" /></Button>
                     </Link>
                     <div>
-                        <h1 className="text-2xl font-bold flex items-center gap-3">
-                            {quote.quoteNumber} <Badge className="ml-2">{quote.status}</Badge>
+                        <h1 className="text-xl sm:text-2xl font-bold flex flex-wrap items-center gap-2 sm:gap-3">
+                            {quote.quoteNumber} <Badge className="ml-0 sm:ml-2">{quote.status}</Badge>
                         </h1>
-                        <p className="text-gray-500 text-sm">Created on {new Date(quote.createdAt).toLocaleDateString()}</p>
+                        <p className="text-gray-500 text-xs sm:text-sm mt-1">Created on {new Date(quote.createdAt).toLocaleDateString()}</p>
                     </div>
                 </div>
-                <div className="flex gap-3">
-                    <Button variant="outline" onClick={() => window.open(`/api/quotes/${quote.id}/pdf`, '_blank')}>
+                <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 w-full md:w-auto mt-2 md:mt-0">
+                    <Button variant="outline" className="w-full sm:w-auto" onClick={() => window.open(`/api/quotes/${quote.id}/pdf`, '_blank')}>
                         <Download className="w-4 h-4 mr-2" /> Download PDF
                     </Button>
                     {quote.status !== 'ACCEPTED' && quote.status !== 'CONVERTED' && (
-                        <Button className="bg-green-600 hover:bg-green-700" onClick={() => handleUpdateStatus('ACCEPTED')}>
+                        <Button className="w-full sm:w-auto bg-green-600 hover:bg-green-700 mt-2 sm:mt-0" onClick={() => handleUpdateStatus('ACCEPTED')}>
                             <CheckCircle className="w-4 h-4 mr-2" /> Approve Quote
                         </Button>
                     )}
                     {(quote.status === 'ACCEPTED') && (
-                        <Button className="bg-purple-600 hover:bg-purple-700" onClick={() => handleUpdateStatus('CONVERTED')}>
+                        <Button className="w-full sm:w-auto bg-purple-600 hover:bg-purple-700 mt-2 sm:mt-0" onClick={() => handleUpdateStatus('CONVERTED')}>
                             <ShoppingCart className="w-4 h-4 mr-2" /> Convert to Order
                         </Button>
                     )}
@@ -109,20 +109,20 @@ export default function AdminQuoteDetailsPage() {
 
                             return (
                                 <div key={item.id} className="p-4 border rounded-lg bg-gray-50">
-                                    <div className="flex justify-between items-start">
-                                        <div>
-                                            <h3 className="font-bold">{item.productType} • {item.shape}</h3>
+                                    <div className="flex flex-col sm:flex-row justify-between items-start gap-2">
+                                        <div className="w-full sm:w-auto">
+                                            <h3 className="font-bold text-base sm:text-lg leading-tight break-words">{item.productType} • {item.shape}</h3>
                                         </div>
-                                        <div className="text-right">
-                                            <p className="text-sm font-semibold text-gray-400">Retailer Map: {formatCurrency(item.totalPrice)}</p>
-                                            <p className="text-lg font-bold text-blue-800">Base Cost: {formatCurrency(item.baseSubtotal)}</p>
+                                        <div className="text-left sm:text-right mt-1 sm:mt-0 shrink-0">
+                                            <p className="text-xs sm:text-sm font-semibold text-gray-400">Retailer Map: {formatCurrency(item.totalPrice)}</p>
+                                            <p className="text-base sm:text-lg font-bold text-blue-800">Base Cost: {formatCurrency(item.baseSubtotal)}</p>
                                         </div>
                                     </div>
-                                    <div className="mt-3 grid grid-cols-2 gap-x-6 gap-y-1.5 text-sm">
+                                    <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2 text-sm text-gray-600">
                                         {dimParts.length > 0 && (
-                                            <div className="col-span-2">
+                                            <div className="col-span-1 sm:col-span-2">
                                                 <span className="text-gray-400 font-medium">Dimensions:</span>{' '}
-                                                <span className="text-gray-700">{dimParts.join(' × ')}</span>
+                                                <span className="text-gray-900 font-medium break-words leading-relaxed">{dimParts.join(' × ')}</span>
                                             </div>
                                         )}
                                         <div>

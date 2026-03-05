@@ -22,29 +22,29 @@ async function getDashboardStats() {
     pendingOrders,
   ] = await Promise.all([
     // Active retailers
-    prisma.retailer.count({ 
-      where: { status: 'ACTIVE', deletedAt: null } 
+    prisma.retailer.count({
+      where: { status: 'ACTIVE', deletedAt: null }
     }),
     // Total retailers
-    prisma.retailer.count({ 
-      where: { deletedAt: null } 
+    prisma.retailer.count({
+      where: { deletedAt: null }
     }),
     // Monthly quotes
-    prisma.quote.count({ 
-      where: { createdAt: { gte: thirtyDaysAgo } } 
+    prisma.quote.count({
+      where: { createdAt: { gte: thirtyDaysAgo } }
     }),
     // Total orders
-    prisma.order.count({ 
-      where: { status: { not: 'CANCELLED' } } 
+    prisma.order.count({
+      where: { status: { not: 'CANCELLED' } }
     }),
     // Total revenue
-    prisma.order.aggregate({ 
+    prisma.order.aggregate({
       _sum: { total: true },
       where: { status: { not: 'CANCELLED' } }
     }),
     // Pending orders
-    prisma.order.count({ 
-      where: { status: { in: ['PENDING', 'CONFIRMED', 'IN_PRODUCTION'] } } 
+    prisma.order.count({
+      where: { status: { in: ['PENDING', 'CONFIRMED', 'IN_PRODUCTION'] } }
     }),
   ])
 
@@ -112,11 +112,11 @@ export default async function AdminDashboardPage() {
   ])
 
   return (
-    <div className="space-y-8">
-      <div className="flex justify-between items-center">
+    <div className="space-y-6 md:space-y-8">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-          <p className="text-gray-600 mt-1">
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Dashboard</h1>
+          <p className="text-sm md:text-base text-gray-600 mt-1">
             Welcome back! Here&apos;s what&apos;s happening with your business.
           </p>
         </div>

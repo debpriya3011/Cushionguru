@@ -74,7 +74,7 @@ export function RecentOrders({ orders }: RecentOrdersProps) {
             {orders.map((order) => (
               <div
                 key={order.id}
-                className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                className="flex flex-col sm:flex-row sm:items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors gap-2"
               >
                 <div className="flex items-center gap-4">
                   <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
@@ -97,7 +97,7 @@ export function RecentOrders({ orders }: RecentOrdersProps) {
                     </p>
                   </div>
                 </div>
-                <div className="text-right">
+                <div className="text-right sm:text-right ml-14 sm:ml-0">
                   <p className="font-semibold text-gray-900">
                     {formatCurrency(order.total.toNumber())}
                   </p>

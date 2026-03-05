@@ -63,12 +63,12 @@ export default function RetailerSettingsPage() {
             </div>
 
             <Tabs defaultValue="general" className="w-full">
-                <TabsList className="grid w-full grid-cols-4 bg-white border h-12 rounded-lg p-1 justify-start">
-                    <TabsTrigger value="general" className="data-[state=active]:bg-gray-100 rounded-md">General</TabsTrigger>
-                    <TabsTrigger value="brand" className="data-[state=active]:bg-gray-100 rounded-md">Label & Brand</TabsTrigger>
+                <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 bg-white border h-auto sm:h-12 rounded-lg p-1 justify-start gap-1">
+                    <TabsTrigger value="general" className="data-[state=active]:bg-gray-100 rounded-md text-xs sm:text-sm">General</TabsTrigger>
+                    <TabsTrigger value="brand" className="data-[state=active]:bg-gray-100 rounded-md text-xs sm:text-sm">Label & Brand</TabsTrigger>
                     {/* <TabsTrigger value="pdf" className="data-[state=active]:bg-gray-100 rounded-md">PDF Customization</TabsTrigger> */}
-                    <TabsTrigger value="shipping" className="data-[state=active]:bg-gray-100 rounded-md">Shipping & Margins</TabsTrigger>
-                    <TabsTrigger value="security" className="data-[state=active]:bg-gray-100 rounded-md">Security</TabsTrigger>
+                    <TabsTrigger value="shipping" className="data-[state=active]:bg-gray-100 rounded-md text-xs sm:text-sm">Shipping & Margins</TabsTrigger>
+                    <TabsTrigger value="security" className="data-[state=active]:bg-gray-100 rounded-md text-xs sm:text-sm">Security</TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="general" className="mt-6 space-y-6">
@@ -81,7 +81,7 @@ export default function RetailerSettingsPage() {
                             <CardDescription>Update your company's contact information</CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-6">
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div className="space-y-2">
                                     <Label>Business Name</Label>
                                     <Input defaultValue={retailer.businessName} disabled />
@@ -95,7 +95,7 @@ export default function RetailerSettingsPage() {
                                     />
                                 </div>
                             </div>
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div className="space-y-2">
                                     <Label>Business Email</Label>
                                     <Input type="email" defaultValue={retailer.email} disabled />
@@ -146,7 +146,7 @@ export default function RetailerSettingsPage() {
                                 </Select>
                             </div>
 
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div className="space-y-2">
                                     <Label>Label Style Preference</Label>
                                     <Input
@@ -361,7 +361,7 @@ export default function RetailerSettingsPage() {
                             <CardDescription>Set your pricing markup rules and shipping defaults</CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-6">
-                            <div className="grid grid-cols-2 gap-6">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="space-y-4 border rounded-lg p-6 bg-gray-50">
                                     <h3 className="text-md font-semibold flex items-center gap-2"><Briefcase className="w-4 h-4" /> Pricing Markup Margin</h3>
                                     <div className="space-y-4">

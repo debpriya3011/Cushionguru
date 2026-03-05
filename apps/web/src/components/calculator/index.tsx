@@ -382,8 +382,8 @@ export function Calculator({
 
       {/* Original Bottom Nav for Submit (Only if onSubmit provided) */}
       {onSubmit && (
-        <div className="fixed bottom-0 left-0 right-0 bg-white border-t p-4 z-40 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]">
-          <div className="max-w-4xl mx-auto flex justify-between items-center">
+        <div className="fixed bottom-0 left-0 right-0 bg-white border-t p-3 sm:p-4 z-40 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]">
+          <div className="max-w-4xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-2 sm:gap-0">
             <div>
               {calculations && (
                 <p className="text-lg font-semibold">
@@ -394,7 +394,7 @@ export function Calculator({
             <button
               onClick={handleSubmit}
               disabled={!calculations || errors.length > 0 || !customerData}
-              className="px-8 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full sm:w-auto px-8 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Save Draft Quote
             </button>
@@ -415,8 +415,8 @@ interface CalculatorSectionProps {
 
 function CalculatorSection({ title, step, children }: CalculatorSectionProps) {
   return (
-    <section className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-      <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-3">
+    <section className="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-gray-100">
+      <h2 className="text-base sm:text-lg font-semibold text-gray-900 mb-4 flex items-center gap-3">
         <span className="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-sm font-bold">
           {step}
         </span>

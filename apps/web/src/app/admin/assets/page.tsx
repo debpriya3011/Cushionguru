@@ -174,15 +174,15 @@ export default function AssetsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Assets</h1>
-          <p className="text-gray-600 mt-1">
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Assets</h1>
+          <p className="text-sm md:text-base text-gray-600 mt-1">
             Manage images, documents, and other assets
           </p>
         </div>
 
-        <div className="flex gap-3">
+        <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
           <Dialog open={uploadDialogOpen} onOpenChange={setUploadDialogOpen}>
             <DialogTrigger asChild>
               <Button>
@@ -281,19 +281,21 @@ export default function AssetsPage() {
       </div>
 
       <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0">
-          <Tabs value={selectedCategory} onValueChange={setSelectedCategory}>
-            <TabsList>
-              {categories.map(cat => (
-                <TabsTrigger key={cat.id} value={cat.id}>
-                  {cat.name}
-                </TabsTrigger>
-              ))}
-            </TabsList>
+        <CardHeader className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 space-y-0">
+          <Tabs value={selectedCategory} onValueChange={setSelectedCategory} className="w-full md:w-auto">
+            <div className="overflow-x-auto pb-2 -mx-4 px-4 sm:mx-0 sm:px-0 hide-scrollbar max-w-[90vw] md:max-w-full">
+              <TabsList className="inline-flex w-max min-w-full md:min-w-0">
+                {categories.map(cat => (
+                  <TabsTrigger key={cat.id} value={cat.id} className="whitespace-nowrap shrink-0">
+                    {cat.name}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+            </div>
           </Tabs>
 
-          <div className="flex items-center gap-4">
-            <div className="relative w-64">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full md:w-auto">
+            <div className="relative w-full sm:w-64">
               <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
               <Input
                 placeholder="Search assets..."

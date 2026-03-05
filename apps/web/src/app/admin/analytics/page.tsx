@@ -23,8 +23,8 @@ export default function AdminAnalyticsPage() {
     return (
         <div className="space-y-8 max-w-7xl mx-auto">
             <div>
-                <h1 className="text-2xl font-bold text-gray-900">Analytics Hub</h1>
-                <p className="text-sm text-gray-500 mt-1">Key metrics and performance of your cushion business across all retailers.</p>
+                <h1 className="text-xl md:text-2xl font-bold text-gray-900">Analytics Hub</h1>
+                <p className="text-sm text-gray-500 mt-1">Key metrics and performance of your cushion business.</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -60,7 +60,7 @@ export default function AdminAnalyticsPage() {
                         <TrendingUp className="w-5 h-5 text-blue-500" />
                         Platform Revenue Timeline (Last 30 Days)
                     </h3>
-                    <div className="h-80 w-full text-sm">
+                    <div className="h-60 sm:h-80 w-full text-sm">
                         {data?.trendData?.length === 0 ? (
                             <div className="h-full flex items-center justify-center text-gray-400 italic bg-gray-50 rounded-lg">
                                 No order revenue generated in the last 30 days.
@@ -121,7 +121,7 @@ function AnalyticsCard({ title, value, subtitle, icon }: any) {
                 <div className="p-2 bg-gray-50 rounded-lg">{icon}</div>
             </div>
             <div className="relative z-10">
-                <h3 className="text-3xl font-bold text-gray-900 mb-1">{value}</h3>
+                <h3 className="text-2xl md:text-3xl font-bold text-gray-900 mb-1">{value}</h3>
                 <p className="text-xs text-green-600 flex items-center gap-1 font-medium">{subtitle}</p>
             </div>
             <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-gray-50 rounded-full opacity-0 group-hover:opacity-100 transition-opacity z-0" />
