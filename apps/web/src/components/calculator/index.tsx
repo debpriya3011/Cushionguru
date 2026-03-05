@@ -254,7 +254,7 @@ export function Calculator({
               <input
                 type="number"
                 min="1"
-                className="w-full md:w-32 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-gray-900"
+                className="w-full md:w-32 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-gray-900 bg-white"
                 value={selections.quantity}
                 onChange={(e) => updateSelection('quantity', parseInt(e.target.value) || 1)}
               />
@@ -319,7 +319,7 @@ export function Calculator({
                 value={selections.instructions || ''}
                 onChange={(e) => updateSelection('instructions', e.target.value)}
                 placeholder="Enter any special instructions, notes, or requirements..."
-                className="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                className="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none bg-white"
                 rows={4}
               />
               <div>
