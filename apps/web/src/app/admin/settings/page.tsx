@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Checkbox } from '@/components/ui/checkbox'
 import { Loader2 } from 'lucide-react'
 
 export default function AdminSettingsPage() {
@@ -88,37 +89,35 @@ export default function AdminSettingsPage() {
                                 </div>
                                 <div className="space-y-4 pt-4 border-t">
                                     <h3 className="text-lg font-medium">Calculator Preferences</h3>
-                                    <div className="flex items-center space-x-2">
-                                        <input
-                                            type="checkbox"
+                                    <div className="flex items-center space-x-3">
+                                        <Checkbox
                                             id="showRetailerPriceBreakdown"
                                             checked={settings.showRetailerPriceBreakdown}
-                                            onChange={(e) => setSettings({ ...settings, showRetailerPriceBreakdown: e.target.checked })}
-                                            className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                                            onCheckedChange={(checked: boolean) => setSettings({ ...settings, showRetailerPriceBreakdown: !!checked })}
+                                            className="border-gray-300 data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600"
                                         />
-                                        <Label htmlFor="showRetailerPriceBreakdown">
+                                        <Label htmlFor="showRetailerPriceBreakdown" className="cursor-pointer">
                                             Show Full Price Breakdown to Retailers
                                         </Label>
                                     </div>
-                                    <p className="text-sm text-gray-500 ml-6">
+                                    <p className="text-sm text-gray-500 ml-7">
                                         If unchecked, retailers will only see the final generated quote/total price, not the exact cost of fiberfill, sewing, piping, etc.
                                     </p>
                                 </div>
                                 <div className="space-y-4 pt-4 border-t">
                                     <h3 className="text-lg font-medium">Quote Preferences</h3>
-                                    <div className="flex items-center space-x-2">
-                                        <input
-                                            type="checkbox"
+                                    <div className="flex items-center space-x-3">
+                                        <Checkbox
                                             id="autoApproveQuotes"
                                             checked={settings.autoApproveQuotes}
-                                            onChange={(e) => setSettings({ ...settings, autoApproveQuotes: e.target.checked })}
-                                            className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                                            onCheckedChange={(checked: boolean) => setSettings({ ...settings, autoApproveQuotes: !!checked })}
+                                            className="border-gray-300 data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600"
                                         />
-                                        <Label htmlFor="autoApproveQuotes">
+                                        <Label htmlFor="autoApproveQuotes" className="cursor-pointer">
                                             Auto-approve sent quotes
                                         </Label>
                                     </div>
-                                    <p className="text-sm text-gray-500 ml-6">
+                                    <p className="text-sm text-gray-500 ml-7">
                                         If checked, quotes with status "SENT" will be automatically approved.
                                     </p>
                                 </div>

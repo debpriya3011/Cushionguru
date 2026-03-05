@@ -65,7 +65,39 @@
   }
   body {
     @apply bg-background text-foreground;
+    color-scheme: light;
   }
+}
+
+/* Fix browser autofill dark background */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active,
+textarea:-webkit-autofill,
+select:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 1000px white inset !important;
+  -webkit-text-fill-color: #111827 !important;
+  box-shadow: 0 0 0 1000px white inset !important;
+  background-color: white !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+/* Fix native checkbox dark appearance */
+input[type="checkbox"] {
+  accent-color: #3b82f6;
+  -webkit-appearance: checkbox;
+  appearance: checkbox;
+  background-color: white;
+}
+
+/* Fix number input spinner buttons */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: inner-spin-button;
+  opacity: 1;
+  background: white;
+  cursor: pointer;
 }
 
 /* Custom scrollbar */
