@@ -154,7 +154,7 @@ export default function AdminSettingsPage() {
                                     This logo will appear in the header of both admin and retailer portals.
                                 </p>
                                 <div className="flex items-center gap-4">
-                                    <div className="w-16 h-16 bg-blue-50 rounded-lg flex items-center justify-center border border-blue-100 overflow-hidden relative">
+                                    <div className={`w-16 h-16 flex items-center justify-center overflow-hidden relative ${settings.logoUrl ? '' : 'bg-blue-50 rounded-lg border border-blue-100'}`}>
                                         {settings.logoUrl ? (
                                             <>
                                                 <img src={settings.logoUrl} alt="Logo" className="w-full h-full object-contain" />
