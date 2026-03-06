@@ -29,21 +29,52 @@ const paymentStatusConfig: Record<string, { label: string; className: string }> 
     REFUNDED: { label: 'Refunded', className: 'bg-orange-100 text-orange-700' },
 }
 
-// Simple native toggle switch (no Radix dependency, works perfectly on mobile/touch)
+// Simple native toggle switch — uses <div> to avoid global mobile CSS `min-height: 36px` on buttons
 function Toggle({ checked, onChange, disabled = false }: { checked: boolean; onChange: (v: boolean) => void; disabled?: boolean }) {
     return (
-        <button
-            type="button"
+        <div
             role="switch"
+            tabIndex={disabled ? -1 : 0}
             aria-checked={checked}
-            disabled={disabled}
             onClick={() => !disabled && onChange(!checked)}
-            className={`relative inline-flex h-7 w-12 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50 ${checked ? 'bg-blue-600' : 'bg-gray-300'}`}
+            onKeyDown={e => { if (!disabled && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); onChange(!checked) } }}
+            style={{
+                position: 'relative',
+                display: 'inline-flex',
+                alignItems: 'center',
+                flexShrink: 0,
+                width: 44,
+                height: 24,
+                minWidth: 44,
+                minHeight: 24,
+                maxHeight: 24,
+                borderRadius: 9999,
+                backgroundColor: checked ? '#2563eb' : '#d1d5db',
+                border: 'none',
+                padding: 2,
+                cursor: disabled ? 'not-allowed' : 'pointer',
+                opacity: disabled ? 0.5 : 1,
+                transition: 'background-color 200ms',
+                outline: 'none',
+                boxSizing: 'border-box',
+                WebkitTapHighlightColor: 'transparent',
+                userSelect: 'none',
+            }}
         >
             <span
-                className={`pointer-events-none inline-block h-6 w-6 rounded-full bg-white shadow-md transform transition-transform duration-200 ${checked ? 'translate-x-5' : 'translate-x-0'}`}
+                style={{
+                    display: 'block',
+                    width: 20,
+                    height: 20,
+                    borderRadius: 9999,
+                    backgroundColor: '#fff',
+                    boxShadow: '0 1px 3px rgba(0,0,0,0.3)',
+                    transform: checked ? 'translateX(20px)' : 'translateX(0px)',
+                    transition: 'transform 200ms',
+                    pointerEvents: 'none',
+                }}
             />
-        </button>
+        </div>
     )
 }
 
@@ -192,27 +223,33 @@ export default function RetailerQuoteDetailsPage() {
 
     // Save label preference toggle for PER_ORDER quotes
     const handleToggleLabel = async (enabled: boolean) => {
+        const prevWant = wantLabel
+        // Optimistic update — instantly reflect in UI
         setWantLabel(enabled)
         if (!quote) return
         // For PER_ORDER: toggling OFF sets labelPreference=NONE for this quote, ON sets it back to PER_ORDER
         // For ALWAYS: this toggle is not shown
         setSavingLabelPref(true)
         try {
+            const newLabelPref = enabled ? 'PER_ORDER' : 'NONE'
             const res = await fetch(`/api/quotes/${params.id}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ labelPreference: enabled ? 'PER_ORDER' : 'NONE' })
+                body: JSON.stringify({ labelPreference: newLabelPref })
             })
             if (res.ok) {
-                await fetchData()
+                // Update quote locally instead of full refetch for instant feedback
+                setQuote((prev: any) => prev ? { ...prev, labelPreference: newLabelPref } : prev)
                 toast({
                     title: enabled ? 'Label Added' : 'Label Removed',
                     description: enabled ? '+$8/cushion label fee added to this quote.' : 'Label fee removed from this quote.'
                 })
+            } else {
+                setWantLabel(prevWant) // rollback on server error
             }
         } catch {
             toast({ title: 'Error', description: 'Failed to update label preference', variant: 'destructive' })
-            setWantLabel(!enabled) // rollback
+            setWantLabel(prevWant) // rollback
         } finally {
             setSavingLabelPref(false)
         }
@@ -317,6 +354,8 @@ export default function RetailerQuoteDetailsPage() {
     const isLabelPerOrder = retailer?.labelPreference === 'PER_ORDER' // based on retailer setting (PER_ORDER)
     // Show label toggle when retailer setting is PER_ORDER AND quote hasn't been paid yet
     const showLabelToggle = isLabelPerOrder && quote.paymentStatus !== 'SUCCESS'
+    // Disable toggle permanently once quote leaves DRAFT status
+    const labelToggleLocked = quote.status !== 'DRAFT'
     const hasLabelSetup = (quote.labelPreference === 'ALWAYS' || quote.labelPreference === 'PER_ORDER') && retailer?.labelFileUrl
     const pmtConfig = paymentStatusConfig[quote.paymentStatus] || paymentStatusConfig.PENDING
     const isPaid = quote.paymentStatus === 'SUCCESS'
@@ -413,7 +452,7 @@ export default function RetailerQuoteDetailsPage() {
                                     <Toggle checked={wantCustomPdf} onChange={setWantCustomPdf} />
                                 </div>
 
-                                {/* Options + Preview */}
+                                {/* Options (disabled when toggle is off) */}
                                 <div className={`space-y-4 ${!wantCustomPdf ? 'opacity-40 pointer-events-none select-none' : ''}`}>
                                     {/* Checkbox options */}
                                     <div className="border rounded-xl overflow-hidden divide-y bg-white">
@@ -450,15 +489,15 @@ export default function RetailerQuoteDetailsPage() {
                                             <Input value={footerContact} onChange={e => setFooterContact(e.target.value)} placeholder="Website, Phone, or Legal tagline..." disabled={!wantCustomPdf} className="bg-white" />
                                         </div>
                                     </div>
+                                </div>
 
-                                    {/* PDF preview — only on desktop */}
-                                    <div className="hidden md:block border rounded-xl overflow-hidden bg-gray-100">
-                                        <div className="bg-gray-200 p-2 text-xs font-semibold text-center text-gray-700 border-b">Live PDF Preview</div>
-                                        <iframe
-                                            src={`/api/quotes/${quote.id}/pdf?inline=true&pdfPreference=${wantCustomPdf && (includeLabel || includeLogo || isAlways) ? 'ALWAYS' : 'NONE'}&includeLogo=${wantCustomPdf && includeLogo}&includeLabel=${wantCustomPdf && includeLabel}&headerText=${encodeURIComponent(wantCustomPdf ? (debouncedHeaderText || '') : '')}&footerContact=${encodeURIComponent(wantCustomPdf ? (debouncedFooterContact || '') : '')}&labelText=${encodeURIComponent(wantCustomPdf ? (debouncedLabelText || '') : '')}#toolbar=0&navpanes=0`}
-                                            className="w-full min-h-[320px]"
-                                        />
-                                    </div>
+                                {/* PDF preview — always visible, updates based on toggle state */}
+                                <div className="hidden md:block border rounded-xl overflow-hidden bg-gray-100">
+                                    <div className="bg-gray-200 p-2 text-xs font-semibold text-center text-gray-700 border-b">Live PDF Preview</div>
+                                    <iframe
+                                        src={`/api/quotes/${quote.id}/pdf?inline=true&pdfPreference=${wantCustomPdf ? 'ALWAYS' : 'NONE'}&includeLogo=${wantCustomPdf && includeLogo}&includeLabel=${wantCustomPdf && includeLabel}&headerText=${encodeURIComponent(wantCustomPdf ? (debouncedHeaderText || '') : '')}&footerContact=${encodeURIComponent(wantCustomPdf ? (debouncedFooterContact || '') : '')}&labelText=${encodeURIComponent(wantCustomPdf ? (debouncedLabelText || '') : '')}#toolbar=0&navpanes=0`}
+                                        className="w-full min-h-[320px]"
+                                    />
                                 </div>
 
                                 <DialogFooter className="mt-4 pt-3 border-t">
@@ -486,24 +525,28 @@ export default function RetailerQuoteDetailsPage() {
 
             {/* PER_ORDER label toggle — shown as a prominent banner when applicable */}
             {showLabelToggle && (
-                <div className={`flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-4 rounded-xl border-2 transition-colors ${wantLabel ? 'bg-purple-50 border-purple-200' : 'bg-gray-50 border-gray-200'}`}>
-                    <div className="flex items-start gap-3">
+                <div className={`flex items-center justify-between gap-3 p-4 rounded-xl border-2 transition-colors ${wantLabel ? 'bg-purple-50 border-purple-200' : 'bg-gray-50 border-gray-200'} ${labelToggleLocked ? 'opacity-75' : ''}`}>
+                    <div className="flex items-start gap-3 min-w-0">
                         <Tag className={`w-5 h-5 mt-0.5 shrink-0 ${wantLabel ? 'text-purple-600' : 'text-gray-400'}`} />
-                        <div>
+                        <div className="min-w-0">
                             <p className={`text-sm font-semibold ${wantLabel ? 'text-purple-800' : 'text-gray-700'}`}>
                                 Brand Label Stitching {wantLabel ? '— Added' : '— Not included'}
+                                {labelToggleLocked && <span className="text-xs text-gray-400 ml-1">🔒 Locked</span>}
                             </p>
                             <p className="text-xs text-gray-500 mt-0.5">
-                                {wantLabel
-                                    ? `+$8 × ${quote.items?.reduce((acc: number, item: any) => acc + item.quantity, 0) || 0} cushion(s) = ${formatCurrency(fabricFee)} added to total`
-                                    : 'Toggle ON to include brand label stitching (+$8/cushion) for this quote.'}
+                                {labelToggleLocked
+                                    ? (wantLabel ? `+$8 × ${quote.items?.reduce((acc: number, item: any) => acc + item.quantity, 0) || 0} cushion(s) = ${formatCurrency(fabricFee)} — locked after quote was sent`
+                                        : 'Label not included — locked after quote was sent')
+                                    : (wantLabel
+                                        ? `+$8 × ${quote.items?.reduce((acc: number, item: any) => acc + item.quantity, 0) || 0} cushion(s) = ${formatCurrency(fabricFee)} added to total`
+                                        : 'Toggle ON to include brand label stitching (+$8/cushion) for this quote.')}
                             </p>
                         </div>
                     </div>
                     <Toggle
                         checked={wantLabel}
                         onChange={handleToggleLabel}
-                        disabled={savingLabelPref}
+                        disabled={savingLabelPref || labelToggleLocked}
                     />
                 </div>
             )}
