@@ -37,14 +37,27 @@ export function FabricSelector({
   onSelect,
   fabricsPerPage = DEFAULT_FABRICS_PER_PAGE
 }: FabricSelectorProps) {
-  const [activeBrandId, setActiveBrandId] = useState<string>(brands[0]?.id || '');
+  const validBrands = useMemo(
+    () => brands.filter(b => b.fabrics && b.fabrics.length > 0),
+    [brands]
+  );
+
+  const [activeBrandId, setActiveBrandId] = useState<string>('');
+
+  // Auto-select first brand with fabrics if nothing is selected or if activeBrandId becomes invalid
+  useMemo(() => {
+    if ((!activeBrandId || !validBrands.find(b => b.id === activeBrandId)) && validBrands.length > 0) {
+      setActiveBrandId(validBrands[0].id);
+    }
+  }, [validBrands, activeBrandId]);
+
   const [visibleCounts, setVisibleCounts] = useState<Record<string, number>>({});
   const [hoveredFabric, setHoveredFabric] = useState<Fabric | null>(null);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
 
   const activeBrand = useMemo(() =>
-    brands.find(b => b.id === activeBrandId),
-    [brands, activeBrandId]
+    validBrands.find(b => b.id === activeBrandId),
+    [validBrands, activeBrandId]
   );
 
   const visibleCount = visibleCounts[activeBrandId] || fabricsPerPage;
@@ -70,10 +83,10 @@ export function FabricSelector({
   };
 
   // If no brands configured, show placeholder
-  if (brands.length === 0) {
+  if (validBrands.length === 0) {
     return (
       <div className="p-8 text-center bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
-        <p className="text-gray-500">No fabrics configured. Please contact admin.</p>
+        <p className="text-gray-500">No fabrics configured for this calculator. Please contact admin.</p>
       </div>
     );
   }
@@ -82,13 +95,13 @@ export function FabricSelector({
     <div className="space-y-4">
       {/* Brand Tabs */}
       <div className="flex flex-wrap gap-2 border-b border-gray-200">
-        {brands.map((brand) => (
+        {validBrands.map((brand) => (
           <button
             key={brand.id}
             onClick={() => setActiveBrandId(brand.id)}
             className={`px-4 py-2 font-medium text-sm transition-colors relative ${activeBrandId === brand.id
-                ? 'text-blue-600'
-                : 'text-gray-600 hover:text-gray-800'
+              ? 'text-blue-600'
+              : 'text-gray-600 hover:text-gray-800'
               }`}
           >
             {brand.name}
@@ -111,8 +124,8 @@ export function FabricSelector({
                 onMouseMove={handleMouseMove}
                 onMouseLeave={handleMouseLeave}
                 className={`group relative aspect-square rounded-lg overflow-hidden border-2 transition-all ${selected === fabric.code
-                    ? 'border-blue-500 ring-2 ring-blue-200'
-                    : 'border-gray-200 hover:border-gray-300 hover:shadow-md'
+                  ? 'border-blue-500 ring-2 ring-blue-200'
+                  : 'border-gray-200 hover:border-gray-300 hover:shadow-md'
                   }`}
               >
                 {fabric.imageUrl ? (

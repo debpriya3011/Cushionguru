@@ -22,7 +22,7 @@ export function QuickActions() {
           <ChevronDown className="ml-2 h-4 w-4" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-56">
+      <DropdownMenuContent align="end" className="w-[calc(80vw-2rem)] sm:w-56 mx-4 sm:mx-0 z-50">
         <DropdownMenuLabel>Create New</DropdownMenuLabel>
         <DropdownMenuSeparator />
 
