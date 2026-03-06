@@ -103,7 +103,7 @@ export async function GET(
         zip.file(`${quote.quoteNumber}-label-info.txt`, notepadContent)
 
         const zipData = await zip.generateAsync({ type: 'uint8array' })
-        const blob = new Blob([zipData], { type: 'application/zip' })
+        const blob = new Blob([zipData.buffer.slice(zipData.byteOffset, zipData.byteOffset + zipData.byteLength)], { type: 'application/zip' })
 
         return new NextResponse(blob, {
             headers: {
