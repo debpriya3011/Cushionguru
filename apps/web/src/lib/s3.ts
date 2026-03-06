@@ -1,4 +1,5 @@
 import { S3Client, PutObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3';
+import { NodeHttpHandler } from '@smithy/node-http-handler';
 
 const getS3Config = () => {
     const s3Region = process.env.AWS_S3_REGION || process.env.AWS_REGION || 'us-east-1';
@@ -28,6 +29,7 @@ export const getS3Client = () => {
             accessKeyId: accessKeyId || '',
             secretAccessKey: secretAccessKey || '',
         },
+        requestHandler: new NodeHttpHandler(),
     });
 };
 
@@ -56,10 +58,16 @@ export async function deleteFromS3(fileUrl: string) {
         throw new Error("AWS_S3_BUCKET is not defined in environment variables");
     }
 
-    // Extract the filename (Key) from the URL
-    // URL format: https://bucket-name.s3.region.amazonaws.com/filename
-    const urlParts = fileUrl.split('/');
-    const key = decodeURIComponent(urlParts[urlParts.length - 1]);
+    let key = '';
+    try {
+        const parsedUrl = new URL(fileUrl);
+        // Try getting exact pathname after host, stripping leading slash
+        // Typical format: https://[bucket].s3.[region].amazonaws.com/[key]
+        key = decodeURIComponent(parsedUrl.pathname.substring(1));
+    } catch {
+        const urlParts = fileUrl.split('/');
+        key = decodeURIComponent(urlParts[urlParts.length - 1]);
+    }
 
     const s3Client = getS3Client();
     const command = new DeleteObjectCommand({
