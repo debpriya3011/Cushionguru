@@ -378,7 +378,7 @@ export function Calculator({
 
         {/* Floating Price & 3D Box (If toggled by admin) */}
         {(features?.show3D || features?.showPrices) && (
-          <div className="w-full lg:w-[350px] lg:shrink-0 lg:sticky lg:top-24 lg:self-start mt-8 lg:mt-0">
+          <div className="w-full lg:w-[380px] lg:shrink-0 lg:sticky lg:top-24 lg:self-start mt-8 lg:mt-0">
             <div className="flex flex-col gap-4">
               <div className="flex justify-end">
                 <button
@@ -392,8 +392,9 @@ export function Calculator({
               {isFloatingOpen && (
                 <div className="flex flex-col gap-4 max-h-[calc(100vh-140px)] overflow-y-auto hide-scrollbar rounded-xl drop-shadow-xl">
                   {features.show3D && (
-                    <div className="bg-white rounded-xl overflow-hidden border border-gray-100 flex-shrink-0">
-                      <Preview3D selections={selections} width={348} height={280} />
+                    <div className="bg-white rounded-xl overflow-hidden border border-gray-100 flex-shrink-0 w-full">
+                      {/* width/height omitted – Preview3D adapts to container via ResizeObserver */}
+                      <Preview3D selections={selections} height={300} />
                     </div>
                   )}
                   {features.showPrices && (

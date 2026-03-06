@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import Image from 'next/image';
 
 interface Fabric {
@@ -15,6 +15,10 @@ interface Fabric {
 interface FabricHoverProps {
   fabric: Fabric | null;
   position: { x: number; y: number };
+  /** scroll position (scrollY) – used on mobile to track movement */
+  scrollY?: number;
+  /** anchor position where the touch started */
+  touchAnchor?: { x: number; y: number; scrollY: number } | null;
 }
 
 // Tier color mapping
@@ -36,14 +40,13 @@ const TIER_NAMES: Record<number, string> = {
   6: 'Exclusive',
 };
 
-export function FabricHover({ fabric, position }: FabricHoverProps) {
+export function FabricHover({ fabric, position, scrollY = 0, touchAnchor }: FabricHoverProps) {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
     if (fabric) {
       setIsVisible(true);
     } else {
-      // Small delay before hiding to prevent flickering
       const timer = setTimeout(() => setIsVisible(false), 100);
       return () => clearTimeout(timer);
     }
@@ -51,83 +54,85 @@ export function FabricHover({ fabric, position }: FabricHoverProps) {
 
   if (!isVisible || !fabric) return null;
 
-  // Ensure preview stays within viewport
   const previewWidth = 280;
   const previewHeight = 320;
-  
-  const adjustedX = Math.min(
-    position.x,
-    typeof window !== 'undefined' ? window.innerWidth - previewWidth - 20 : position.x
-  );
-  
-  const adjustedY = Math.min(
-    position.y,
-    typeof window !== 'undefined' ? window.innerHeight - previewHeight - 20 : position.y
-  );
+
+  // ── Desktop path ──────────────────────────────────────────────
+  // touchAnchor is null on desktop; use raw mouse position.
+  if (!touchAnchor) {
+    const adjustedX = Math.min(
+      position.x + 20,
+      typeof window !== 'undefined' ? window.innerWidth - previewWidth - 20 : position.x,
+    );
+    const adjustedY = Math.min(
+      position.y + 20,
+      typeof window !== 'undefined' ? window.innerHeight - previewHeight - 20 : position.y,
+    );
+
+    return (
+      <div
+        className="fixed z-50 pointer-events-none transition-opacity duration-150"
+        style={{ left: adjustedX, top: adjustedY, opacity: 1 }}
+      >
+        <HoverCard fabric={fabric} />
+      </div>
+    );
+  }
+
+  // ── Mobile / touch path ───────────────────────────────────────
+  // The card is anchored to the element that was touched.
+  // As the user scrolls, scrollY changes and we move the card
+  // so it stays "attached" visually, then floats upwards as they scroll up.
+  const scrollDelta = scrollY - touchAnchor.scrollY; // positive = scrolled down
+  // Card appears 20px above the touch point initially
+  const cardTop = touchAnchor.y - previewHeight - 20 - scrollDelta;
+
+  const clampedTop = Math.max(8, Math.min(cardTop, window.innerHeight - previewHeight - 8));
+  const clampedLeft = Math.max(8, Math.min(touchAnchor.x - previewWidth / 2, window.innerWidth - previewWidth - 8));
 
   return (
     <div
-      className="fixed z-50 pointer-events-none transition-opacity duration-150"
-      style={{
-        left: adjustedX,
-        top: adjustedY,
-        opacity: fabric ? 1 : 0,
-      }}
+      className="fixed z-50 pointer-events-none transition-[top] duration-75 ease-linear"
+      style={{ left: clampedLeft, top: clampedTop, opacity: 1 }}
     >
-      <div className="bg-white rounded-xl shadow-2xl p-4 w-64 border border-gray-100">
-        {/* Fabric Image */}
-        <div className="aspect-square relative mb-4 rounded-lg overflow-hidden bg-gray-100">
-          {fabric.imageUrl ? (
-            <Image
-              src={fabric.imageUrl}
-              alt={fabric.name}
-              fill
-              className="object-cover"
-              priority
-            />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center text-gray-400">
-              <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-              </svg>
-            </div>
-          )}
-        </div>
+      <HoverCard fabric={fabric} />
+    </div>
+  );
+}
 
-        {/* Fabric Info */}
-        <div className="space-y-2">
+function HoverCard({ fabric }: { fabric: Fabric }) {
+  return (
+    <div className="bg-white rounded-xl shadow-2xl p-4 w-64 border border-gray-100">
+      {/* Fabric Image */}
+      <div className="aspect-square relative mb-4 rounded-lg overflow-hidden bg-gray-100">
+        {fabric.imageUrl ? (
+          <Image
+            src={fabric.imageUrl}
+            alt={fabric.name}
+            fill
+            className="object-cover"
+            priority
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center text-gray-400">
+            <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+          </div>
+        )}
+      </div>
 
-          <h4 className="font-semibold text-gray-900 text-lg leading-tight">
-            {fabric.name}
-          </h4>
-          {/* <h4 className="font-semibold text-gray-900 text-lg leading-tight">
-            {fabric.code}
-          </h4> */}
-          
-          {/* <p className="text-sm text-gray-500 font-mono">
-            {fabric.code}
-          </p> */}
+      {/* Fabric Info */}
+      <div className="space-y-2">
+        <h4 className="font-semibold text-gray-900 text-lg leading-tight">
+          {fabric.name}
+        </h4>
 
-          {fabric.description && (
-            <p className="text-sm text-gray-600 line-clamp-2">
-              {fabric.description}
-            </p>
-          )}
-
-          {/* Price Tier Badge */}
-          {/* <div className="pt-2">
-            <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${
-              TIER_COLORS[fabric.priceTier] || 'bg-gray-100 text-gray-800'
-            }`}>
-              Tier {fabric.priceTier} - {TIER_NAMES[fabric.priceTier] || 'Standard'}
-            </span>
-          </div> */}
-
-          {/* Price info */}
-          {/* <p className="text-xs text-gray-500 pt-1">
-            Price multiplier: {getTierMultiplier(fabric.priceTier)}x
-          </p> */}
-        </div>
+        {fabric.description && (
+          <p className="text-sm text-gray-600 line-clamp-2">
+            {fabric.description}
+          </p>
+        )}
       </div>
     </div>
   );

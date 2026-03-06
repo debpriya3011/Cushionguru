@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { FabricHover } from './FabricHover';
 
@@ -55,6 +55,37 @@ export function FabricSelector({
   const [hoveredFabric, setHoveredFabric] = useState<Fabric | null>(null);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
 
+  // Touch / mobile state
+  const [isMobile, setIsMobile] = useState(false);
+  const [scrollY, setScrollY] = useState(0);
+  const touchScrolling = useRef(false);
+  // anchor = where the touch began on screen + what scrollY was at that moment
+  const [touchAnchor, setTouchAnchor] = useState<{ x: number; y: number; scrollY: number } | null>(null);
+  // How long the touch has been held (ms)
+  const touchTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const touchFabricRef = useRef<Fabric | null>(null);
+
+  // Detect mobile once on mount
+  useEffect(() => {
+    const check = () => setIsMobile(window.matchMedia('(hover: none)').matches);
+    check();
+    window.matchMedia('(hover: none)').addEventListener('change', check);
+    return () => window.matchMedia('(hover: none)').removeEventListener('change', check);
+  }, []);
+
+  // Track scroll to move the card on mobile
+  useEffect(() => {
+    const onScroll = () => {
+      setScrollY(window.scrollY);
+      // If we're scrolling and a fabric hover is active, keep it visible
+      if (hoveredFabric) {
+        touchScrolling.current = true;
+      }
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, [hoveredFabric]);
+
   const activeBrand = useMemo(() =>
     validBrands.find(b => b.id === activeBrandId),
     [validBrands, activeBrandId]
@@ -62,6 +93,7 @@ export function FabricSelector({
 
   const visibleCount = visibleCounts[activeBrandId] || fabricsPerPage;
 
+  // ──── Desktop handlers ────────────────────────────────────────
   const handleMouseEnter = (fabric: Fabric, e: React.MouseEvent) => {
     setHoveredFabric(fabric);
     setMousePos({ x: e.clientX, y: e.clientY });
@@ -73,6 +105,53 @@ export function FabricSelector({
 
   const handleMouseLeave = () => {
     setHoveredFabric(null);
+  };
+
+  // ──── Mobile / touch handlers ─────────────────────────────────
+  const handleTouchStart = (fabric: Fabric, e: React.TouchEvent) => {
+    if (!isMobile) return;
+    touchScrolling.current = false;
+    touchFabricRef.current = fabric;
+
+    const touch = e.touches[0];
+    const anchor = { x: touch.clientX, y: touch.clientY, scrollY: window.scrollY };
+
+    // Show preview after a very brief delay so a quick tap doesn't trigger it
+    touchTimer.current = setTimeout(() => {
+      setHoveredFabric(touchFabricRef.current);
+      setTouchAnchor(anchor);
+    }, 150);
+  };
+
+  const handleTouchMove = () => {
+    // User started scrolling – cancel the "show" timer
+    touchScrolling.current = true;
+    if (touchTimer.current) {
+      clearTimeout(touchTimer.current);
+      touchTimer.current = null;
+    }
+    // If the card was already shown the scroll state is tracked via scrollY effect above
+  };
+
+  const handleTouchEnd = () => {
+    if (touchTimer.current) {
+      clearTimeout(touchTimer.current);
+      touchTimer.current = null;
+    }
+    // Hide after a short moment so user can still see it after releasing
+    setTimeout(() => {
+      if (!touchScrolling.current) {
+        setHoveredFabric(null);
+        setTouchAnchor(null);
+      } else {
+        // Was scrolling – hide after scroll settles
+        setTimeout(() => {
+          setHoveredFabric(null);
+          setTouchAnchor(null);
+          touchScrolling.current = false;
+        }, 600);
+      }
+    }, 300);
   };
 
   const loadMore = () => {
@@ -120,9 +199,14 @@ export function FabricSelector({
               <button
                 key={fabric.id}
                 onClick={() => onSelect(fabric.code, fabric.priceTier, fabric.price)}
-                onMouseEnter={(e) => handleMouseEnter(fabric, e)}
-                onMouseMove={handleMouseMove}
-                onMouseLeave={handleMouseLeave}
+                // Desktop
+                onMouseEnter={(e) => !isMobile && handleMouseEnter(fabric, e)}
+                onMouseMove={(e) => !isMobile && handleMouseMove(e)}
+                onMouseLeave={() => !isMobile && handleMouseLeave()}
+                // Mobile / touch
+                onTouchStart={(e) => handleTouchStart(fabric, e)}
+                onTouchMove={handleTouchMove}
+                onTouchEnd={handleTouchEnd}
                 className={`group relative aspect-square rounded-lg overflow-hidden border-2 transition-all ${selected === fabric.code
                   ? 'border-blue-500 ring-2 ring-blue-200'
                   : 'border-gray-200 hover:border-gray-300 hover:shadow-md'
@@ -152,8 +236,7 @@ export function FabricSelector({
 
                 {/* Fabric name overlay */}
                 <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-2">
-                  {/* <p className="text-white text-xs font-medium truncate">{fabric.name}</p>
-                  <p className="text-white/70 text-[10px]">Tier {fabric.priceTier}</p> */}
+                  {/* name hidden by design */}
                 </div>
               </button>
             ))}
@@ -179,8 +262,13 @@ export function FabricSelector({
         </div>
       )}
 
-      {/* Hover Preview */}
-      <FabricHover fabric={hoveredFabric} position={mousePos} />
+      {/* Hover Preview (desktop) / Scroll Preview (mobile) */}
+      <FabricHover
+        fabric={hoveredFabric}
+        position={mousePos}
+        scrollY={scrollY}
+        touchAnchor={touchAnchor}
+      />
     </div>
   );
 }

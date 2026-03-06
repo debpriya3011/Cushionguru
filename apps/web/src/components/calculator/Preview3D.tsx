@@ -9,12 +9,39 @@ const getShade = (color: string, factor: number) => {
   return `color-mix(in srgb, ${color}, black ${Math.floor(Math.max(0, (1 - factor) * 100))}%)`;
 };
 
-export function Preview3D({ selections, width = 350, height = 350 }: { selections: any, width?: number, height?: number }) {
+export function Preview3D({
+  selections,
+  width = 350,
+  height = 350,
+}: {
+  selections: any;
+  width?: number;
+  height?: number;
+}) {
   const [rotation, setRotation] = useState({ x: -25, y: 35 });
   const [scale, setScale] = useState(1);
   const [isDragging, setIsDragging] = useState(false);
-  const [lastMouse, setLastMouse] = useState({ x: 0, y: 0 });
+  const [lastPointer, setLastPointer] = useState({ x: 0, y: 0 });
   const [autoRotate, setAutoRotate] = useState(true);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // Responsive: use container width on mobile
+  const [containerWidth, setContainerWidth] = useState<number>(width);
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        setContainerWidth(Math.floor(entry.contentRect.width));
+      }
+    });
+    ro.observe(el);
+    setContainerWidth(el.getBoundingClientRect().width || width);
+    return () => ro.disconnect();
+  }, [width]);
+
+  // Clamp height to a sensible fraction of mobile screens
+  const effectiveHeight = Math.min(height, Math.round(containerWidth * 0.9));
 
   const scaleFactor = 4.5;
   const dims = {
@@ -22,7 +49,6 @@ export function Preview3D({ selections, width = 350, height = 350 }: { selection
     h: (selections.dimensions.length || 24) * scaleFactor,
     d: (selections.dimensions.thickness || 4) * scaleFactor,
     r: ((selections.dimensions.diameter || 20) / 2) * scaleFactor,
-    // Trapezium specific
     topW: (selections.dimensions.topWidth || selections.dimensions.width * 0.7) * scaleFactor,
     bottomW: (selections.dimensions.bottomWidth || selections.dimensions.width) * scaleFactor,
   };
@@ -37,29 +63,78 @@ export function Preview3D({ selections, width = 350, height = 350 }: { selection
     return () => clearInterval(interval);
   }, [autoRotate, isDragging]);
 
+  // ── Shared drag / touch helpers ──────────────────────────────
+  const startDrag = (x: number, y: number) => {
+    setIsDragging(true);
+    setAutoRotate(false);
+    setLastPointer({ x, y });
+  };
+
+  const moveDrag = (x: number, y: number) => {
+    if (!isDragging) return;
+    setRotation(prev => ({
+      x: Math.max(-90, Math.min(90, prev.x - (y - lastPointer.y) * 0.5)),
+      y: prev.y + (x - lastPointer.x) * 0.5,
+    }));
+    setLastPointer({ x, y });
+  };
+
+  const endDrag = () => setIsDragging(false);
+
   return (
-    <div className="bg-slate-900 rounded-xl overflow-hidden border border-slate-700" style={{ width }}>
+    <div
+      ref={containerRef}
+      className="bg-slate-900 rounded-xl overflow-hidden border border-slate-700 w-full"
+    >
+      {/* Header */}
       <div className="p-3 sm:p-4 border-b border-slate-800 flex justify-between items-center bg-slate-900/50 gap-2">
-        <h3 className="text-white font-medium text-xs sm:text-sm flex items-center shrink-0">3D Preview</h3>
-        <button onClick={() => setAutoRotate(!autoRotate)} className={`text-[10px] px-3 py-1 rounded-full font-bold transition-all shrink-0 whitespace-nowrap ${autoRotate ? 'bg-blue-600 text-white' : 'bg-slate-700 text-slate-400'}`}>
+        <h3 className="text-white font-medium text-xs sm:text-sm flex items-center shrink-0">
+          3D Preview
+        </h3>
+        <button
+          onClick={() => setAutoRotate(!autoRotate)}
+          className={`text-[10px] px-3 py-1 rounded-full font-bold transition-all shrink-0 whitespace-nowrap ${autoRotate ? 'bg-blue-600 text-white' : 'bg-slate-700 text-slate-400'}`}
+        >
           {autoRotate ? 'Rotating' : 'Static'}
         </button>
       </div>
 
+      {/* Canvas */}
       <div
-        className="relative cursor-grab active:cursor-grabbing select-none overflow-hidden"
-        style={{ height, perspective: '1500px', background: 'radial-gradient(circle at center, #1e293b 0%, #0f172a 100%)' }}
-        onMouseDown={(e) => { setIsDragging(true); setLastMouse({ x: e.clientX, y: e.clientY }); }}
-        onMouseMove={(e) => {
-          if (!isDragging) return;
-          setRotation(prev => ({ x: Math.max(-90, Math.min(90, prev.x - (e.clientY - lastMouse.y) * 0.5)), y: prev.y + (e.clientX - lastMouse.x) * 0.5 }));
-          setLastMouse({ x: e.clientX, y: e.clientY });
+        className="relative cursor-grab active:cursor-grabbing select-none overflow-hidden touch-none"
+        style={{
+          height: effectiveHeight,
+          perspective: '1500px',
+          background: 'radial-gradient(circle at center, #1e293b 0%, #0f172a 100%)',
         }}
-        onMouseUp={() => setIsDragging(false)}
-        onMouseLeave={() => setIsDragging(false)}
+        // Desktop mouse
+        onMouseDown={(e) => startDrag(e.clientX, e.clientY)}
+        onMouseMove={(e) => moveDrag(e.clientX, e.clientY)}
+        onMouseUp={endDrag}
+        onMouseLeave={endDrag}
+        // Mobile touch – single finger rotate
+        onTouchStart={(e) => {
+          if (e.touches.length === 1) {
+            e.preventDefault();
+            startDrag(e.touches[0].clientX, e.touches[0].clientY);
+          }
+        }}
+        onTouchMove={(e) => {
+          if (e.touches.length === 1) {
+            e.preventDefault();
+            moveDrag(e.touches[0].clientX, e.touches[0].clientY);
+          }
+        }}
+        onTouchEnd={endDrag}
       >
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none"
-          style={{ transform: `rotateX(${rotation.x}deg) rotateY(${rotation.y}deg) scale(${scale})`, transformStyle: 'preserve-3d', transition: isDragging ? 'none' : 'transform 0.1s ease-out' }}>
+        <div
+          className="absolute inset-0 flex items-center justify-center pointer-events-none"
+          style={{
+            transform: `rotateX(${rotation.x}deg) rotateY(${rotation.y}deg) scale(${scale})`,
+            transformStyle: 'preserve-3d',
+            transition: isDragging ? 'none' : 'transform 0.1s ease-out',
+          }}
+        >
           <div style={{ transformStyle: 'preserve-3d', width: 0, height: 0 }}>
             <ShapeRenderer
               shape={selections.shape}
@@ -72,11 +147,34 @@ export function Preview3D({ selections, width = 350, height = 350 }: { selection
           </div>
         </div>
 
+        {/* Controls */}
         <div className="absolute bottom-4 left-4 flex gap-2">
-          <button onClick={() => setScale(s => Math.max(0.3, s * 0.8))} className="w-8 h-8 bg-slate-800/80 hover:bg-slate-700 text-white rounded-lg flex items-center justify-center">−</button>
-          <button onClick={() => { setRotation({ x: -25, y: 35 }); setScale(1); }} className="w-8 h-8 bg-slate-800/80 hover:bg-slate-700 text-white rounded-lg flex items-center justify-center">↺</button>
-          <button onClick={() => setScale(s => Math.min(2.5, s * 1.2))} className="w-8 h-8 bg-slate-800/80 hover:bg-slate-700 text-white rounded-lg flex items-center justify-center">+</button>
+          <button
+            onClick={() => setScale(s => Math.max(0.3, s * 0.8))}
+            className="w-8 h-8 bg-slate-800/80 hover:bg-slate-700 text-white rounded-lg flex items-center justify-center text-lg leading-none"
+          >
+            −
+          </button>
+          <button
+            onClick={() => { setRotation({ x: -25, y: 35 }); setScale(1); }}
+            className="w-8 h-8 bg-slate-800/80 hover:bg-slate-700 text-white rounded-lg flex items-center justify-center"
+          >
+            ↺
+          </button>
+          <button
+            onClick={() => setScale(s => Math.min(2.5, s * 1.2))}
+            className="w-8 h-8 bg-slate-800/80 hover:bg-slate-700 text-white rounded-lg flex items-center justify-center text-lg leading-none"
+          >
+            +
+          </button>
         </div>
+
+        {/* Touch hint – shows only on touch devices when autoRotate is off */}
+        {!autoRotate && (
+          <p className="md:hidden absolute bottom-4 right-4 text-[10px] text-slate-500 select-none pointer-events-none">
+            Drag to rotate
+          </p>
+        )}
       </div>
     </div>
   );
@@ -132,7 +230,6 @@ function ShapeRenderer({ shape, dims, color, piping, zipper, ties }: any) {
         <Panel width={d} height={h} transform={`rotateY(-90deg) translateZ(${w / 2}px)`} background={getShade(color, 0.8)} />
         <Panel width={w} height={d} transform={`rotateX(90deg) translateZ(${h / 2}px)`} background={getShade(color, 1.1)} />
         <Panel width={w} height={d} transform={`rotateX(-90deg) translateZ(${h / 2}px)`} background={getShade(color, 0.7)} />
-
       </>
     );
   }
@@ -210,10 +307,7 @@ function ShapeRenderer({ shape, dims, color, piping, zipper, ties }: any) {
     );
   }
 
-
-
-
-  // TRAPEZIUM (Dynamic Responsiveness)
+  // TRAPEZIUM
   if (shape === 'Trapezium') {
     const diff = Math.abs(bottomW - topW) / 2;
     const slope = Math.sqrt(diff ** 2 + h ** 2);
@@ -228,12 +322,11 @@ function ShapeRenderer({ shape, dims, color, piping, zipper, ties }: any) {
         <Panel width={bottomW} height={d} transform={`translateY(${h / 2}px) rotateX(-90deg)`} background={getShade(color, 0.7)} />
         <Panel width={slope} height={d} transform={`translate(${-bottomW / 2 + diff / 2}px, 0) rotateZ(-${angle}deg) rotateX(90deg)`} background={getShade(color, 0.85)} />
         <Panel width={slope} height={d} transform={`translate(${bottomW / 2 - diff / 2}px, 0) rotateZ(${angle}deg) rotateX(90deg)`} background={getShade(color, 0.85)} />
-
       </>
     );
   }
 
-  return null; // Add other shapes (L, T, Triangle) similarly
+  return null;
 }
 
 // ==================== HELPERS ====================
