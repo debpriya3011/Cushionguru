@@ -104,7 +104,12 @@ export async function GET(
 
         const zipData = await zip.generateAsync({ type: 'nodebuffer' })
 
-        return new NextResponse(zipData, {
+        const arrayBuffer = zipData.buffer.slice(
+            zipData.byteOffset,
+            zipData.byteOffset + zipData.byteLength
+        )
+
+        return new Response(arrayBuffer, {
             headers: {
                 'Content-Type': 'application/zip',
                 'Content-Disposition': `attachment; filename="${quote.quoteNumber}-label-pack.zip"`,
