@@ -79,6 +79,7 @@ export async function PUT(
 
     // Branding & Label preferences
     if (body.labelPreference !== undefined) updateData.labelPreference = body.labelPreference
+    if (body.labelTitle !== undefined) updateData.labelTitle = body.labelTitle
     if (body.labelStyle !== undefined) updateData.labelStyle = body.labelStyle
     if (body.labelPlacement !== undefined) updateData.labelPlacement = body.labelPlacement
     if (body.labelFileUrl !== undefined) updateData.labelFileUrl = body.labelFileUrl

@@ -48,9 +48,14 @@ export async function GET(
     if (pdfPref === 'ALWAYS' || quote.isCustomized) { pdfFee = 10 }
     else if (pdfPref === 'PER_ORDER' && quote.status === 'DRAFT') { pdfFee = 10 }
     let fabricFee = 0
-    if (labelPref === 'ALWAYS' && quote.paymentStatus !== 'SUCCESS') {
-      const qty = (quote.items ?? []).reduce((acc: number, i: any) => acc + i.quantity, 0)
-      fabricFee = 8 * qty
+    if (quote.paymentStatus !== 'SUCCESS') {
+      if (labelPref === 'ALWAYS') {
+        const qty = (quote.items ?? []).reduce((acc: number, i: any) => acc + i.quantity, 0)
+        fabricFee = 8 * qty
+      } else if (labelPref === 'PER_ORDER') {
+        const qty = (quote.items ?? []).reduce((acc: number, i: any) => acc + i.quantity, 0)
+        fabricFee = 8 * qty
+      }
     }
     const finalTotal = parseFloat(quote.total?.toString() || '0') + pdfFee + fabricFee
 
@@ -93,7 +98,7 @@ export async function PUT(
     }
 
     const body = await req.json()
-    const { status, customerDetails } = body
+    const { status, customerDetails, labelPreference } = body
 
     const updateData: any = {}
     if (status) {
@@ -111,6 +116,13 @@ export async function PUT(
       updateData.customerEmail = customerDetails.email
       updateData.customerPhone = customerDetails.phone
       updateData.customerAddress = customerDetails.address
+    }
+    // Allow retailers to toggle the label preference per quote (for PER_ORDER preference)
+    if (labelPreference !== undefined) {
+      // Only allow toggling between PER_ORDER and NONE — ALWAYS is set at settings level
+      if (['PER_ORDER', 'NONE'].includes(labelPreference)) {
+        updateData.labelPreference = labelPreference
+      }
     }
 
     const updatedQuote = await prisma.$transaction(async (tx) => {

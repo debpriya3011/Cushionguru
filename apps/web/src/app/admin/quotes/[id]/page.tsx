@@ -3,11 +3,19 @@
 import { useState, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { ArrowLeft, CheckCircle, Store, Send, ShoppingCart, Download } from 'lucide-react'
+import { ArrowLeft, CheckCircle, Store, ShoppingCart, Download, CheckCircle2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { toast } from '@/components/ui/use-toast'
+
+const paymentStatusConfig: Record<string, { label: string; className: string }> = {
+    PENDING: { label: 'Unpaid', className: 'bg-gray-100 text-gray-600' },
+    UNPAID: { label: 'Unpaid', className: 'bg-gray-100 text-gray-600' },
+    SUCCESS: { label: '✓ Paid', className: 'bg-green-100 text-green-700' },
+    FAILED: { label: 'Payment Failed', className: 'bg-red-100 text-red-700' },
+    REFUNDED: { label: 'Refunded', className: 'bg-orange-100 text-orange-700' },
+}
 
 export default function AdminQuoteDetailsPage() {
     const params = useParams()
@@ -52,6 +60,27 @@ export default function AdminQuoteDetailsPage() {
         }
     }
 
+    const downloadLabelPack = async () => {
+        try {
+            const rRes = await fetch(`/api/quotes/${quote.id}/label-pack`)
+            if (!rRes.ok) {
+                const err = await rRes.json()
+                toast({ title: 'Error', description: err.error || 'Could not generate label pack', variant: 'destructive' })
+                return
+            }
+            const blob = await rRes.blob()
+            const url = URL.createObjectURL(blob)
+            const a = document.createElement('a')
+            a.href = url
+            a.download = `${quote.quoteNumber}-label-pack.zip`
+            a.click()
+            URL.revokeObjectURL(url)
+            toast({ title: 'Downloaded', description: 'Label pack downloaded.' })
+        } catch {
+            toast({ title: 'Download Failed', description: 'Could not download label pack.', variant: 'destructive' })
+        }
+    }
+
     if (loading) return <div className="p-8 text-center">Loading...</div>
     if (!quote) return <div className="p-8 text-center">Quote not found</div>
 
@@ -59,8 +88,13 @@ export default function AdminQuoteDetailsPage() {
         return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount)
     }
 
+    const pmtConfig = paymentStatusConfig[quote.paymentStatus] || paymentStatusConfig.PENDING
+    const isPaid = quote.paymentStatus === 'SUCCESS'
+    const hasLabelSetup = (quote.labelPreference === 'ALWAYS' || quote.labelPreference === 'PER_ORDER')
+
     return (
         <div className="space-y-6 max-w-5xl mx-auto">
+            {/* Header */}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div className="flex items-center gap-3 sm:gap-4">
                     <Link href="/admin/quotes">
@@ -68,7 +102,9 @@ export default function AdminQuoteDetailsPage() {
                     </Link>
                     <div>
                         <h1 className="text-xl sm:text-2xl font-bold flex flex-wrap items-center gap-2 sm:gap-3">
-                            {quote.quoteNumber} <Badge className="ml-0 sm:ml-2">{quote.status}</Badge>
+                            {quote.quoteNumber}
+                            <Badge className="ml-0 sm:ml-2">{quote.status}</Badge>
+                            <Badge className={pmtConfig.className}>{pmtConfig.label}</Badge>
                         </h1>
                         <p className="text-gray-500 text-xs sm:text-sm mt-1">Created on {new Date(quote.createdAt).toLocaleDateString()}</p>
                     </div>
@@ -77,6 +113,16 @@ export default function AdminQuoteDetailsPage() {
                     <Button variant="outline" className="w-full sm:w-auto" onClick={() => window.open(`/api/quotes/${quote.id}/pdf`, '_blank')}>
                         <Download className="w-4 h-4 mr-2" /> Download PDF
                     </Button>
+                    {/* Label Pack download — only if retailer has label setup */}
+                    {hasLabelSetup && (
+                        <Button
+                            variant="outline"
+                            className="w-full sm:w-auto border-purple-200 text-purple-700 hover:bg-purple-50"
+                            onClick={downloadLabelPack}
+                        >
+                            <Download className="w-4 h-4 mr-2" /> Label Pack
+                        </Button>
+                    )}
                     {quote.status !== 'ACCEPTED' && quote.status !== 'CONVERTED' && (
                         <Button className="w-full sm:w-auto bg-green-600 hover:bg-green-700 mt-2 sm:mt-0" onClick={() => handleUpdateStatus('ACCEPTED')}>
                             <CheckCircle className="w-4 h-4 mr-2" /> Approve Quote
@@ -93,7 +139,7 @@ export default function AdminQuoteDetailsPage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <Card className="col-span-2">
                     <CardHeader>
-                        <CardTitle>Hardware & Materials ({quote.items?.length || 0} items)</CardTitle>
+                        <CardTitle>Hardware &amp; Materials ({quote.items?.length || 0} items)</CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-4">
                         {quote.items?.map((item: any, i: number) => {
@@ -125,30 +171,12 @@ export default function AdminQuoteDetailsPage() {
                                                 <span className="text-gray-900 font-medium break-words leading-relaxed">{dimParts.join(' × ')}</span>
                                             </div>
                                         )}
-                                        <div>
-                                            <span className="text-gray-400 font-medium">Foam/Fill:</span>{' '}
-                                            <span className="text-gray-700">{item.foamType}</span>
-                                        </div>
-                                        <div>
-                                            <span className="text-gray-400 font-medium">Fabric:</span>{' '}
-                                            <span className="text-gray-700">{item.fabricCode}{item.fabricName ? ` (${item.fabricName})` : ''}</span>
-                                        </div>
-                                        <div>
-                                            <span className="text-gray-400 font-medium">Zipper:</span>{' '}
-                                            <span className="text-gray-700">{item.zipperPosition}</span>
-                                        </div>
-                                        <div>
-                                            <span className="text-gray-400 font-medium">Piping:</span>{' '}
-                                            <span className="text-gray-700">{item.piping}</span>
-                                        </div>
-                                        <div>
-                                            <span className="text-gray-400 font-medium">Ties:</span>{' '}
-                                            <span className="text-gray-700">{item.ties}</span>
-                                        </div>
-                                        <div>
-                                            <span className="text-gray-400 font-medium">Quantity:</span>{' '}
-                                            <span className="text-gray-700">{item.quantity}</span>
-                                        </div>
+                                        <div><span className="text-gray-400 font-medium">Foam/Fill:</span>{' '}<span className="text-gray-700">{item.foamType}</span></div>
+                                        <div><span className="text-gray-400 font-medium">Fabric:</span>{' '}<span className="text-gray-700">{item.fabricCode}{item.fabricName ? ` (${item.fabricName})` : ''}</span></div>
+                                        <div><span className="text-gray-400 font-medium">Zipper:</span>{' '}<span className="text-gray-700">{item.zipperPosition}</span></div>
+                                        <div><span className="text-gray-400 font-medium">Piping:</span>{' '}<span className="text-gray-700">{item.piping}</span></div>
+                                        <div><span className="text-gray-400 font-medium">Ties:</span>{' '}<span className="text-gray-700">{item.ties}</span></div>
+                                        <div><span className="text-gray-400 font-medium">Quantity:</span>{' '}<span className="text-gray-700">{item.quantity}</span></div>
                                     </div>
                                 </div>
                             )
@@ -179,22 +207,19 @@ export default function AdminQuoteDetailsPage() {
                                 const markup = parseFloat(quote.markupAmount?.toString() || '0')
                                 const baseTotal = parseFloat(quote.total?.toString() || '0')
 
-                                // PDF fee — uses quote's snapshotted pdfPreference (immune to settings changes)
                                 let pdfFee = 0
-                                if (quote.pdfPreference === 'ALWAYS') {
-                                    pdfFee = 10
-                                } else if (quote.isCustomized) {
-                                    pdfFee = 10
-                                }
+                                if (quote.pdfPreference === 'ALWAYS') { pdfFee = 10 }
+                                else if (quote.isCustomized) { pdfFee = 10 }
 
-                                // Fabric label fee — uses quote's snapshotted labelPreference
                                 let fabricFee = 0
-                                if (
-                                    quote.labelPreference === 'ALWAYS' &&
-                                    quote.paymentStatus !== 'SUCCESS'
-                                ) {
-                                    const qty = quote.items?.reduce((i: any, item: any) => i + item.quantity, 0) || 0
-                                    fabricFee = 8 * qty
+                                if (quote.paymentStatus !== 'SUCCESS') {
+                                    if (quote.labelPreference === 'ALWAYS') {
+                                        const qty = quote.items?.reduce((i: any, item: any) => i + item.quantity, 0) || 0
+                                        fabricFee = 8 * qty
+                                    } else if (quote.labelPreference === 'PER_ORDER') {
+                                        const qty = quote.items?.reduce((i: any, item: any) => i + item.quantity, 0) || 0
+                                        fabricFee = 8 * qty
+                                    }
                                 }
 
                                 const grandTotal = baseTotal + pdfFee + fabricFee
@@ -226,6 +251,27 @@ export default function AdminQuoteDetailsPage() {
                                         <div className="flex justify-between pt-1">
                                             <span className="font-bold text-lg">Total to Customer</span>
                                             <span className="font-bold text-lg text-green-700">{formatCurrency(grandTotal)}</span>
+                                        </div>
+
+                                        {/* Payment status card */}
+                                        <div className={`mt-2 p-3 rounded-lg border ${isPaid ? 'bg-green-50 border-green-200' : 'bg-gray-50 border-gray-200'}`}>
+                                            <div className="flex items-center justify-between">
+                                                <span className="text-sm font-medium text-gray-700">Payment Status</span>
+                                                <Badge className={pmtConfig.className}>{pmtConfig.label}</Badge>
+                                            </div>
+                                            {isPaid && (
+                                                <div className="flex items-center justify-between mt-2 text-sm text-green-700">
+                                                    <span className="flex items-center gap-1">
+                                                        <CheckCircle2 className="w-4 h-4" /> Amount Paid
+                                                    </span>
+                                                    <span className="font-bold">{formatCurrency(grandTotal)}</span>
+                                                </div>
+                                            )}
+                                            {quote.paymentDate && isPaid && (
+                                                <p className="text-xs text-gray-400 mt-1">
+                                                    Paid on {new Date(quote.paymentDate).toLocaleDateString()}
+                                                </p>
+                                            )}
                                         </div>
                                     </>
                                 )
