@@ -314,4 +314,88 @@ router.get(
   })
 );
 
+// Generate/Resend invitation code for retailer (Super Admin only)
+router.post(
+  '/:id/generate-invitation',
+  requireRole('SUPER_ADMIN'),
+  asyncHandler(async (req: AuthenticatedRequest, res) => {
+    const { id } = req.params;
+
+    const retailer = await prisma.retailer.findFirst({
+      where: { id, deletedAt: null },
+      include: {
+        users: {
+          where: { deletedAt: null },
+        },
+      },
+    });
+
+    if (!retailer) {
+      return res.status(404).json({ error: 'Retailer not found' });
+    }
+
+    if (!retailer.users || retailer.users.length === 0) {
+      return res.status(400).json({ error: 'No users associated with this retailer' });
+    }
+
+    // Generate invitation token and set expiration (7 days)
+    const invitationToken = require('crypto').randomBytes(32).toString('hex');
+    const invitationExpires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+
+    // Update all users for this retailer with the invitation token
+    const updatedUsers = await Promise.all(
+      retailer.users.map(user =>
+        prisma.user.update({
+          where: { id: user.id },
+          data: {
+            invitationToken,
+            invitationExpires,
+            status: 'PENDING',
+          },
+        })
+      )
+    );
+
+    res.json({
+      message: 'Invitation code generated successfully',
+      invitationToken,
+      expiresAt: invitationExpires,
+      usersUpdated: updatedUsers.length,
+    });
+  })
+);
+
+// Suspend retailer (Super Admin only)
+router.patch(
+  '/:id/suspend',
+  requireRole('SUPER_ADMIN'),
+  asyncHandler(async (req: AuthenticatedRequest, res) => {
+    const { id } = req.params;
+    const { action } = req.body;
+
+    if (!['suspend', 'unsuspend'].includes(action)) {
+      return res.status(400).json({ error: 'Invalid action' });
+    }
+
+    const retailer = await prisma.retailer.findFirst({
+      where: { id, deletedAt: null },
+    });
+
+    if (!retailer) {
+      return res.status(404).json({ error: 'Retailer not found' });
+    }
+
+    const status = action === 'suspend' ? 'SUSPENDED' : 'ACTIVE';
+    const updated = await prisma.retailer.update({
+      where: { id },
+      data: { status },
+    });
+
+    res.json({
+      message: `Retailer ${action}ed successfully`,
+      retailer: updated,
+    });
+  })
+);
+
 export { router as retailersRouter };
