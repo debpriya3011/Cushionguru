@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Checkbox } from '@/components/ui/checkbox'
-import { Store, PaintBucket, Lock, Briefcase, Tag, Truck } from 'lucide-react'
+import { Store, PaintBucket, Lock, Briefcase, Tag, Truck, Eye, EyeOff, Loader2 } from 'lucide-react'
 import { useSession } from 'next-auth/react'
 import { toast } from '@/components/ui/use-toast'
 
@@ -16,6 +16,21 @@ export default function RetailerSettingsPage() {
     const { data: session } = useSession()
     const [retailer, setRetailer] = useState<any>(null)
     const [loading, setLoading] = useState(true)
+
+    const [securityData, setSecurityData] = useState({
+        currentPassword: '',
+        newPassword: '',
+        confirmPassword: '',
+        newEmail: ''
+    })
+    const [showPasswords, setShowPasswords] = useState(false)
+    const [savingSecurity, setSavingSecurity] = useState(false)
+
+    useEffect(() => {
+        if (session?.user?.email) {
+            setSecurityData(prev => ({ ...prev, newEmail: session.user.email as string }))
+        }
+    }, [session?.user?.email])
 
     useEffect(() => {
         if (session?.user?.retailerId) {
@@ -50,6 +65,46 @@ export default function RetailerSettingsPage() {
                 description: e.message || 'Failed to update',
                 variant: 'destructive'
             })
+        }
+    }
+
+    const handleSecuritySave = async () => {
+        if (!securityData.currentPassword) {
+            toast({ title: 'Error', description: 'Current password is required', variant: 'destructive' })
+            return
+        }
+        if (securityData.newPassword && securityData.newPassword !== securityData.confirmPassword) {
+            toast({ title: 'Error', description: 'New passwords do not match', variant: 'destructive' })
+            return
+        }
+
+        setSavingSecurity(true)
+        try {
+            const res = await fetch('/api/retailers/security', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    currentPassword: securityData.currentPassword,
+                    newPassword: securityData.newPassword,
+                    newEmail: securityData.newEmail
+                })
+            })
+
+            const contentType = res.headers.get('content-type')
+            if (res.ok) {
+                toast({ title: 'Success', description: 'Security settings updated successfully!' })
+                setSecurityData(prev => ({ ...prev, currentPassword: '', newPassword: '', confirmPassword: '' }))
+            } else {
+                const errorText = contentType?.includes('application/json')
+                    ? (await res.json()).message
+                    : await res.text()
+                toast({ title: 'Error', description: errorText || 'Failed to update security settings', variant: 'destructive' })
+            }
+        } catch (error) {
+            console.error(error)
+            toast({ title: 'Error', description: 'Something went wrong', variant: 'destructive' })
+        } finally {
+            setSavingSecurity(false)
         }
     }
 
@@ -434,19 +489,73 @@ export default function RetailerSettingsPage() {
                         <CardContent className="space-y-6">
                             <div className="space-y-4 max-w-sm">
                                 <div className="space-y-2">
-                                    <Label>Current Password</Label>
-                                    <Input type="password" />
+                                    <Label>Email Address</Label>
+                                    <Input
+                                        type="email"
+                                        value={securityData.newEmail}
+                                        onChange={(e) => setSecurityData({ ...securityData, newEmail: e.target.value })}
+                                        placeholder="retailer@example.com"
+                                    />
+                                    <p className="text-xs text-gray-500">Update your login email</p>
                                 </div>
-                                <div className="space-y-2">
-                                    <Label>New Password</Label>
-                                    <Input type="password" />
+                                <div className="space-y-2 relative">
+                                    <Label>Current Password (required to save changes)</Label>
+                                    <div className="relative">
+                                        <Input
+                                            type={showPasswords ? "text" : "password"}
+                                            value={securityData.currentPassword}
+                                            onChange={(e) => setSecurityData({ ...securityData, currentPassword: e.target.value })}
+                                            placeholder="Enter current password"
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowPasswords(!showPasswords)}
+                                            className="absolute right-3 top-2.5 text-gray-500 hover:text-gray-700"
+                                        >
+                                            {showPasswords ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                                        </button>
+                                    </div>
                                 </div>
-                                <div className="space-y-2">
+                                <div className="space-y-2 relative">
+                                    <Label>New Password (Optional)</Label>
+                                    <div className="relative">
+                                        <Input
+                                            type={showPasswords ? "text" : "password"}
+                                            value={securityData.newPassword}
+                                            onChange={(e) => setSecurityData({ ...securityData, newPassword: e.target.value })}
+                                            placeholder="Leave blank to keep same"
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowPasswords(!showPasswords)}
+                                            className="absolute right-3 top-2.5 text-gray-500 hover:text-gray-700"
+                                        >
+                                            {showPasswords ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                                        </button>
+                                    </div>
+                                </div>
+                                <div className="space-y-2 relative">
                                     <Label>Confirm New Password</Label>
-                                    <Input type="password" />
+                                    <div className="relative">
+                                        <Input
+                                            type={showPasswords ? "text" : "password"}
+                                            value={securityData.confirmPassword}
+                                            onChange={(e) => setSecurityData({ ...securityData, confirmPassword: e.target.value })}
+                                            placeholder="Confirm new password"
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowPasswords(!showPasswords)}
+                                            className="absolute right-3 top-2.5 text-gray-500 hover:text-gray-700"
+                                        >
+                                            {showPasswords ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
-                            <Button variant="outline">Change Password</Button>
+                            <Button onClick={handleSecuritySave} disabled={savingSecurity}>
+                                {savingSecurity ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : 'Save Security Changes'}
+                            </Button>
                         </CardContent>
                     </Card>
                 </TabsContent>
