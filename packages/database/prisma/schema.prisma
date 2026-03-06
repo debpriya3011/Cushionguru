@@ -109,6 +109,7 @@ model Retailer {
   
   // Brand Settings
   labelPreference     BrandPreference? @default(NONE)
+  labelTitle          String?
   labelStyle          String?
   labelPlacement      String?
   labelFileUrl        String?

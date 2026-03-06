@@ -27,11 +27,17 @@ function computeFinalTotal(quote: any): number {
     pdfFee = 10  // Default toggle is ON in the detail page
   }
 
-  // Fabric label fee ($8 × qty) — shown until paid
+  // Fabric label fee ($8 × qty) — added for ALWAYS or opted-in PER_ORDER, shown until paid
   let fabricFee = 0
-  if (labelPref === 'ALWAYS' && quote.paymentStatus !== 'SUCCESS') {
-    const qty = (quote.items ?? []).reduce((acc: number, i: any) => acc + i.quantity, 0)
-    fabricFee = 8 * qty
+  if (quote.paymentStatus !== 'SUCCESS') {
+    if (labelPref === 'ALWAYS') {
+      const qty = (quote.items ?? []).reduce((acc: number, i: any) => acc + i.quantity, 0)
+      fabricFee = 8 * qty
+    } else if (labelPref === 'PER_ORDER') {
+      // PER_ORDER on the quote itself means the retailer opted IN for this quote
+      const qty = (quote.items ?? []).reduce((acc: number, i: any) => acc + i.quantity, 0)
+      fabricFee = 8 * qty
+    }
   }
 
   return base + pdfFee + fabricFee

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { Plus, Search, FileText } from 'lucide-react'
+import { Plus, Search, FileText, Download, CheckCircle2, Clock, XCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import {
@@ -14,6 +14,7 @@ import {
     TableRow,
 } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
+import { toast } from '@/components/ui/use-toast'
 
 const statusColors: Record<string, string> = {
     DRAFT: 'bg-gray-100 text-gray-700',
@@ -22,6 +23,15 @@ const statusColors: Record<string, string> = {
     ACCEPTED: 'bg-green-100 text-green-700',
     EXPIRED: 'bg-red-100 text-red-700',
     REJECTED: 'bg-red-100 text-red-700',
+    CONVERTED: 'bg-emerald-100 text-emerald-700',
+}
+
+const paymentStatusConfig: Record<string, { label: string; className: string }> = {
+    PENDING: { label: 'Unpaid', className: 'bg-gray-100 text-gray-600' },
+    UNPAID: { label: 'Unpaid', className: 'bg-gray-100 text-gray-600' },
+    SUCCESS: { label: 'Paid ✓', className: 'bg-green-100 text-green-700' },
+    FAILED: { label: 'Failed', className: 'bg-red-100 text-red-700' },
+    REFUNDED: { label: 'Refunded', className: 'bg-orange-100 text-orange-700' },
 }
 
 export default function RetailerQuotesPage() {
@@ -66,13 +76,40 @@ export default function RetailerQuotesPage() {
         }).format(amount)
     }
 
-
     const formatDate = (date: string) => {
         return new Intl.DateTimeFormat('en-US', {
             month: 'short',
             day: 'numeric',
             year: 'numeric'
         }).format(new Date(date))
+    }
+
+    // Downloads a zip containing the label image + notepad(txt) named after quoteNumber
+    const downloadLabelPack = async (quote: any) => {
+        try {
+            // Fetch the retailer's label data  
+            const rRes = await fetch(`/api/quotes/${quote.id}/label-pack`)
+            if (!rRes.ok) {
+                const err = await rRes.json()
+                toast({ title: 'Error', description: err.error || 'Could not generate label pack', variant: 'destructive' })
+                return
+            }
+            const blob = await rRes.blob()
+            const url = URL.createObjectURL(blob)
+            const a = document.createElement('a')
+            a.href = url
+            a.download = `${quote.quoteNumber}-label-pack.zip`
+            a.click()
+            URL.revokeObjectURL(url)
+        } catch (err) {
+            toast({ title: 'Download Failed', description: 'Could not download label pack.', variant: 'destructive' })
+        }
+    }
+
+    // Whether this retailer has a label setup (image + title)
+    const hasLabelSetup = (q: any) => {
+        const labelPref = q.labelPreference || q.retailer?.labelPreference
+        return (labelPref === 'ALWAYS' || labelPref === 'PER_ORDER')
     }
 
     return (
@@ -116,45 +153,68 @@ export default function RetailerQuotesPage() {
                         <Table>
                             <TableHeader>
                                 <TableRow>
-                                    <TableHead>Quote Number</TableHead>
-                                    <TableHead>Customer</TableHead>
-                                    <TableHead>Amount</TableHead>
-                                    <TableHead>Status</TableHead>
-                                    <TableHead>Date</TableHead>
+                                    <TableHead className="whitespace-nowrap">Quote #</TableHead>
+                                    <TableHead className="whitespace-nowrap">Customer</TableHead>
+                                    <TableHead className="whitespace-nowrap">Amount</TableHead>
+                                    <TableHead className="whitespace-nowrap">Status</TableHead>
+                                    <TableHead className="whitespace-nowrap">Payment</TableHead>
+                                    <TableHead className="whitespace-nowrap">Date</TableHead>
                                     <TableHead></TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                                {filteredQuotes.map((quote) => (
-                                    <TableRow key={quote.id}>
-                                        <TableCell className="font-medium text-gray-900">
-                                            {quote.quoteNumber}
-                                        </TableCell>
-                                        <TableCell>
-                                            <p className="font-medium text-gray-900">{quote.customerName}</p>
-                                            <p className="text-sm text-gray-500">{quote.customerEmail}</p>
-                                        </TableCell>
-                                        <TableCell className="font-medium">
-                                            {formatCurrency(Number(quote.total) || 0)}
-                                        </TableCell>
-                                        <TableCell>
-                                            <Badge variant="secondary" className={statusColors[quote.status] || 'bg-gray-100'}>
-                                                {quote.status}
-                                            </Badge>
-                                        </TableCell>
-                                        <TableCell className="text-gray-500 text-sm">
-                                            {formatDate(quote.createdAt)}
-                                        </TableCell>
-                                        <TableCell className="text-right">
-                                            <Link href={`/retailer/quotes/${quote.id}`}>
-                                                <Button variant="ghost" size="sm" className="text-blue-600 hover:text-blue-800 hover:bg-blue-50">
-                                                    <FileText className="h-4 w-4 mr-2" />
-                                                    View
-                                                </Button>
-                                            </Link>
-                                        </TableCell>
-                                    </TableRow>
-                                ))}
+                                {filteredQuotes.map((quote) => {
+                                    const pmtConfig = paymentStatusConfig[quote.paymentStatus] || paymentStatusConfig.PENDING
+                                    return (
+                                        <TableRow key={quote.id}>
+                                            <TableCell className="font-medium text-gray-900 whitespace-nowrap">
+                                                {quote.quoteNumber}
+                                            </TableCell>
+                                            <TableCell>
+                                                <p className="font-medium text-gray-900 whitespace-nowrap">{quote.customerName}</p>
+                                                <p className="text-sm text-gray-500 truncate max-w-[160px]">{quote.customerEmail}</p>
+                                            </TableCell>
+                                            <TableCell className="font-medium whitespace-nowrap">
+                                                {formatCurrency(Number(quote.finalTotal ?? quote.total) || 0)}
+                                            </TableCell>
+                                            <TableCell>
+                                                <Badge variant="secondary" className={statusColors[quote.status] || 'bg-gray-100'}>
+                                                    {quote.status}
+                                                </Badge>
+                                            </TableCell>
+                                            <TableCell>
+                                                <Badge variant="secondary" className={pmtConfig.className}>
+                                                    {pmtConfig.label}
+                                                </Badge>
+                                            </TableCell>
+                                            <TableCell className="text-gray-500 text-sm whitespace-nowrap">
+                                                {formatDate(quote.createdAt)}
+                                            </TableCell>
+                                            <TableCell>
+                                                <div className="flex items-center gap-1 justify-end">
+                                                    {hasLabelSetup(quote) && (
+                                                        <Button
+                                                            variant="ghost"
+                                                            size="sm"
+                                                            className="text-purple-600 hover:text-purple-800 hover:bg-purple-50 whitespace-nowrap"
+                                                            onClick={() => downloadLabelPack(quote)}
+                                                            title="Download Label Pack (image + name)"
+                                                        >
+                                                            <Download className="h-4 w-4 mr-1" />
+                                                            <span className="hidden sm:inline">Label Pack</span>
+                                                        </Button>
+                                                    )}
+                                                    <Link href={`/retailer/quotes/${quote.id}`}>
+                                                        <Button variant="ghost" size="sm" className="text-blue-600 hover:text-blue-800 hover:bg-blue-50 whitespace-nowrap">
+                                                            <FileText className="h-4 w-4 mr-1" />
+                                                            <span className="hidden sm:inline">View</span>
+                                                        </Button>
+                                                    </Link>
+                                                </div>
+                                            </TableCell>
+                                        </TableRow>
+                                    )
+                                })}
                             </TableBody>
                         </Table>
                     </div>
