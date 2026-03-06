@@ -50,8 +50,18 @@ export async function PUT(req: Request) {
                 where: { email: newEmail }
             })
             if (existingUser) {
-                return new NextResponse('Email is already in use', { status: 400 })
+                return new NextResponse('Email is already in use by a user', { status: 400 })
             }
+            // Now verify for Retailer model overlap too
+            if (user.retailerId) {
+                const existingRetailer = await prisma.retailer.findUnique({
+                    where: { email: newEmail }
+                })
+                if (existingRetailer && existingRetailer.id !== user.retailerId) {
+                    return new NextResponse('Email is already in use by a retailer business', { status: 400 })
+                }
+            }
+
             updateData.email = newEmail
         }
 
@@ -59,9 +69,20 @@ export async function PUT(req: Request) {
             return new NextResponse('No valid fields to update', { status: 400 })
         }
 
-        await prisma.user.update({
-            where: { id: session.user.id },
-            data: updateData
+        // Use a transaction since we might update both tables
+        await prisma.$transaction(async (tx) => {
+            await tx.user.update({
+                where: { id: session.user.id },
+                data: updateData
+            })
+
+            // Sync the business email as well
+            if (updateData.email && user.retailerId) {
+                await tx.retailer.update({
+                    where: { id: user.retailerId },
+                    data: { email: updateData.email }
+                })
+            }
         })
 
         return NextResponse.json({ success: true, email: updateData.email || user.email })

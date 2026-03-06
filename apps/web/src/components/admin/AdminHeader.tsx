@@ -122,17 +122,23 @@ export function AdminHeader({ user }: AdminHeaderProps) {
             <DropdownMenuContent align="end" className="w-56">
               <DropdownMenuLabel>My Account</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>
-                <User className="mr-2 h-4 w-4" />
-                Profile
+              <DropdownMenuItem asChild>
+                <Link href="/admin/settings" className="cursor-pointer w-full">
+                  <User className="mr-2 h-4 w-4" />
+                  Profile
+                </Link>
               </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Settings className="mr-2 h-4 w-4" />
-                Settings
+              <DropdownMenuItem asChild>
+                <Link href="/admin/settings" className="cursor-pointer w-full">
+                  <Settings className="mr-2 h-4 w-4" />
+                  Settings
+                </Link>
               </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Shield className="mr-2 h-4 w-4" />
-                Admin Panel
+              <DropdownMenuItem asChild>
+                <Link href="/admin/dashboard" className="cursor-pointer w-full">
+                  <Shield className="mr-2 h-4 w-4" />
+                  Admin Panel
+                </Link>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => signOut({ callbackUrl: '/login' })}>
