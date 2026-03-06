@@ -39,9 +39,10 @@ const mobileNav = [
 
 export function AdminHeader({ user }: AdminHeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const [branding, setBranding] = useState<{ logoUrl: string; companyName: string }>({
+  const [branding, setBranding] = useState<{ logoUrl: string; companyName: string; supportEmail: string }>({
     logoUrl: '',
     companyName: 'Cushion Quoting',
+    supportEmail: 'support@cushionsaas.com'
   })
 
   useEffect(() => {
@@ -63,8 +64,24 @@ export function AdminHeader({ user }: AdminHeaderProps) {
                 <Menu className="h-5 w-5" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="w-64 flex flex-col">
-              <div className="flex-1 overflow-y-auto mt-8 pb-8 pr-2 space-y-1">
+            <SheetContent side="left" className="w-64 flex flex-col p-0">
+              <div className="p-6 pr-14 border-b">
+                <Link href="/admin/dashboard" className="flex items-center gap-3">
+                  <div className={`w-8 h-8 flex items-center justify-center overflow-hidden shrink-0 ${branding.logoUrl ? '' : 'bg-blue-600 rounded-lg'}`}>
+                    {branding.logoUrl ? (
+                      <img src={branding.logoUrl} alt="Logo" className="w-full h-full object-contain" />
+                    ) : (
+                      <span className="text-white font-bold text-sm">C</span>
+                    )}
+                  </div>
+                  <div className="flex flex-col min-w-0">
+                    <h1 className="font-bold text-gray-900 truncate">{branding.companyName}</h1>
+                    <p className="text-xs text-gray-500 truncate">Admin Portal</p>
+                  </div>
+                </Link>
+              </div>
+
+              <div className="flex-1 overflow-y-auto py-4 px-2 space-y-1">
                 {mobileNav.map((item) => {
                   const Icon = item.icon
                   return (
@@ -80,6 +97,23 @@ export function AdminHeader({ user }: AdminHeaderProps) {
                   )
                 })}
               </div>
+              <div className="mt-auto p-4 border-t">
+                <div className="bg-blue-50 rounded-lg p-4">
+                  <p className="text-sm font-medium text-blue-900">Need Help?</p>
+                  <p className="text-xs text-blue-700 mt-1">
+                    Contact support for assistance
+                  </p>
+                  <a
+                    href={`https://mail.google.com/mail/?view=cm&fs=1&to=${branding.supportEmail}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-xs text-blue-600 hover:underline mt-2 block truncate"
+                    title={branding.supportEmail}
+                  >
+                    {branding.supportEmail}
+                  </a>
+                </div>
+              </div>
             </SheetContent>
           </Sheet>
 
@@ -92,9 +126,9 @@ export function AdminHeader({ user }: AdminHeaderProps) {
                 <span className="text-white font-bold text-lg">C</span>
               )}
             </div>
-            <div className="hidden sm:block">
-              <h1 className="font-bold text-gray-900">{branding.companyName}</h1>
-              <p className="text-xs text-gray-500">Admin Portal</p>
+            <div className="flex flex-col min-w-0 max-w-[130px] sm:max-w-xs">
+              <h1 className="font-bold text-gray-900 truncate">{branding.companyName}</h1>
+              <p className="text-xs text-gray-500 truncate">Admin Portal</p>
             </div>
           </Link>
         </div>
