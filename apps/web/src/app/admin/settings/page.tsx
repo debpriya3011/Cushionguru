@@ -7,7 +7,9 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Checkbox } from '@/components/ui/checkbox'
-import { Loader2, Upload, X } from 'lucide-react'
+import { Loader2, Upload, X, Lock, Eye, EyeOff } from 'lucide-react'
+import { useSession } from 'next-auth/react'
+import { toast } from '@/components/ui/use-toast'
 
 export default function AdminSettingsPage() {
     const [settings, setSettings] = useState({
@@ -20,6 +22,23 @@ export default function AdminSettingsPage() {
     const [loading, setLoading] = useState(true)
     const [saving, setSaving] = useState(false)
     const [uploading, setUploading] = useState(false)
+
+    const { data: session } = useSession()
+
+    const [securityData, setSecurityData] = useState({
+        currentPassword: '',
+        newPassword: '',
+        confirmPassword: '',
+        newEmail: ''
+    })
+    const [showPasswords, setShowPasswords] = useState(false)
+    const [savingSecurity, setSavingSecurity] = useState(false)
+
+    useEffect(() => {
+        if (session?.user?.email) {
+            setSecurityData(prev => ({ ...prev, newEmail: session.user.email as string }))
+        }
+    }, [session?.user?.email])
 
     useEffect(() => {
         fetch('/api/admin/settings')
@@ -110,6 +129,46 @@ export default function AdminSettingsPage() {
         }
     }
 
+    const handleSecuritySave = async () => {
+        if (!securityData.currentPassword) {
+            toast({ title: 'Error', description: 'Current password is required', variant: 'destructive' })
+            return
+        }
+        if (securityData.newPassword && securityData.newPassword !== securityData.confirmPassword) {
+            toast({ title: 'Error', description: 'New passwords do not match', variant: 'destructive' })
+            return
+        }
+
+        setSavingSecurity(true)
+        try {
+            const res = await fetch('/api/admin/security', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    currentPassword: securityData.currentPassword,
+                    newPassword: securityData.newPassword,
+                    newEmail: securityData.newEmail
+                })
+            })
+
+            const contentType = res.headers.get('content-type')
+            if (res.ok) {
+                toast({ title: 'Success', description: 'Security settings updated successfully!' })
+                setSecurityData(prev => ({ ...prev, currentPassword: '', newPassword: '', confirmPassword: '' }))
+            } else {
+                const errorText = contentType?.includes('application/json')
+                    ? (await res.json()).message
+                    : await res.text()
+                toast({ title: 'Error', description: errorText || 'Failed to update security settings', variant: 'destructive' })
+            }
+        } catch (error) {
+            console.error(error)
+            toast({ title: 'Error', description: 'Something went wrong', variant: 'destructive' })
+        } finally {
+            setSavingSecurity(false)
+        }
+    }
+
     if (loading) {
         return <div className="p-12 text-center"><Loader2 className="h-8 w-8 animate-spin mx-auto text-blue-500" /></div>
     }
@@ -127,6 +186,7 @@ export default function AdminSettingsPage() {
                         <TabsTrigger value="general" className="whitespace-nowrap">General</TabsTrigger>
                         <TabsTrigger value="notifications" className="whitespace-nowrap">Emails & Notifications</TabsTrigger>
                         <TabsTrigger value="billing" className="whitespace-nowrap">Billing</TabsTrigger>
+                        <TabsTrigger value="security" className="whitespace-nowrap">Security</TabsTrigger>
                     </TabsList>
                 </div>
                 <TabsContent value="general">
@@ -268,6 +328,88 @@ export default function AdminSettingsPage() {
                                 </div>
                                 <div className="px-3 py-1 bg-blue-600 text-white rounded text-sm font-medium">Active</div>
                             </div>
+                        </CardContent>
+                    </Card>
+                </TabsContent>
+                <TabsContent value="security">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2">
+                                <Lock className="w-5 h-5 text-blue-600" />
+                                Account Security
+                            </CardTitle>
+                            <CardDescription>Manage your admin sign-in credentials.</CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-6">
+                            <div className="space-y-4 max-w-sm">
+                                <div className="space-y-2">
+                                    <Label>Email Address</Label>
+                                    <Input
+                                        type="email"
+                                        value={securityData.newEmail}
+                                        onChange={(e) => setSecurityData({ ...securityData, newEmail: e.target.value })}
+                                        placeholder="admin@example.com"
+                                    />
+                                    <p className="text-xs text-gray-500">Update your login email</p>
+                                </div>
+                                <div className="space-y-2 relative">
+                                    <Label>Current Password (required to save changes)</Label>
+                                    <div className="relative">
+                                        <Input
+                                            type={showPasswords ? "text" : "password"}
+                                            value={securityData.currentPassword}
+                                            onChange={(e) => setSecurityData({ ...securityData, currentPassword: e.target.value })}
+                                            placeholder="Enter current password"
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowPasswords(!showPasswords)}
+                                            className="absolute right-3 top-2.5 text-gray-500 hover:text-gray-700"
+                                        >
+                                            {showPasswords ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                                        </button>
+                                    </div>
+                                </div>
+                                <div className="space-y-2 relative">
+                                    <Label>New Password (Optional)</Label>
+                                    <div className="relative">
+                                        <Input
+                                            type={showPasswords ? "text" : "password"}
+                                            value={securityData.newPassword}
+                                            onChange={(e) => setSecurityData({ ...securityData, newPassword: e.target.value })}
+                                            placeholder="Leave blank to keep same"
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowPasswords(!showPasswords)}
+                                            className="absolute right-3 top-2.5 text-gray-500 hover:text-gray-700"
+                                        >
+                                            {showPasswords ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                                        </button>
+                                    </div>
+                                </div>
+                                <div className="space-y-2 relative">
+                                    <Label>Confirm New Password</Label>
+                                    <div className="relative">
+                                        <Input
+                                            type={showPasswords ? "text" : "password"}
+                                            value={securityData.confirmPassword}
+                                            onChange={(e) => setSecurityData({ ...securityData, confirmPassword: e.target.value })}
+                                            placeholder="Confirm new password"
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowPasswords(!showPasswords)}
+                                            className="absolute right-3 top-2.5 text-gray-500 hover:text-gray-700"
+                                        >
+                                            {showPasswords ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <Button onClick={handleSecuritySave} disabled={savingSecurity}>
+                                {savingSecurity ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : 'Save Security Changes'}
+                            </Button>
                         </CardContent>
                     </Card>
                 </TabsContent>
