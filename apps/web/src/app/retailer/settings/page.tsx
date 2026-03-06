@@ -94,6 +94,9 @@ export default function RetailerSettingsPage() {
             if (res.ok) {
                 toast({ title: 'Success', description: 'Security settings updated successfully!' })
                 setSecurityData(prev => ({ ...prev, currentPassword: '', newPassword: '', confirmPassword: '' }))
+                if (securityData.newEmail) {
+                    setRetailer((prev: any) => ({ ...prev, email: securityData.newEmail }))
+                }
             } else {
                 const errorText = contentType?.includes('application/json')
                     ? (await res.json()).message
