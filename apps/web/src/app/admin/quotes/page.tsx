@@ -148,7 +148,7 @@ export default function AdminQuotesPage() {
                                     <TableHead className="whitespace-nowrap">Quote #</TableHead>
                                     <TableHead className="whitespace-nowrap">Retailer</TableHead>
                                     <TableHead className="whitespace-nowrap">Customer</TableHead>
-                                    <TableHead className="whitespace-nowrap">Amount</TableHead>
+                                    <TableHead className="whitespace-nowrap">Base Amount</TableHead>
                                     <TableHead className="whitespace-nowrap">Status</TableHead>
                                     <TableHead className="whitespace-nowrap">Payment</TableHead>
                                     <TableHead className="whitespace-nowrap">Date</TableHead>
