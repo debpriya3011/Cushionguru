@@ -48,6 +48,7 @@ export async function GET(
     // Allow query params to override stored customization (for preview mode)
     const overrides = {
       pdfPreference: searchParams.get('pdfPreference') || pdfPreference,
+      labelPreference: (quote as any).labelPreference || quote.retailer.labelPreference || 'NONE',
       pdfCustomization: {
         headerText: searchParams.get('headerText') || (customization as any)?.headerText || undefined,
         footerContact: searchParams.get('footerContact') || (customization as any)?.footerContact || undefined,
