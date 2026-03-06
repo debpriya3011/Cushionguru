@@ -25,6 +25,7 @@ import {
   FileText,
   ShoppingCart,
   LayoutDashboard,
+  HelpCircle,
 } from 'lucide-react'
 import { NotificationBell } from '@/components/notifications/NotificationBell'
 
@@ -58,6 +59,7 @@ export function RetailerHeader({ user }: RetailerHeaderProps) {
     { name: 'Quotes', href: '/retailer/quotes', icon: FileText },
     { name: 'Orders', href: '/retailer/orders', icon: ShoppingCart },
     { name: 'Settings', href: '/retailer/settings', icon: Settings },
+    { name: 'Help & Support', href: '/retailer/help', icon: HelpCircle },
   ]
 
   return (
@@ -72,8 +74,25 @@ export function RetailerHeader({ user }: RetailerHeaderProps) {
                 <Menu className="h-5 w-5" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="w-64">
-              <div className="flex flex-col gap-4 mt-8">
+            <SheetContent side="left" className="w-64 flex flex-col p-0">
+              <div className="p-6 pr-14 border-b">
+                <Link href="/retailer/dashboard" className="flex items-center gap-3">
+                  <div className={`w-8 h-8 flex items-center justify-center overflow-hidden shrink-0 ${branding.logoUrl ? '' : 'bg-blue-600 rounded-lg'}`}>
+                    {branding.logoUrl ? (
+                      <img src={branding.logoUrl} alt="Logo" className="w-full h-full object-contain" />
+                    ) : (
+                      <span className="text-white font-bold text-sm">C</span>
+                    )}
+                  </div>
+                  <div className="flex flex-col min-w-0">
+                    <h1 className="font-bold text-gray-900 truncate">{user.retailer?.businessName || branding.companyName}</h1>
+                    <p className="text-[10px] text-gray-500 truncate">
+                      {user.retailer?.businessName ? `Powered by ${branding.companyName}` : 'Retailer Portal'}
+                    </p>
+                  </div>
+                </Link>
+              </div>
+              <div className="flex-1 overflow-y-auto py-4 px-2 space-y-1 mt-2">
                 {mobileNav.map((item) => {
                   const Icon = item.icon
                   return (
@@ -101,9 +120,11 @@ export function RetailerHeader({ user }: RetailerHeaderProps) {
                 <span className="text-white font-bold text-lg">C</span>
               )}
             </div>
-            <div className="hidden sm:block">
-              <h1 className="font-bold text-gray-900">{user.retailer?.businessName || branding.companyName}</h1>
-              <p className="text-xs text-gray-500">Retailer Portal</p>
+            <div className="flex flex-col min-w-0 max-w-[130px] sm:max-w-xs">
+              <h1 className="font-bold text-gray-900 truncate">{user.retailer?.businessName || branding.companyName}</h1>
+              <p className="text-xs text-gray-500 truncate">
+                {user.retailer?.businessName ? `Powered by ${branding.companyName}` : 'Retailer Portal'}
+              </p>
             </div>
           </Link>
         </div>

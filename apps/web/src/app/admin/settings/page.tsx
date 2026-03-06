@@ -120,7 +120,10 @@ export default function AdminSettingsPage() {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(settings)
             })
-            if (res.ok) alert('Settings saved successfully!')
+            if (res.ok) {
+                alert('Settings saved successfully!')
+                window.location.reload()
+            }
             else alert('Failed to save settings')
         } catch (error) {
             console.error(error)

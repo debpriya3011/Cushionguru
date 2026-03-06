@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { useState, useEffect } from 'react'
 import { cn } from '@/lib/utils'
 import {
   LayoutDashboard,
@@ -27,6 +28,18 @@ const navigation = [
 
 export function AdminSidebar() {
   const pathname = usePathname()
+  const [supportEmail, setSupportEmail] = useState('support@cushionsaas.com')
+
+  useEffect(() => {
+    fetch('/api/platform/branding')
+      .then(res => res.json())
+      .then(data => {
+        if (data.supportEmail) {
+          setSupportEmail(data.supportEmail)
+        }
+      })
+      .catch(console.error)
+  }, [])
 
   return (
     <aside className="hidden md:block w-64 flex-shrink-0 bg-white border-r h-[calc(100vh-4rem)] sticky top-16 flex flex-col">
@@ -60,10 +73,13 @@ export function AdminSidebar() {
             Contact support for assistance
           </p>
           <a
-            href="mailto:support@cushionsaas.com"
-            className="text-xs text-blue-600 hover:underline mt-2 inline-block"
+            href={`https://mail.google.com/mail/?view=cm&fs=1&to=${supportEmail}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-xs text-blue-600 hover:underline mt-2 block truncate"
+            title={supportEmail}
           >
-            support@cushionsaas.com
+            {supportEmail}
           </a>
         </div>
       </div>
