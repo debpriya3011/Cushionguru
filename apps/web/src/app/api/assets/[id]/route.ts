@@ -24,7 +24,7 @@ export async function DELETE(
         }
 
         // Delete the file from S3
-        if (asset.url.includes('.s3.')) {
+        if (asset.url && typeof asset.url === 'string' && asset.url.trim() !== '') {
             try {
                 await deleteFromS3(asset.url);
             } catch (err) {
