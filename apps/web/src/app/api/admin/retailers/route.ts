@@ -66,6 +66,18 @@ export async function POST(req: NextRequest) {
       )
     }
 
+    // Check if user with email already exists
+    const existingUser = await prisma.user.findUnique({
+      where: { email },
+    })
+
+    if (existingUser) {
+      return NextResponse.json(
+        { error: 'A user with this email already exists' },
+        { status: 400 }
+      )
+    }
+
     // Check retailer limit
     const retailerCount = await prisma.retailer.count({
       where: { deletedAt: null },
@@ -89,7 +101,7 @@ export async function POST(req: NextRequest) {
         markupType: markupType || 'PERCENTAGE',
         markupValue: markupValue || 20,
         address: address || undefined,
-        status: 'ACTIVE',
+        status: 'PENDING',
       },
     })
 
@@ -122,8 +134,9 @@ export async function POST(req: NextRequest) {
     )
   } catch (error) {
     console.error('Failed to create retailer:', error)
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error'
     return NextResponse.json(
-      { error: 'Failed to create retailer' },
+      { error: 'Failed to create retailer', details: errorMessage },
       { status: 500 }
     )
   }

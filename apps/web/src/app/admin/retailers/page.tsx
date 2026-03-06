@@ -44,11 +44,20 @@ export default async function RetailersPage() {
         <div className="p-4 border-b flex items-center gap-4">
           <div className="flex items-center gap-2 text-sm text-gray-600">
             <Users className="h-4 w-4" />
-            <span>{retailers.length} retailers</span>
+            <span>{retailers.length} total retailers</span>
           </div>
-          <div className="flex gap-2">
-            <span className="text-sm text-gray-600">
+          <div className="flex gap-4 ml-auto text-sm text-gray-600">
+            <span className="text-green-600 font-medium">
               {retailers.filter(r => r.status === 'ACTIVE').length} active
+            </span>
+            <span className="text-yellow-600 font-medium">
+              {retailers.filter(r => r.status === 'PENDING').length} pending
+            </span>
+            <span className="text-gray-600 font-medium">
+              {retailers.filter(r => r.status === 'INACTIVE').length} inactive
+            </span>
+            <span className="text-red-600 font-medium">
+              {retailers.filter(r => r.status === 'SUSPENDED').length} suspended
             </span>
           </div>
         </div>

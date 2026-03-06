@@ -79,6 +79,7 @@ enum ShippingPreference {
 enum RetailerStatus {
   ACTIVE
   INACTIVE
+  PENDING
   SUSPENDED
 }
 

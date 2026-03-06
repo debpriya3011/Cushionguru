@@ -31,7 +31,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
-import { MoreHorizontal, Edit, Trash2, Mail, Eye, Copy } from 'lucide-react'
+import { MoreHorizontal, Edit, Trash2, Mail, Eye, Copy, Ban, CheckCircle, Send } from 'lucide-react'
 
 interface Retailer {
   id: string
@@ -56,6 +56,7 @@ interface RetailersTableProps {
 const statusColors: Record<string, string> = {
   ACTIVE: 'bg-green-100 text-green-700',
   INACTIVE: 'bg-gray-100 text-gray-700',
+  PENDING: 'bg-yellow-100 text-yellow-700',
   SUSPENDED: 'bg-red-100 text-red-700',
 }
 
@@ -63,6 +64,11 @@ export function RetailersTable({ retailers }: RetailersTableProps) {
   const router = useRouter()
   const [deleteId, setDeleteId] = useState<string | null>(null)
   const [isDeleting, setIsDeleting] = useState(false)
+  const [suspendId, setSuspendId] = useState<string | null>(null)
+  const [isSuspending, setIsSuspending] = useState(false)
+  const [isChangingStatus, setIsChangingStatus] = useState<string | null>(null)
+  const [generatingInvitationId, setGeneratingInvitationId] = useState<string | null>(null)
+  const [isGeneratingInvitation, setIsGeneratingInvitation] = useState(false)
 
   const handleDelete = async () => {
     if (!deleteId) return
@@ -84,6 +90,29 @@ export function RetailersTable({ retailers }: RetailersTableProps) {
     }
   }
 
+  const handleStatusChange = async (id: string, action: 'suspend' | 'unsuspend') => {
+    setIsChangingStatus(id)
+    try {
+      const res = await fetch(`/api/admin/retailers/${id}/suspend`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action }),
+      })
+
+      if (res.ok) {
+        router.refresh()
+      } else {
+        alert(`Failed to ${action} retailer`)
+      }
+    } catch (error) {
+      console.error(`Failed to ${action} retailer:`, error)
+      alert(`Failed to ${action} retailer`)
+    } finally {
+      setIsChangingStatus(null)
+      if (action === 'suspend') setSuspendId(null)
+    }
+  }
+
   const handleResendInvitation = async (retailerId: string) => {
     try {
       await fetch(`/api/admin/retailers/${retailerId}/resend-invitation`, {
@@ -92,6 +121,31 @@ export function RetailersTable({ retailers }: RetailersTableProps) {
       alert('Invitation resent successfully')
     } catch (error) {
       alert('Failed to resend invitation')
+    }
+  }
+
+  const handleGenerateInvitation = async (retailerId: string) => {
+    setGeneratingInvitationId(retailerId)
+    setIsGeneratingInvitation(true)
+    try {
+      const res = await fetch(`/api/admin/retailers/${retailerId}/generate-invitation`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+      })
+
+      if (res.ok) {
+        const data = await res.json()
+        alert(`Invitation generated successfully.\n\nInvitation URL: ${data.invitationUrl}\n\nExpires: ${new Date(data.expiresAt).toLocaleString()}`)
+        router.refresh()
+      } else {
+        alert('Failed to generate invitation')
+      }
+    } catch (error) {
+      console.error('Failed to generate invitation:', error)
+      alert('Failed to generate invitation')
+    } finally {
+      setIsGeneratingInvitation(false)
+      setGeneratingInvitationId(null)
     }
   }
 
@@ -192,20 +246,50 @@ export function RetailersTable({ retailers }: RetailersTableProps) {
                         </DropdownMenuItem>
                       </Link>
 
-                      <Link href={`/admin/retailers/${retailer.id}/edit`}>
-                        <DropdownMenuItem>
-                          <Edit className="mr-2 h-4 w-4" />
-                          Edit
-                        </DropdownMenuItem>
-                      </Link>
+                      {/* Status-based actions */}
+                      {retailer.status === 'PENDING' || retailer.status === 'INACTIVE' ? (
+                        <>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem
+                            onClick={() => handleGenerateInvitation(retailer.id)}
+                            disabled={generatingInvitationId === retailer.id}
+                            className="text-blue-600"
+                          >
+                            <Send className="mr-2 h-4 w-4" />
+                            {generatingInvitationId === retailer.id ? 'Generating...' : 'Generate Invitation Code'}
+                          </DropdownMenuItem>
+                        </>
+                      ) : null}
 
-                      <DropdownMenuItem onClick={() => handleResendInvitation(retailer.id)}>
-                        <Mail className="mr-2 h-4 w-4" />
-                        Resend Invitation
-                      </DropdownMenuItem>
+                      {retailer.status === 'ACTIVE' ? (
+                        <>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem
+                            onClick={() => setSuspendId(retailer.id)}
+                            disabled={isChangingStatus === retailer.id}
+                            className="text-orange-600"
+                          >
+                            <Ban className="mr-2 h-4 w-4" />
+                            Suspend
+                          </DropdownMenuItem>
+                        </>
+                      ) : null}
+
+                      {retailer.status === 'SUSPENDED' ? (
+                        <>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem
+                            onClick={() => handleStatusChange(retailer.id, 'unsuspend')}
+                            disabled={isChangingStatus === retailer.id}
+                            className="text-green-600"
+                          >
+                            <CheckCircle className="mr-2 h-4 w-4" />
+                            Revoke Suspension
+                          </DropdownMenuItem>
+                        </>
+                      ) : null}
 
                       <DropdownMenuSeparator />
-
                       <DropdownMenuItem
                         onClick={() => setDeleteId(retailer.id)}
                         className="text-red-600"
@@ -222,13 +306,35 @@ export function RetailersTable({ retailers }: RetailersTableProps) {
         </Table>
       </div>
 
+      <AlertDialog open={!!suspendId} onOpenChange={() => setSuspendId(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Suspend Retailer?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will deactivate the retailer account. All data will be preserved
+              but the retailer will no longer be able to access the system until you revoke the suspension.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => suspendId && handleStatusChange(suspendId, 'suspend')}
+              disabled={isChangingStatus !== null}
+              className="bg-orange-600 hover:bg-orange-700"
+            >
+              {isChangingStatus === suspendId ? 'Suspending...' : 'Suspend'}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
       <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-            <AlertDialogDescription>
-              This will deactivate the retailer account. All data will be preserved
-              but the retailer will no longer be able to access the system.
+            <AlertDialogTitle>Warning: Permanently Delete Retailer?</AlertDialogTitle>
+            <AlertDialogDescription className="text-red-600 font-medium">
+              You are about to permanently delete this retailer and ALL of their associated data (quotes, orders, users, etc.) from the database.
+              This action cannot be undone. A new user will be able to register with this email address afterward.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -238,7 +344,7 @@ export function RetailersTable({ retailers }: RetailersTableProps) {
               disabled={isDeleting}
               className="bg-red-600 hover:bg-red-700"
             >
-              {isDeleting ? 'Deleting...' : 'Delete'}
+              {isDeleting ? 'Deleting...' : 'Permanently Delete'}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

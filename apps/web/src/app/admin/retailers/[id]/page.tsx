@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
-import { ArrowLeft, Mail, Phone, Calendar, Store, Edit, Trash2, Copy, Send, Activity, Settings2 } from 'lucide-react'
+import { ArrowLeft, Mail, Phone, Calendar, Store, Edit, Trash2, Copy, Send, Activity, Settings2, CheckCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Switch } from '@/components/ui/switch'
@@ -52,14 +52,21 @@ export default function RetailerDetailsPage() {
     }, [params.id, filterRange])
 
     const handleSuspend = async () => {
-        if (!confirm('Are you sure you want to suspend this retailer completely?')) return;
+        const action = retailer.status === 'SUSPENDED' ? 'revoke suspension' : 'suspend';
+        if (!confirm(`Are you sure you want to ${action} this retailer?`)) return;
         try {
-            const res = await fetch(`/api/retailers/${retailer.id}`, {
-                method: 'DELETE'
+            const res = await fetch(`/api/admin/retailers/${retailer.id}/suspend`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    action: retailer.status === 'SUSPENDED' ? 'unsuspend' : 'suspend'
+                })
             });
             if (res.ok) {
-                toast({ title: 'Retailer Suspended' });
+                toast({ title: `Retailer ${action} successful` });
                 fetchRetailerContent();
+            } else {
+                toast({ title: 'Error', description: 'Failed to update retailer status', variant: 'destructive' });
             }
         } catch (e: any) {
             toast({ title: 'Error Details', description: e.message, variant: 'destructive' })
@@ -114,7 +121,10 @@ export default function RetailerDetailsPage() {
                         <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
                             {retailer.businessName}
                             <Badge variant="secondary" className={
-                                retailer.status === 'ACTIVE' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+                                retailer.status === 'ACTIVE' ? 'bg-green-100 text-green-700' :
+                                retailer.status === 'PENDING' ? 'bg-yellow-100 text-yellow-700' :
+                                retailer.status === 'SUSPENDED' ? 'bg-red-100 text-red-700' :
+                                'bg-gray-100 text-gray-700'
                             }>
                                 {retailer.status}
                             </Badge>
@@ -137,9 +147,15 @@ export default function RetailerDetailsPage() {
                         </div>
                     )}
 
-                    <Button variant="destructive" className="bg-red-50 text-red-600 hover:bg-red-100 border border-red-200" onClick={handleSuspend}>
-                        <Trash2 className="w-4 h-4 mr-2" /> Suspend
-                    </Button>
+                    {retailer.status === 'SUSPENDED' ? (
+                        <Button variant="outline" className="text-green-600 hover:bg-green-50 border border-green-200" onClick={handleSuspend}>
+                            <CheckCircle className="w-4 h-4 mr-2" /> Revoke Suspension
+                        </Button>
+                    ) : (
+                        <Button variant="destructive" className="bg-red-50 text-red-600 hover:bg-red-100 border border-red-200" onClick={handleSuspend}>
+                            <Trash2 className="w-4 h-4 mr-2" /> Suspend
+                        </Button>
+                    )}
                 </div>
             </div>
 

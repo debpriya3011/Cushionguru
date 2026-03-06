@@ -32,18 +32,24 @@ export async function POST(req: NextRequest) {
         // Hash the new permanently chosen password
         const hashedPassword = await hash(password, 10)
 
-        // Update user to active state
-        await prisma.user.update({
-            where: { id: user.id },
-            data: {
-                firstName,
-                lastName,
-                password: hashedPassword,
-                status: 'ACTIVE',
-                invitationToken: null,
-                invitationExpires: null
-            }
-        })
+        // Update user to active state and retailer to active
+        await prisma.$transaction([
+            prisma.user.update({
+                where: { id: user.id },
+                data: {
+                    firstName,
+                    lastName,
+                    password: hashedPassword,
+                    status: 'ACTIVE',
+                    invitationToken: null,
+                    invitationExpires: null
+                }
+            }),
+            prisma.retailer.update({
+                where: { id: user.retailerId! },
+                data: { status: 'ACTIVE' }
+            })
+        ])
 
         return NextResponse.json({ success: true })
     } catch (error) {
