@@ -202,8 +202,9 @@ export async function generateQuotePDF(
   if (pref !== 'NONE' && (customizationOverride?.pdfPreference === 'ALWAYS' || retailer.pdfPreference === 'ALWAYS' || pref === 'ALWAYS')) {
     dynamicFees += 10;
   }
-  const includedFabricLabel = customizationOverride?.labelPreference || retailer.labelPreference;
-  if (includedFabricLabel === 'ALWAYS') {
+  // Use the quote-level snapshotted labelPreference (ALWAYS or PER_ORDER = fee applies)
+  const quoteLabelPref = customizationOverride?.labelPreference || retailer.labelPreference;
+  if (quoteLabelPref === 'ALWAYS' || quoteLabelPref === 'PER_ORDER') {
     const qty = quote.items?.reduce((acc: number, item: any) => acc + item.quantity, 0) || 0;
     dynamicFees += (8 * qty);
   }
@@ -470,8 +471,8 @@ export async function generateOrderPDF(
   if (pref !== 'NONE' && (customizationOverride?.pdfPreference === 'ALWAYS' || retailer.pdfPreference === 'ALWAYS' || pref === 'ALWAYS')) {
     dynamicFeesOrder += 10;
   }
-  const includedFabricLabelOrder = customizationOverride?.labelPreference || retailer.labelPreference;
-  if (includedFabricLabelOrder === 'ALWAYS') {
+  const orderLabelPref = customizationOverride?.labelPreference || retailer.labelPreference;
+  if (orderLabelPref === 'ALWAYS' || orderLabelPref === 'PER_ORDER') {
     const qty = order.items?.reduce((acc: number, item: any) => acc + item.quantity, 0) || 0;
     dynamicFeesOrder += (8 * qty);
   }

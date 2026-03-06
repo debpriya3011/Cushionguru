@@ -56,7 +56,7 @@ export async function GET(
         const zip = new JSZip()
 
         // Add label image
-        let imageBuffer: Buffer
+        let imageBytes: Uint8Array
         let imageExt = 'jpg'
 
         if (retailer.labelFileUrl.startsWith('data:')) {
@@ -66,7 +66,10 @@ export async function GET(
                 return NextResponse.json({ error: 'Invalid label image format' }, { status: 400 })
             }
             imageExt = matches[1] === 'jpeg' ? 'jpg' : matches[1]
-            imageBuffer = Buffer.from(matches[2], 'base64')
+            const raw = atob(matches[2])
+            const arr = new Uint8Array(raw.length)
+            for (let i = 0; i < raw.length; i++) arr[i] = raw.charCodeAt(i)
+            imageBytes = arr
         } else {
             // Remote URL — fetch it
             const imgRes = await fetch(retailer.labelFileUrl)
@@ -76,10 +79,10 @@ export async function GET(
             const contentType = imgRes.headers.get('content-type') || ''
             if (contentType.includes('png')) imageExt = 'png'
             else if (contentType.includes('webp')) imageExt = 'webp'
-            imageBuffer = Buffer.from(await imgRes.arrayBuffer())
+            imageBytes = new Uint8Array(await imgRes.arrayBuffer())
         }
 
-        zip.file(`${quote.quoteNumber}-label.${imageExt}`, imageBuffer)
+        zip.file(`${quote.quoteNumber}-label.${imageExt}`, imageBytes)
 
         // Add notepad (txt) with label title and quote info
         const notepadContent = [
@@ -99,9 +102,9 @@ export async function GET(
 
         zip.file(`${quote.quoteNumber}-label-info.txt`, notepadContent)
 
-        const zipBuffer = await zip.generateAsync({ type: 'nodebuffer' })
+        const zipData = await zip.generateAsync({ type: 'uint8array' })
 
-        return new NextResponse(zipBuffer, {
+        return new NextResponse(zipData, {
             headers: {
                 'Content-Type': 'application/zip',
                 'Content-Disposition': `attachment; filename="${quote.quoteNumber}-label-pack.zip"`,

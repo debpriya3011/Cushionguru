@@ -25,37 +25,37 @@ enum UserStatus {
 }
 
 model User {
-  id            String     @id @default(cuid())
-  email         String     @unique
-  password      String     // Hashed with bcrypt
-  role          UserRole
-  status        UserStatus @default(PENDING)
-  
+  id       String     @id @default(cuid())
+  email    String     @unique
+  password String // Hashed with bcrypt
+  role     UserRole
+  status   UserStatus @default(PENDING)
+
   // Profile
-  firstName     String?
-  lastName      String?
-  phone         String?
-  
+  firstName String?
+  lastName  String?
+  phone     String?
+
   // Retailer-specific (null for admin)
-  retailerId    String?    @unique
-  retailer      Retailer?  @relation(fields: [retailerId], references: [id])
-  
+  retailerId String?   @unique
+  retailer   Retailer? @relation(fields: [retailerId], references: [id])
+
   // Invitation system
   invitationToken   String?   @unique
   invitationExpires DateTime?
   invitedById       String?
   invitedBy         User?     @relation("UserInvitations", fields: [invitedById], references: [id])
   invitationsSent   User[]    @relation("UserInvitations")
-  
+
   // Notifications
-  notifications     Notification[]
+  notifications Notification[]
 
   // Timestamps
-  lastLoginAt   DateTime?
-  createdAt     DateTime   @default(now())
-  updatedAt     DateTime   @updatedAt
-  deletedAt     DateTime?  // Soft delete
-  
+  lastLoginAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime? // Soft delete
+
   @@index([email])
   @@index([role])
   @@index([retailerId])
@@ -89,52 +89,52 @@ enum MarkupType {
 }
 
 model Retailer {
-  id              String   @id @default(cuid())
-  businessName    String
-  contactName     String
-  email           String   @unique
-  phone           String?
-  
+  id           String  @id @default(cuid())
+  businessName String
+  contactName  String
+  email        String  @unique
+  phone        String?
+
   // Address stored as JSON
-  address         Json?    // { line1, line2, city, state, zip, country }
-  
+  address Json? // { line1, line2, city, state, zip, country }
+
   // Branding
-  logoUrl         String?
-  primaryColor    String?  @default("#3b82f6")
-  secondaryColor  String?  @default("#1e40af")
-  
+  logoUrl        String?
+  primaryColor   String? @default("#3b82f6")
+  secondaryColor String? @default("#1e40af")
+
   // Markup settings
-  markupType      MarkupType @default(PERCENTAGE)
-  markupValue     Decimal    @default(0) @db.Decimal(10, 2) // % or fixed amount
-  
+  markupType  MarkupType @default(PERCENTAGE)
+  markupValue Decimal    @default(0) @db.Decimal(10, 2) // % or fixed amount
+
   // Brand Settings
-  labelPreference     BrandPreference? @default(NONE)
-  labelTitle          String?
-  labelStyle          String?
-  labelPlacement      String?
-  labelFileUrl        String?
-  labelCost           Decimal?   @default(8.00) @db.Decimal(10, 2)
-  
-  pdfPreference       BrandPreference? @default(NONE)
-  pdfCustomization    Json?
-  pdfCost             Decimal?   @default(10.00) @db.Decimal(10, 2)
-  
-  shippingPreference  ShippingPreference? @default(SHIP_TO_RETAILER)
-  
+  labelPreference BrandPreference? @default(NONE)
+  labelTitle      String?
+  labelStyle      String?
+  labelPlacement  String?
+  labelFileUrl    String?
+  labelCost       Decimal?         @default(8.00) @db.Decimal(10, 2)
+
+  pdfPreference    BrandPreference? @default(NONE)
+  pdfCustomization Json?
+  pdfCost          Decimal?         @default(10.00) @db.Decimal(10, 2)
+
+  shippingPreference ShippingPreference? @default(SHIP_TO_RETAILER)
+
   // Status
-  status          RetailerStatus @default(ACTIVE)
-  
+  status RetailerStatus @default(ACTIVE)
+
   // Relations
-  user            User?
+  user                  User?
   calculatorAssignments RetailerCalculatorAssignment[]
-  quotes          Quote[]
-  orders          Order[]
-  
+  quotes                Quote[]
+  orders                Order[]
+
   // Timestamps
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-  deletedAt       DateTime? // Soft delete
-  
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime? // Soft delete
+
   @@index([status])
   @@index([email])
   @@map("retailers")
@@ -149,62 +149,60 @@ enum CalculatorStatus {
 }
 
 model Calculator {
-  id          String   @id @default(cuid())
+  id          String  @id @default(cuid())
   name        String
   description String?
-  
+
   // Configuration stored as JSON
-  config      Json     // CalculatorConfig type
-  
+  config Json // CalculatorConfig type
+
   // Status
-  status      CalculatorStatus @default(DRAFT)
-  version     Int              @default(1)
-  isMaster    Boolean          @default(false)
-  parentId    String?          // For versioning
-
-
+  status   CalculatorStatus @default(DRAFT)
+  version  Int              @default(1)
+  isMaster Boolean          @default(false)
+  parentId String? // For versioning
 
   fabricBrands FabricBrand[]
-  
+
   // Relations
   assignments RetailerCalculatorAssignment[]
   createdById String
-  
+
   // Timestamps
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  deletedAt   DateTime? // Soft delete
-  
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime? // Soft delete
+
   @@index([status])
   @@index([isMaster])
   @@map("calculators")
 }
 
 enum AssignmentType {
-  SYNCED    // Updates propagate from master
-  DETACHED  // Independent copy
+  SYNCED // Updates propagate from master
+  DETACHED // Independent copy
 }
 
 model RetailerCalculatorAssignment {
-  id            String   @id @default(cuid())
-  
+  id String @id @default(cuid())
+
   // Relations
-  retailerId    String
-  retailer      Retailer @relation(fields: [retailerId], references: [id], onDelete: Cascade)
-  
-  calculatorId  String
-  calculator    Calculator @relation(fields: [calculatorId], references: [id], onDelete: Cascade)
-  
+  retailerId String
+  retailer   Retailer @relation(fields: [retailerId], references: [id], onDelete: Cascade)
+
+  calculatorId String
+  calculator   Calculator @relation(fields: [calculatorId], references: [id], onDelete: Cascade)
+
   // Assignment type
   assignmentType AssignmentType @default(SYNCED)
-  
+
   // Custom pricing (if DETACHED)
-  customPricing Json?    // Override base prices
-  
+  customPricing Json? // Override base prices
+
   // Timestamps
-  assignedAt    DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  
+  assignedAt DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
   @@unique([retailerId, calculatorId])
   @@index([retailerId])
   @@index([calculatorId])
@@ -214,51 +212,51 @@ model RetailerCalculatorAssignment {
 // ==================== FABRIC MANAGEMENT ====================
 
 enum FabricPriceTier {
-  TIER_1  // $21.89375
-  TIER_2  // $24.0125
-  TIER_3  // $25.425
-  TIER_4  // $33.90
-  TIER_5  // $36.725
-  TIER_6  // $73.45
+  TIER_1 // $21.89375
+  TIER_2 // $24.0125
+  TIER_3 // $25.425
+  TIER_4 // $33.90
+  TIER_5 // $36.725
+  TIER_6 // $73.45
 }
 
 model FabricBrand {
-  id            String    @id @default(cuid())
-  name          String
-  description   String?
-  
+  id          String  @id @default(cuid())
+  name        String
+  description String?
+
   // Relations
-  calculatorId  String
-  calculator    Calculator @relation(fields: [calculatorId], references: [id], onDelete: Cascade)
-  fabrics       Fabric[]
-  
+  calculatorId String
+  calculator   Calculator @relation(fields: [calculatorId], references: [id], onDelete: Cascade)
+  fabrics      Fabric[]
+
   // Timestamps
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   @@index([calculatorId])
   @@map("fabric_brands")
 }
 
 model Fabric {
-  id            String     @id @default(cuid())
-  name          String
-  code          String     // Internal code like "SOLID_3737_ARDOISE"
-  description   String?
-  imageUrl      String
-  
+  id          String  @id @default(cuid())
+  name        String
+  code        String // Internal code like "SOLID_3737_ARDOISE"
+  description String?
+  imageUrl    String
+
   // Pricing
-  price         Decimal    @default(0) @db.Decimal(10, 2)
-  priceTier     FabricPriceTier @default(TIER_1)
-  
+  price     Decimal         @default(0) @db.Decimal(10, 2)
+  priceTier FabricPriceTier @default(TIER_1)
+
   // Relations
-  brandId       String
-  brand         FabricBrand @relation(fields: [brandId], references: [id], onDelete: Cascade)
-  
+  brandId String
+  brand   FabricBrand @relation(fields: [brandId], references: [id], onDelete: Cascade)
+
   // Timestamps
-  createdAt     DateTime   @default(now())
-  updatedAt     DateTime   @updatedAt
-  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   @@index([brandId])
   @@index([code])
   @@map("fabrics")
@@ -276,63 +274,64 @@ enum QuoteStatus {
 
 enum PaymentStatus {
   PENDING
-  UNPAID   // kept for backwards compatibility with existing DB rows
+  UNPAID // kept for backwards compatibility with existing DB rows
   SUCCESS
   FAILED
   REFUNDED
 }
 
 model Quote {
-  id              String      @id @default(cuid())
-  quoteNumber     String      @unique // Generated: QUO-2024-XXXX
-  
+  id          String @id @default(cuid())
+  quoteNumber String @unique // Generated: QUO-2024-XXXX
+
   // Relations
-  retailerId      String
-  retailer        Retailer    @relation(fields: [retailerId], references: [id])
-  
+  retailerId String
+  retailer   Retailer @relation(fields: [retailerId], references: [id])
+
   // Customer info
   customerName    String
   customerEmail   String
   customerPhone   String?
-  customerAddress Json?       // { line1, line2, city, state, zip }
-  
-  // Preferences explicitly for this quote
-  labelPreference     BrandPreference?
-  pdfPreference       BrandPreference?
-  shippingPreference  ShippingPreference?
+  customerAddress Json? // { line1, line2, city, state, zip }
 
-  isCustomized            Boolean  @default(false)
+  // Preferences explicitly for this quote (snapshotted at creation)
+  labelPreference    BrandPreference?
+  labelFileUrl       String?  // Snapshot of retailer label image at quote creation
+  labelTitle         String?  // Snapshot of retailer label title at quote creation
+  pdfPreference      BrandPreference?
+  shippingPreference ShippingPreference?
+
+  isCustomized        Boolean   @default(false)
   customizationSentAt DateTime?
   pdfCustomization    Json?
 
-  
   // Quote data
-  items           QuoteItem[]
-  
+  items QuoteItem[]
+
   // Pricing
-  subtotal        Decimal     @db.Decimal(10, 2)
-  markupAmount    Decimal     @db.Decimal(10, 2)
-  total           Decimal     @db.Decimal(10, 2)
-  
+  subtotal     Decimal @db.Decimal(10, 2)
+  markupAmount Decimal @db.Decimal(10, 2)
+  total        Decimal @db.Decimal(10, 2)
+
   // Status
-  status          QuoteStatus @default(DRAFT)
-  
+  status QuoteStatus @default(DRAFT)
+
   // PDF
-  pdfUrl          String?
-  
+  pdfUrl String?
+
   // Expiration
-  expiresAt       DateTime?
-  
+  expiresAt DateTime?
+
   // Timestamps
-  createdAt       DateTime    @default(now())
-  updatedAt       DateTime    @updatedAt
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
   convertedToOrderId String?  @unique
-  
+
   // Payment tracking
-  paymentStatus   PaymentStatus @default(PENDING)
+  paymentStatus         PaymentStatus @default(PENDING)
   stripePaymentIntentId String?
-  paymentDate     DateTime?
-  
+  paymentDate           DateTime?
+
   @@index([retailerId])
   @@index([status])
   @@index([createdAt])
@@ -341,51 +340,51 @@ model Quote {
 }
 
 model QuoteItem {
-  id              String   @id @default(cuid())
-  
+  id String @id @default(cuid())
+
   // Relations
-  quoteId         String
-  quote           Quote    @relation(fields: [quoteId], references: [id], onDelete: Cascade)
-  
+  quoteId String
+  quote   Quote  @relation(fields: [quoteId], references: [id], onDelete: Cascade)
+
   // Selections
-  productType     String
-  shape           String   // "Rectangle", "Round", etc.
-  dimensions      Json     // { length, width, thickness, diameter, ear, bottomWidth, topWidth }
-  foamType        String   // "High Density Foam", "Dry Fast Foam", "Fiber Fill", "Covers Only"
-  fabricId        String?
-  fabricCode      String   // Denormalized for history
-  fabricName      String?
-  zipperPosition  String   // "Long Side", "Short Side", "No Zipper"
-  piping          String   // "Piping", "No Piping"
-  ties            String   // "No ties", "2 Side", "4 Side", "4 Corner"
-  
+  productType    String
+  shape          String // "Rectangle", "Round", etc.
+  dimensions     Json // { length, width, thickness, diameter, ear, bottomWidth, topWidth }
+  foamType       String // "High Density Foam", "Dry Fast Foam", "Fiber Fill", "Covers Only"
+  fabricId       String?
+  fabricCode     String // Denormalized for history
+  fabricName     String?
+  zipperPosition String // "Long Side", "Short Side", "No Zipper"
+  piping         String // "Piping", "No Piping"
+  ties           String // "No ties", "2 Side", "4 Side", "4 Corner"
+
   // Calculated values
-  fabricMeters    Decimal  @db.Decimal(10, 4)
-  quantity        Int      @default(1)
-  
+  fabricMeters Decimal @db.Decimal(10, 4)
+  quantity     Int     @default(1)
+
   // Costs (base costs - hidden from retailer)
-  baseSewingCost      Decimal @db.Decimal(10, 2)
-  baseFiberfillCost   Decimal @db.Decimal(10, 2)
-  basePipingCost      Decimal @db.Decimal(10, 2)
-  baseTiesCost        Decimal @db.Decimal(10, 2)
-  baseFabricCost      Decimal @db.Decimal(10, 2)
-  baseSubtotal        Decimal @db.Decimal(10, 2)
-  
+  baseSewingCost    Decimal @db.Decimal(10, 2)
+  baseFiberfillCost Decimal @db.Decimal(10, 2)
+  basePipingCost    Decimal @db.Decimal(10, 2)
+  baseTiesCost      Decimal @db.Decimal(10, 2)
+  baseFabricCost    Decimal @db.Decimal(10, 2)
+  baseSubtotal      Decimal @db.Decimal(10, 2)
+
   // Final pricing (with markup)
-  unitPrice       Decimal  @db.Decimal(10, 2)
-  totalPrice      Decimal  @db.Decimal(10, 2)
-  
+  unitPrice  Decimal @db.Decimal(10, 2)
+  totalPrice Decimal @db.Decimal(10, 2)
+
   // Instructions
-  instructions    String?
-  attachmentUrls  String[]
-  
+  instructions   String?
+  attachmentUrls String[]
+
   // 3D Preview snapshot
-  preview3DUrl    String?
-  
+  preview3DUrl String?
+
   // Timestamps
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   @@index([quoteId])
   @@map("quote_items")
 }
@@ -419,50 +418,50 @@ enum Priority {
 }
 
 model Order {
-  id              String      @id @default(cuid())
-  orderNumber     String      @unique // ORD-2024-XXXX
-  
+  id          String @id @default(cuid())
+  orderNumber String @unique // ORD-2024-XXXX
+
   // Relations
-  retailerId      String
-  retailer        Retailer    @relation(fields: [retailerId], references: [id])
-  quoteId         String?     @unique
-  
+  retailerId String
+  retailer   Retailer @relation(fields: [retailerId], references: [id])
+  quoteId    String?  @unique
+
   // Customer info (denormalized from quote)
   customerName    String
   customerEmail   String
   customerPhone   String?
   customerAddress Json?
-  
+
   // Retailer preferences locked in at order
-  labelPreference     BrandPreference?
-  pdfPreference       BrandPreference?
-  shippingPreference  ShippingPreference?
-  
+  labelPreference    BrandPreference?
+  pdfPreference      BrandPreference?
+  shippingPreference ShippingPreference?
+
   // Order items
-  items           OrderItem[]
-  
+  items OrderItem[]
+
   // Pricing
-  subtotal        Decimal     @db.Decimal(10, 2)
-  markupAmount    Decimal     @db.Decimal(10, 2)
-  total           Decimal     @db.Decimal(10, 2)
-  
+  subtotal     Decimal @db.Decimal(10, 2)
+  markupAmount Decimal @db.Decimal(10, 2)
+  total        Decimal @db.Decimal(10, 2)
+
   // Status workflow
-  status          OrderStatus @default(PENDING)
-  priority        Priority    @default(NORMAL)
-  
+  status   OrderStatus @default(PENDING)
+  priority Priority    @default(NORMAL)
+
   // Production
   productionNotes String?
-  
+
   // Shipping
   shippingAddress Json?
   trackingNumber  String?
   shippedAt       DateTime?
-  
+
   // Timestamps
-  createdAt       DateTime    @default(now())
-  updatedAt       DateTime    @updatedAt
-  completedAt     DateTime?
-  
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  completedAt DateTime?
+
   @@index([retailerId])
   @@index([status])
   @@index([createdAt])
@@ -471,38 +470,38 @@ model Order {
 }
 
 model OrderItem {
-  id              String   @id @default(cuid())
-  
+  id String @id @default(cuid())
+
   // Relations
-  orderId         String
-  order           Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  
+  orderId String
+  order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
   // Copied from QuoteItem
-  productType     String
-  shape           String
-  dimensions      Json
-  foamType        String
-  fabricCode      String
-  zipperPosition  String
-  piping          String
-  ties            String
-  fabricMeters    Decimal  @db.Decimal(10, 4)
-  quantity        Int
-  unitPrice       Decimal  @db.Decimal(10, 2)
-  totalPrice      Decimal  @db.Decimal(10, 2)
-  instructions    String?
-  attachmentUrls  String[]
-  
+  productType    String
+  shape          String
+  dimensions     Json
+  foamType       String
+  fabricCode     String
+  zipperPosition String
+  piping         String
+  ties           String
+  fabricMeters   Decimal  @db.Decimal(10, 4)
+  quantity       Int
+  unitPrice      Decimal  @db.Decimal(10, 2)
+  totalPrice     Decimal  @db.Decimal(10, 2)
+  instructions   String?
+  attachmentUrls String[]
+
   // Production status
   productionStatus ProductionStatus @default(PENDING)
   productionNotes  String?
   assignedTo       String?
-  
+
   // Timestamps
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-  completedAt     DateTime?
-  
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  completedAt DateTime?
+
   @@index([orderId])
   @@index([productionStatus])
   @@map("order_items")
@@ -523,27 +522,27 @@ enum AssetCategory {
 }
 
 model Asset {
-  id          String     @id @default(cuid())
-  filename    String
+  id           String @id @default(cuid())
+  filename     String
   originalName String
-  mimeType    String
-  size        Int        // bytes
-  url         String
-  
+  mimeType     String
+  size         Int // bytes
+  url          String
+
   // Categorization
-  category    AssetCategory
-  tags        String[]
-  
+  category AssetCategory
+  tags     String[]
+
   // Metadata
-  metadata    Json?      // { width, height, etc. }
-  
+  metadata Json? // { width, height, etc. }
+
   // Uploader
   uploadedById String
-  
+
   // Timestamps
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
-  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   @@index([category])
   @@index([tags])
   @@map("assets")
@@ -552,17 +551,17 @@ model Asset {
 // ==================== AUDIT LOG ====================
 
 model AuditLog {
-  id          String   @id @default(cuid())
-  userId      String?
-  action      String   // "QUOTE_CREATED", "ORDER_STATUS_CHANGED", etc.
-  entityType  String   // "Quote", "Order", "Retailer"
-  entityId    String?
-  oldValues   Json?
-  newValues   Json?
-  ipAddress   String?
-  userAgent   String?
-  createdAt   DateTime @default(now())
-  
+  id         String   @id @default(cuid())
+  userId     String?
+  action     String // "QUOTE_CREATED", "ORDER_STATUS_CHANGED", etc.
+  entityType String // "Quote", "Order", "Retailer"
+  entityId   String?
+  oldValues  Json?
+  newValues  Json?
+  ipAddress  String?
+  userAgent  String?
+  createdAt  DateTime @default(now())
+
   @@index([userId])
   @@index([action])
   @@index([entityType, entityId])
@@ -573,16 +572,16 @@ model AuditLog {
 // ==================== NOTIFICATIONS ====================
 
 model Notification {
-  id          String   @id @default(cuid())
-  userId      String
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  title       String
-  message     String
-  link        String?
-  isRead      Boolean  @default(false)
-  
-  createdAt   DateTime @default(now())
-  
+  id      String  @id @default(cuid())
+  userId  String
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title   String
+  message String
+  link    String?
+  isRead  Boolean @default(false)
+
+  createdAt DateTime @default(now())
+
   @@index([userId])
   @@index([isRead])
   @@map("notifications")
@@ -591,11 +590,11 @@ model Notification {
 // ==================== SYSTEM SETTINGS ====================
 
 model SystemSetting {
-  id          String   @id @default(cuid())
-  key         String   @unique
-  value       Json     // E.g., { autoApproveQuotes: true }
-  
-  updatedAt   DateTime @updatedAt
-  
+  id    String @id @default(cuid())
+  key   String @unique
+  value Json // E.g., { autoApproveQuotes: true }
+
+  updatedAt DateTime @updatedAt
+
   @@map("system_settings")
 }
