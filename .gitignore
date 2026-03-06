@@ -41,3 +41,7 @@ apps/web/public/mock-uploads/
 # Build outputs
 dist
 coverage
+
+
+apps/api/tsconfig.tsbuildinfo
+*.tsbuildinfo
