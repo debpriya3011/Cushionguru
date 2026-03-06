@@ -104,6 +104,24 @@ export function Calculator({
   const [customerData, setCustomerData] = useState<any>(null);
   const [isFloatingOpen, setIsFloatingOpen] = useState(true);
   const [preferences, setPreferences] = useState<any>(null);
+  const [showBottomBar, setShowBottomBar] = useState(true);
+  const lastScrollY = useRef(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      if (currentScrollY > lastScrollY.current && currentScrollY > 100) {
+        // Scrolling down
+        setShowBottomBar(false);
+      } else {
+        // Scrolling up
+        setShowBottomBar(true);
+      }
+      lastScrollY.current = currentScrollY;
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   // Fetch calculator config for retailer
   useEffect(() => {
@@ -249,15 +267,31 @@ export function Calculator({
               ranges={config.dimensionRanges}
               onChange={updateDimensions}
             />
-            <div className="mt-4 pt-4 border-t border-gray-100">
-              <label className="block text-sm font-medium text-gray-700 mb-2">Quantity</label>
-              <input
-                type="number"
-                min="1"
-                className="w-full md:w-32 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-gray-900 bg-white"
-                value={selections.quantity}
-                onChange={(e) => updateSelection('quantity', parseInt(e.target.value) || 1)}
-              />
+            <div className="mt-6 pt-6 border-t border-gray-50 flex items-center justify-between sm:justify-start gap-4">
+              <label className="block text-sm font-medium text-gray-700">Quantity</label>
+              <div className="flex items-center border border-gray-300 rounded-lg bg-white overflow-hidden shrink-0 shadow-sm">
+                <button
+                  type="button"
+                  className="px-4 py-3 bg-gray-50 hover:bg-gray-100 text-gray-500 hover:text-gray-700 border-r border-gray-200 transition-colors"
+                  onClick={() => updateSelection('quantity', Math.max(1, selections.quantity - 1))}
+                >
+                  <span className="text-xl leading-none font-medium">&minus;</span>
+                </button>
+                <input
+                  type="number"
+                  min="1"
+                  className="w-16 p-3 text-center focus:outline-none text-gray-900 bg-transparent font-medium"
+                  value={selections.quantity}
+                  onChange={(e) => updateSelection('quantity', Math.max(1, parseInt(e.target.value) || 1))}
+                />
+                <button
+                  type="button"
+                  className="px-4 py-3 bg-gray-50 hover:bg-gray-100 text-gray-500 hover:text-gray-700 border-l border-gray-200 transition-colors"
+                  onClick={() => updateSelection('quantity', selections.quantity + 1)}
+                >
+                  <span className="text-xl leading-none font-medium">&#43;</span>
+                </button>
+              </div>
             </div>
           </CalculatorSection>
 
@@ -344,7 +378,7 @@ export function Calculator({
 
         {/* Floating Price & 3D Box (If toggled by admin) */}
         {(features?.show3D || features?.showPrices) && (
-          <div className="hidden lg:block w-[350px] shrink-0 sticky top-24 self-start">
+          <div className="w-full lg:w-[350px] lg:shrink-0 lg:sticky lg:top-24 lg:self-start mt-8 lg:mt-0">
             <div className="flex flex-col gap-4">
               <div className="flex justify-end">
                 <button
@@ -382,8 +416,8 @@ export function Calculator({
 
       {/* Original Bottom Nav for Submit (Only if onSubmit provided) */}
       {onSubmit && (
-        <div className="fixed bottom-0 left-0 right-0 bg-white border-t p-3 sm:p-4 z-40 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]">
-          <div className="max-w-4xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-2 sm:gap-0">
+        <div className={`fixed bottom-0 left-0 right-0 bg-white border-t p-3 lg:p-4 z-40 shadow-[0_-4px_10px_-1px_rgba(0,0,0,0.1)] transition-transform duration-300 ease-in-out ${showBottomBar ? 'translate-y-0' : 'translate-y-[120%]'}`}>
+          <div className="max-w-4xl mx-auto flex flex-col xs:flex-row justify-between items-center gap-3 xs:gap-0">
             <div>
               {calculations && (
                 <p className="text-lg font-semibold">

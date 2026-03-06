@@ -32,6 +32,13 @@ export async function DELETE(
             }
         }
 
+        // If it's a fabric image, delete corresponding Fabric
+        if (asset.category === 'FABRIC_IMAGE') {
+            await prisma.fabric.deleteMany({
+                where: { imageUrl: asset.url }
+            })
+        }
+
         await prisma.asset.delete({
             where: { id: params.id }
         })
