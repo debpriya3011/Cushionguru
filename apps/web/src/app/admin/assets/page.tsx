@@ -174,7 +174,7 @@ export default function AssetsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Assets</h1>
           <p className="text-gray-600 mt-1">
@@ -276,24 +276,24 @@ export default function AssetsPage() {
             </DialogContent>
           </Dialog>
         </div>
-
-
       </div>
 
       <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0">
-          <Tabs value={selectedCategory} onValueChange={setSelectedCategory}>
-            <TabsList>
-              {categories.map(cat => (
-                <TabsTrigger key={cat.id} value={cat.id}>
-                  {cat.name}
-                </TabsTrigger>
-              ))}
-            </TabsList>
-          </Tabs>
+        <CardHeader className="flex flex-col lg:flex-row items-start lg:items-center justify-between space-y-4 lg:space-y-0 gap-4">
+          <div className="w-full overflow-x-auto pb-2 -mb-2 hide-scrollbar">
+            <Tabs value={selectedCategory} onValueChange={setSelectedCategory} className="w-full">
+              <TabsList className="flex w-max min-w-full lg:min-w-0 justify-start h-10 p-1">
+                {categories.map(cat => (
+                  <TabsTrigger key={cat.id} value={cat.id} className="whitespace-nowrap px-3 text-sm">
+                    {cat.name}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+            </Tabs>
+          </div>
 
-          <div className="flex items-center gap-4">
-            <div className="relative w-64">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full lg:w-auto">
+            <div className="relative w-full sm:w-64">
               <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
               <Input
                 placeholder="Search assets..."
@@ -303,7 +303,7 @@ export default function AssetsPage() {
               />
             </div>
 
-            <div className="flex border rounded-md">
+            <div className="flex border rounded-md self-end sm:self-auto shrink-0">
               <Button
                 variant={viewMode === 'grid' ? 'secondary' : 'ghost'}
                 size="icon"
