@@ -31,7 +31,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
-import { MoreHorizontal, Edit, Trash2, Mail, Eye, Copy, Ban, CheckCircle, Send } from 'lucide-react'
+import { MoreHorizontal, Edit, Trash2, Mail, Eye, Copy, Ban, CheckCircle } from 'lucide-react'
 
 interface Retailer {
   id: string
@@ -56,7 +56,6 @@ interface RetailersTableProps {
 const statusColors: Record<string, string> = {
   ACTIVE: 'bg-green-100 text-green-700',
   INACTIVE: 'bg-gray-100 text-gray-700',
-  PENDING: 'bg-yellow-100 text-yellow-700',
   SUSPENDED: 'bg-red-100 text-red-700',
 }
 
@@ -67,8 +66,6 @@ export function RetailersTable({ retailers }: RetailersTableProps) {
   const [suspendId, setSuspendId] = useState<string | null>(null)
   const [isSuspending, setIsSuspending] = useState(false)
   const [isChangingStatus, setIsChangingStatus] = useState<string | null>(null)
-  const [generatingInvitationId, setGeneratingInvitationId] = useState<string | null>(null)
-  const [isGeneratingInvitation, setIsGeneratingInvitation] = useState(false)
 
   const handleDelete = async () => {
     if (!deleteId) return
@@ -121,31 +118,6 @@ export function RetailersTable({ retailers }: RetailersTableProps) {
       alert('Invitation resent successfully')
     } catch (error) {
       alert('Failed to resend invitation')
-    }
-  }
-
-  const handleGenerateInvitation = async (retailerId: string) => {
-    setGeneratingInvitationId(retailerId)
-    setIsGeneratingInvitation(true)
-    try {
-      const res = await fetch(`/api/admin/retailers/${retailerId}/generate-invitation`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-      })
-
-      if (res.ok) {
-        const data = await res.json()
-        alert(`Invitation generated successfully.\n\nInvitation URL: ${data.invitationUrl}\n\nExpires: ${new Date(data.expiresAt).toLocaleString()}`)
-        router.refresh()
-      } else {
-        alert('Failed to generate invitation')
-      }
-    } catch (error) {
-      console.error('Failed to generate invitation:', error)
-      alert('Failed to generate invitation')
-    } finally {
-      setIsGeneratingInvitation(false)
-      setGeneratingInvitationId(null)
     }
   }
 
@@ -246,50 +218,40 @@ export function RetailersTable({ retailers }: RetailersTableProps) {
                         </DropdownMenuItem>
                       </Link>
 
-                      {/* Status-based actions */}
-                      {retailer.status === 'PENDING' || retailer.status === 'INACTIVE' ? (
-                        <>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem
-                            onClick={() => handleGenerateInvitation(retailer.id)}
-                            disabled={generatingInvitationId === retailer.id}
-                            className="text-blue-600"
-                          >
-                            <Send className="mr-2 h-4 w-4" />
-                            {generatingInvitationId === retailer.id ? 'Generating...' : 'Generate Invitation Code'}
-                          </DropdownMenuItem>
-                        </>
-                      ) : null}
+                      {/* <Link href={`/admin/retailers/${retailer.id}/edit`}>
+                        <DropdownMenuItem>
+                          <Edit className="mr-2 h-4 w-4" />
+                          Edit
+                        </DropdownMenuItem>
+                      </Link> */}
 
-                      {retailer.status === 'ACTIVE' ? (
-                        <>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem
-                            onClick={() => setSuspendId(retailer.id)}
-                            disabled={isChangingStatus === retailer.id}
-                            className="text-orange-600"
-                          >
-                            <Ban className="mr-2 h-4 w-4" />
-                            Suspend
-                          </DropdownMenuItem>
-                        </>
-                      ) : null}
-
-                      {retailer.status === 'SUSPENDED' ? (
-                        <>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem
-                            onClick={() => handleStatusChange(retailer.id, 'unsuspend')}
-                            disabled={isChangingStatus === retailer.id}
-                            className="text-green-600"
-                          >
-                            <CheckCircle className="mr-2 h-4 w-4" />
-                            Revoke Suspension
-                          </DropdownMenuItem>
-                        </>
-                      ) : null}
+                      {/* <DropdownMenuItem onClick={() => handleResendInvitation(retailer.id)}>
+                        <Mail className="mr-2 h-4 w-4" />
+                        Resend Invitation
+                      </DropdownMenuItem> */}
 
                       <DropdownMenuSeparator />
+
+                      {retailer.status === 'SUSPENDED' ? (
+                        <DropdownMenuItem
+                          onClick={() => handleStatusChange(retailer.id, 'unsuspend')}
+                          disabled={isChangingStatus === retailer.id}
+                          className="text-green-600"
+                        >
+                          <CheckCircle className="mr-2 h-4 w-4" />
+                          Revoke Suspend
+                        </DropdownMenuItem>
+                      ) : (
+                        <DropdownMenuItem
+                          onClick={() => setSuspendId(retailer.id)}
+                          disabled={isChangingStatus === retailer.id}
+                          className="text-orange-600"
+                        >
+                          <Ban className="mr-2 h-4 w-4" />
+                          Suspend
+                        </DropdownMenuItem>
+                      )}
+
                       <DropdownMenuItem
                         onClick={() => setDeleteId(retailer.id)}
                         className="text-red-600"
