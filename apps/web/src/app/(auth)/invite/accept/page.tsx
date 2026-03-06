@@ -16,7 +16,10 @@ function AcceptInvitationForm() {
   const searchParams = useSearchParams()
   const token = searchParams.get('token')
 
-  const [step, setStep] = useState<'verify' | 'form' | 'success'>('verify')
+  const [step, setStep] = useState<'input_token' | 'verify' | 'form' | 'success'>('verify')
+  const [tokenInput, setTokenInput] = useState('')
+  const [activeToken, setActiveToken] = useState<string | null>(null)
+
   const [invitationData, setInvitationData] = useState<any>(null)
   const [formData, setFormData] = useState({
     firstName: '',
@@ -29,35 +32,46 @@ function AcceptInvitationForm() {
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
 
-  // Verify token on mount
+  // Set active token from URL on mount
   useEffect(() => {
-    if (!token) {
-      setError('Invalid or missing invitation token')
+    if (token && !activeToken) {
+      setActiveToken(token)
+    } else if (!token && !activeToken) {
+      setStep('input_token')
       setLoading(false)
+    }
+  }, [token, activeToken])
+
+  // Verify token when activeToken changes
+  useEffect(() => {
+    if (!activeToken) {
       return
     }
 
     const verifyToken = async () => {
+      setLoading(true)
       try {
-        const res = await fetch(`/api/auth/verify-invitation?token=${token}`)
+        const res = await fetch(`/api/auth/verify-invitation?token=${activeToken}`)
         const data = await res.json()
 
         if (!res.ok) {
           setError(data.error || 'Invalid invitation token')
-          setStep('verify')
+          setStep('input_token')
         } else {
           setInvitationData(data)
           setStep('form')
+          setError('')
         }
       } catch (err) {
         setError('Failed to verify invitation')
+        setStep('input_token')
       } finally {
         setLoading(false)
       }
     }
 
     verifyToken()
-  }, [token])
+  }, [activeToken])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -80,7 +94,7 @@ function AcceptInvitationForm() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          token,
+          token: activeToken,
           firstName: formData.firstName,
           lastName: formData.lastName,
           password: formData.password,
@@ -102,10 +116,95 @@ function AcceptInvitationForm() {
     }
   }
 
+  const handleTokenSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!tokenInput.trim()) {
+      setError('Please enter an invitation token or URL')
+      return
+    }
+    setError('')
+
+    // Extract token if it's a URL
+    let extractedToken = tokenInput.trim()
+    try {
+      if (extractedToken.includes('http')) {
+        const url = new URL(extractedToken)
+        const urlToken = url.searchParams.get('token')
+        if (urlToken) {
+          extractedToken = urlToken
+        }
+      }
+    } catch (e) {
+      // Ignore URL parse error, use as is
+    }
+
+    setActiveToken(extractedToken)
+  }
+
   if (step === 'verify' && loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
+      </div>
+    )
+  }
+
+  if (step === 'input_token') {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100 p-4">
+        <div className="w-full max-w-md">
+          <div className="text-center mb-8">
+            <h1 className="text-3xl font-bold text-slate-900">Accept Invitation</h1>
+            <p className="text-slate-600 mt-2">Enter your invitation details to continue</p>
+          </div>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Invitation Details</CardTitle>
+              <CardDescription>
+                Please paste the invitation URL or token you received in your email.
+              </CardDescription>
+            </CardHeader>
+
+            <form onSubmit={handleTokenSubmit}>
+              <CardContent className="space-y-4">
+                {error && (
+                  <Alert variant="destructive">
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertDescription>{error}</AlertDescription>
+                  </Alert>
+                )}
+
+                <div className="space-y-2">
+                  <Label htmlFor="tokenInput">Invitation URL or Token</Label>
+                  <Input
+                    id="tokenInput"
+                    placeholder="https://.../invite/accept?token=... or abc123def456"
+                    value={tokenInput}
+                    onChange={(e) => setTokenInput(e.target.value)}
+                    required
+                  />
+                </div>
+              </CardContent>
+              <CardFooter>
+                <Button
+                  type="submit"
+                  className="w-full"
+                  disabled={loading}
+                >
+                  {loading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Verifying...
+                    </>
+                  ) : (
+                    'Continue'
+                  )}
+                </Button>
+              </CardFooter>
+            </form>
+          </Card>
+        </div>
       </div>
     )
   }
