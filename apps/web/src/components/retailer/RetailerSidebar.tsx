@@ -24,8 +24,8 @@ export function RetailerSidebar() {
   const pathname = usePathname()
 
   return (
-    <aside className="hidden md:block w-64 bg-white border-r h-[calc(100vh-4rem)] sticky top-16 overflow-y-auto">
-      <nav className="p-4 space-y-1">
+    <aside className="hidden md:block w-64 flex-shrink-0 bg-white border-r h-[calc(100vh-4rem)] sticky top-16 flex flex-col">
+      <nav className="p-4 space-y-1 flex-1 overflow-y-auto">
         {navigation.map((item) => {
           let isActive = pathname === item.href || pathname.startsWith(`${item.href}/`)
 
@@ -54,7 +54,7 @@ export function RetailerSidebar() {
         })}
       </nav>
 
-      <div className="absolute bottom-0 left-0 right-0 p-4 border-t">
+      <div className="p-4 border-t bg-white mt-auto">
         <Link
           href="/retailer/help"
           className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors"

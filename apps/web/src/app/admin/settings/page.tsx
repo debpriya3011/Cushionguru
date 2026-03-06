@@ -181,8 +181,8 @@ export default function AdminSettingsPage() {
             </div>
 
             <Tabs defaultValue="general" className="w-full">
-                <div className="overflow-x-auto pb-2 mb-6 hide-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0">
-                    <TabsList className="inline-flex min-w-full sm:min-w-0">
+                <div className="w-full overflow-x-auto pb-2 mb-6 hide-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0">
+                    <TabsList className="flex w-max min-w-full justify-start sm:inline-flex sm:w-auto sm:min-w-0">
                         <TabsTrigger value="general" className="whitespace-nowrap">General</TabsTrigger>
                         <TabsTrigger value="notifications" className="whitespace-nowrap">Emails & Notifications</TabsTrigger>
                         <TabsTrigger value="billing" className="whitespace-nowrap">Billing</TabsTrigger>
@@ -215,21 +215,23 @@ export default function AdminSettingsPage() {
                                 <p className="text-xs text-gray-500">
                                     This logo will appear in the header of both admin and retailer portals.
                                 </p>
-                                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-                                    <div className={`w-16 h-16 flex items-center justify-center overflow-hidden relative ${settings.logoUrl ? '' : 'bg-blue-50 rounded-lg border border-blue-100'}`}>
-                                        {settings.logoUrl ? (
-                                            <>
+                                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mt-2">
+                                    <div className="relative">
+                                        <div className={`w-16 h-16 flex items-center justify-center overflow-hidden ${settings.logoUrl ? '' : 'bg-blue-50 rounded-lg border border-blue-100'}`}>
+                                            {settings.logoUrl ? (
                                                 <img src={settings.logoUrl} alt="Logo" className="w-full h-full object-contain" />
-                                                <button
-                                                    onClick={handleRemoveLogo}
-                                                    className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600 transition-colors"
-                                                    title="Remove logo"
-                                                >
-                                                    <X className="w-3 h-3" />
-                                                </button>
-                                            </>
-                                        ) : (
-                                            <span className="text-blue-500 font-bold text-xl">C</span>
+                                            ) : (
+                                                <span className="text-blue-500 font-bold text-xl">C</span>
+                                            )}
+                                        </div>
+                                        {settings.logoUrl && (
+                                            <button
+                                                onClick={handleRemoveLogo}
+                                                className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600 transition-colors z-10 shadow-sm"
+                                                title="Remove logo"
+                                            >
+                                                <X className="w-3.5 h-3.5" />
+                                            </button>
                                         )}
                                     </div>
                                     <div>
@@ -264,14 +266,14 @@ export default function AdminSettingsPage() {
 
                             <div className="space-y-4 pt-4 border-t">
                                 <h3 className="text-lg font-medium">Calculator Preferences</h3>
-                                <div className="flex items-center space-x-3">
+                                <div className="flex items-start sm:items-center space-x-3">
                                     <Checkbox
                                         id="showRetailerPriceBreakdown"
                                         checked={settings.showRetailerPriceBreakdown}
                                         onCheckedChange={(checked: boolean) => setSettings({ ...settings, showRetailerPriceBreakdown: !!checked })}
-                                        className="border-gray-300 data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600"
+                                        className="mt-1 sm:mt-0 !h-4 !w-4 min-w-[16px] min-h-[16px] shrink-0 border-gray-300 data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600"
                                     />
-                                    <Label htmlFor="showRetailerPriceBreakdown" className="cursor-pointer">
+                                    <Label htmlFor="showRetailerPriceBreakdown" className="cursor-pointer leading-tight pt-1 sm:pt-0">
                                         Show Full Price Breakdown to Retailers
                                     </Label>
                                 </div>
@@ -281,14 +283,14 @@ export default function AdminSettingsPage() {
                             </div>
                             <div className="space-y-4 pt-4 border-t">
                                 <h3 className="text-lg font-medium">Quote Preferences</h3>
-                                <div className="flex items-center space-x-3">
+                                <div className="flex items-start sm:items-center space-x-3">
                                     <Checkbox
                                         id="autoApproveQuotes"
                                         checked={settings.autoApproveQuotes}
                                         onCheckedChange={(checked: boolean) => setSettings({ ...settings, autoApproveQuotes: !!checked })}
-                                        className="border-gray-300 data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600"
+                                        className="mt-1 sm:mt-0 !h-4 !w-4 min-w-[16px] min-h-[16px] shrink-0 border-gray-300 data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600"
                                     />
-                                    <Label htmlFor="autoApproveQuotes" className="cursor-pointer">
+                                    <Label htmlFor="autoApproveQuotes" className="cursor-pointer leading-tight pt-1 sm:pt-0">
                                         Auto-approve sent quotes
                                     </Label>
                                 </div>
@@ -360,11 +362,12 @@ export default function AdminSettingsPage() {
                                             value={securityData.currentPassword}
                                             onChange={(e) => setSecurityData({ ...securityData, currentPassword: e.target.value })}
                                             placeholder="Enter current password"
+                                            className="pr-10"
                                         />
                                         <button
                                             type="button"
                                             onClick={() => setShowPasswords(!showPasswords)}
-                                            className="absolute right-3 top-2.5 text-gray-500 hover:text-gray-700"
+                                            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 p-1"
                                         >
                                             {showPasswords ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                                         </button>
@@ -378,11 +381,12 @@ export default function AdminSettingsPage() {
                                             value={securityData.newPassword}
                                             onChange={(e) => setSecurityData({ ...securityData, newPassword: e.target.value })}
                                             placeholder="Leave blank to keep same"
+                                            className="pr-10"
                                         />
                                         <button
                                             type="button"
                                             onClick={() => setShowPasswords(!showPasswords)}
-                                            className="absolute right-3 top-2.5 text-gray-500 hover:text-gray-700"
+                                            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 p-1"
                                         >
                                             {showPasswords ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                                         </button>
@@ -396,11 +400,12 @@ export default function AdminSettingsPage() {
                                             value={securityData.confirmPassword}
                                             onChange={(e) => setSecurityData({ ...securityData, confirmPassword: e.target.value })}
                                             placeholder="Confirm new password"
+                                            className="pr-10"
                                         />
                                         <button
                                             type="button"
                                             onClick={() => setShowPasswords(!showPasswords)}
-                                            className="absolute right-3 top-2.5 text-gray-500 hover:text-gray-700"
+                                            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 p-1"
                                         >
                                             {showPasswords ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                                         </button>
