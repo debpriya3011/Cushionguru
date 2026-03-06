@@ -145,6 +145,25 @@ export default function AssetsPage() {
     }
   }
 
+  const handleDownloadBtn = async (url: string, filename: string) => {
+    try {
+      const response = await fetch(url)
+      if (!response.ok) throw new Error('Network error')
+      const blob = await response.blob()
+      const blobUrl = window.URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = blobUrl
+      a.download = filename
+      document.body.appendChild(a)
+      a.click()
+      window.URL.revokeObjectURL(blobUrl)
+      document.body.removeChild(a)
+    } catch (error) {
+      console.error('Download failed, opening in new tab:', error)
+      window.open(url, '_blank')
+    }
+  }
+
   const filteredAssets = assets.filter(asset =>
     asset.originalName.toLowerCase().includes(search.toLowerCase()) ||
     asset.tags.some(tag => tag.toLowerCase().includes(search.toLowerCase()))
@@ -352,11 +371,16 @@ export default function AssetsPage() {
                   </div>
 
                   <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center gap-2">
-                    <a href={asset.url} target="_blank" rel="noopener noreferrer">
-                      <Button size="icon" variant="secondary">
-                        <Download className="h-4 w-4" />
-                      </Button>
-                    </a>
+                    <Button
+                      size="icon"
+                      variant="secondary"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        handleDownloadBtn(asset.url, asset.originalName)
+                      }}
+                    >
+                      <Download className="h-4 w-4" />
+                    </Button>
                     <Button
                       size="icon"
                       variant="destructive"
@@ -376,32 +400,34 @@ export default function AssetsPage() {
               {filteredAssets.map((asset) => (
                 <div
                   key={asset.id}
-                  className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100"
+                  className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 gap-4"
                 >
-                  <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 bg-gray-200 rounded-lg flex items-center justify-center">
+                  <div className="flex items-center gap-4 w-full sm:w-auto overflow-hidden">
+                    <div className="w-12 h-12 shrink-0 bg-gray-200 rounded-lg flex items-center justify-center">
                       {isImage(asset.mimeType) ? (
-                        <Image src={asset.url} alt="" width={48} height={48} className="rounded-lg" />
+                        <Image src={asset.url} alt="" width={48} height={48} className="rounded-lg object-cover w-full h-full" />
                       ) : (
                         <FileText className="h-6 w-6 text-gray-400" />
                       )}
                     </div>
-                    <div>
-                      <p className="font-medium">{asset.originalName}</p>
-                      <div className="flex items-center gap-2 text-sm text-gray-500">
+                    <div className="min-w-0 flex-1">
+                      <p className="font-medium truncate">{asset.originalName}</p>
+                      <div className="flex flex-wrap items-center gap-2 text-sm text-gray-500 mt-1">
                         <Badge variant="secondary">{categoryLabels[asset.category] || asset.category}</Badge>
-                        <span>{formatFileSize(asset.size)}</span>
-                        <span>{new Date(asset.createdAt).toLocaleDateString()}</span>
+                        <span className="shrink-0">{formatFileSize(asset.size)}</span>
+                        <span className="shrink-0 text-gray-400">{new Date(asset.createdAt).toLocaleDateString()}</span>
                       </div>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-2">
-                    <a href={asset.url} target="_blank" rel="noopener noreferrer">
-                      <Button size="sm" variant="ghost">
-                        <Download className="h-4 w-4" />
-                      </Button>
-                    </a>
+                  <div className="flex items-center gap-2 self-end sm:self-auto shrink-0">
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => handleDownloadBtn(asset.url, asset.originalName)}
+                    >
+                      <Download className="h-4 w-4" />
+                    </Button>
                     <Button
                       size="sm"
                       variant="ghost"
