@@ -121,15 +121,17 @@ export default function RetailerSettingsPage() {
             </div>
 
             <Tabs defaultValue="general" className="w-full">
-                <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 bg-white border h-auto sm:h-12 rounded-lg p-1 justify-start gap-1">
-                    <TabsTrigger value="general" className="data-[state=active]:bg-gray-100 rounded-md text-xs sm:text-sm">General</TabsTrigger>
-                    <TabsTrigger value="brand" className="data-[state=active]:bg-gray-100 rounded-md text-xs sm:text-sm">Label & Brand</TabsTrigger>
-                    {/* <TabsTrigger value="pdf" className="data-[state=active]:bg-gray-100 rounded-md">PDF Customization</TabsTrigger> */}
-                    <TabsTrigger value="shipping" className="data-[state=active]:bg-gray-100 rounded-md text-xs sm:text-sm">Shipping & Margins</TabsTrigger>
-                    <TabsTrigger value="security" className="data-[state=active]:bg-gray-100 rounded-md text-xs sm:text-sm">Security</TabsTrigger>
-                </TabsList>
+                <div className="w-full overflow-x-auto pb-2 mb-6 hide-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0">
+                    <TabsList className="flex w-max min-w-full justify-start sm:inline-flex sm:w-auto sm:min-w-0 bg-white border h-auto sm:h-12 rounded-lg p-1 gap-1">
+                        <TabsTrigger value="general" className="data-[state=active]:bg-gray-100 rounded-md text-sm whitespace-nowrap">General</TabsTrigger>
+                        <TabsTrigger value="brand" className="data-[state=active]:bg-gray-100 rounded-md text-sm whitespace-nowrap">Label & Brand</TabsTrigger>
+                        {/* <TabsTrigger value="pdf" className="data-[state=active]:bg-gray-100 rounded-md whitespace-nowrap">PDF Customization</TabsTrigger> */}
+                        <TabsTrigger value="shipping" className="data-[state=active]:bg-gray-100 rounded-md text-sm whitespace-nowrap">Shipping & Margins</TabsTrigger>
+                        <TabsTrigger value="security" className="data-[state=active]:bg-gray-100 rounded-md text-sm whitespace-nowrap">Security</TabsTrigger>
+                    </TabsList>
+                </div>
 
-                <TabsContent value="general" className="mt-6 space-y-6">
+                <TabsContent value="general" className="mt-0 space-y-6">
                     <Card>
                         <CardHeader>
                             <CardTitle className="flex items-center gap-2">
@@ -174,7 +176,7 @@ export default function RetailerSettingsPage() {
                     </Card>
                 </TabsContent>
 
-                <TabsContent value="brand" className="mt-6 space-y-6">
+                <TabsContent value="brand" className="mt-0 space-y-6">
                     <Card>
                         <CardHeader>
                             <CardTitle className="flex items-center gap-2">
@@ -286,7 +288,7 @@ export default function RetailerSettingsPage() {
                     </Card>
                 </TabsContent>
 
-                <TabsContent value="pdf" className="mt-6 space-y-6">
+                <TabsContent value="pdf" className="mt-0 space-y-6">
                     <Card>
                         <CardHeader>
                             <CardTitle className="flex items-center gap-2">
@@ -324,6 +326,7 @@ export default function RetailerSettingsPage() {
                                                         id="auto-inject-logo"
                                                         checked={retailer.pdfCustomization?.includeLogo !== false}
                                                         onCheckedChange={(c: boolean) => setRetailer({ ...retailer, pdfCustomization: { ...retailer.pdfCustomization, includeLogo: !!c } })}
+                                                        className="mt-1 !h-4 !w-4 min-w-[16px] min-h-[16px] shrink-0"
                                                     />
                                                     <div className="space-y-1">
                                                         <Label htmlFor="auto-inject-logo" className="font-semibold cursor-pointer">Inject My Brand Logo</Label>
@@ -335,6 +338,7 @@ export default function RetailerSettingsPage() {
                                                         id="auto-inject-label"
                                                         checked={retailer.pdfCustomization?.includeLabel !== false}
                                                         onCheckedChange={(c: boolean) => setRetailer({ ...retailer, pdfCustomization: { ...retailer.pdfCustomization, includeLabel: !!c } })}
+                                                        className="mt-1 !h-4 !w-4 min-w-[16px] min-h-[16px] shrink-0"
                                                     />
                                                     <div className="space-y-1">
                                                         <Label htmlFor="auto-inject-label" className="font-semibold cursor-pointer">Inject Brand Label</Label>
@@ -409,7 +413,7 @@ export default function RetailerSettingsPage() {
                     </Card>
                 </TabsContent>
 
-                <TabsContent value="shipping" className="mt-6 space-y-6">
+                <TabsContent value="shipping" className="mt-0 space-y-6">
                     <Card>
                         <CardHeader>
                             <CardTitle className="flex items-center gap-2">
@@ -480,7 +484,7 @@ export default function RetailerSettingsPage() {
                     </Card>
                 </TabsContent>
 
-                <TabsContent value="security" className="mt-6 space-y-6">
+                <TabsContent value="security" className="mt-0 space-y-6">
                     <Card>
                         <CardHeader>
                             <CardTitle className="flex items-center gap-2">
@@ -509,11 +513,12 @@ export default function RetailerSettingsPage() {
                                             value={securityData.currentPassword}
                                             onChange={(e) => setSecurityData({ ...securityData, currentPassword: e.target.value })}
                                             placeholder="Enter current password"
+                                            className="pr-10 h-10"
                                         />
                                         <button
                                             type="button"
                                             onClick={() => setShowPasswords(!showPasswords)}
-                                            className="absolute right-3 top-2.5 text-gray-500 hover:text-gray-700"
+                                            className="absolute right-0 top-0 h-full px-3 flex items-center justify-center text-gray-500 hover:text-gray-700"
                                         >
                                             {showPasswords ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                                         </button>
@@ -527,11 +532,12 @@ export default function RetailerSettingsPage() {
                                             value={securityData.newPassword}
                                             onChange={(e) => setSecurityData({ ...securityData, newPassword: e.target.value })}
                                             placeholder="Leave blank to keep same"
+                                            className="pr-10 h-10"
                                         />
                                         <button
                                             type="button"
                                             onClick={() => setShowPasswords(!showPasswords)}
-                                            className="absolute right-3 top-2.5 text-gray-500 hover:text-gray-700"
+                                            className="absolute right-0 top-0 h-full px-3 flex items-center justify-center text-gray-500 hover:text-gray-700"
                                         >
                                             {showPasswords ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                                         </button>
@@ -545,11 +551,12 @@ export default function RetailerSettingsPage() {
                                             value={securityData.confirmPassword}
                                             onChange={(e) => setSecurityData({ ...securityData, confirmPassword: e.target.value })}
                                             placeholder="Confirm new password"
+                                            className="pr-10 h-10"
                                         />
                                         <button
                                             type="button"
                                             onClick={() => setShowPasswords(!showPasswords)}
-                                            className="absolute right-3 top-2.5 text-gray-500 hover:text-gray-700"
+                                            className="absolute right-0 top-0 h-full px-3 flex items-center justify-center text-gray-500 hover:text-gray-700"
                                         >
                                             {showPasswords ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                                         </button>
