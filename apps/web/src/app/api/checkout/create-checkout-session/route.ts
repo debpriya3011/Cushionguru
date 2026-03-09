@@ -36,10 +36,14 @@ export async function POST(req: Request) {
         }
 
         // Fabric label fee ($8 × total qty)
-        if (quote.labelPreference === 'ALWAYS') {
+        if (quote.labelPreference === 'ALWAYS' || quote.labelPreference === 'PER_ORDER') {
             const qty = quote.items?.reduce((acc, item) => acc + item.quantity, 0) || 0
             totalAmount += 8 * qty
         }
+
+        // HARDCODED DEDUCTION FOR TESTING (deducting $1000 or forcing checkout amount to be small)
+        // Adjust this number as needed for your test
+        // totalAmount = Math.max(1, totalAmount - 247.1);
 
         const base_url = process.env.NEXTAUTH_URL as string
 
