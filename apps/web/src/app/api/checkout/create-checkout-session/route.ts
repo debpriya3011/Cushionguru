@@ -43,7 +43,7 @@ export async function POST(req: Request) {
 
         // HARDCODED DEDUCTION FOR TESTING (deducting $1000 or forcing checkout amount to be small)
         // Adjust this number as needed for your test
-        totalAmount = Math.max(1, totalAmount - 247.1);
+        // totalAmount = Math.max(1, totalAmount - 247.1);
 
         const base_url = process.env.NEXTAUTH_URL as string
 
