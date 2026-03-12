@@ -14,6 +14,7 @@ interface Retailer {
     quotes: number
     orders: number
   }
+  labelFileUrl: string | null
 }
 
 interface RetailerActivityProps {
@@ -62,9 +63,19 @@ export function RetailerActivity({ retailers }: RetailerActivityProps) {
                 className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors gap-3"
               >
                 <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center text-white font-bold shrink-0">
-                    {retailer.businessName.charAt(0)}
-                  </div>
+                  {retailer.labelFileUrl ? (
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg overflow-hidden shrink-0 border border-gray-200">
+                      <img
+                        src={retailer.labelFileUrl}
+                        alt={`${retailer.businessName} label`}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  ) : (
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center text-white font-bold shrink-0">
+                      {retailer.businessName.charAt(0)}
+                    </div>
+                  )}
                   <div className="min-w-0">
                     <p className="font-medium text-gray-900 truncate">
                       {retailer.businessName}
