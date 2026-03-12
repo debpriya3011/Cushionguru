@@ -3,6 +3,9 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { RetailerSidebar } from '@/components/retailer/RetailerSidebar'
 import { RetailerHeader } from '@/components/retailer/RetailerHeader'
+import { prisma } from '@/lib/prisma'
+import { SuspendedScreen } from './SuspendedScreen'
+import { SuspensionListener } from '@/components/retailer/SuspensionListener'
 
 export default async function RetailerLayout({
   children,
@@ -15,8 +18,26 @@ export default async function RetailerLayout({
     redirect('/login?callbackUrl=/retailer/dashboard')
   }
 
+  const currentUser = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: { status: true, retailer: { select: { status: true } } }
+  })
+
+  const isSuspended = currentUser?.status === 'SUSPENDED' || currentUser?.retailer?.status === 'SUSPENDED'
+
+  // Prevent accessing dashboard metrics when suspended
+  if (isSuspended) {
+    return (
+      <>
+        <SuspensionListener isCurrentlySuspended={true} />
+        <SuspendedScreen />
+      </>
+    )
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
+      <SuspensionListener isCurrentlySuspended={false} />
       <RetailerHeader user={session.user} />
       <div className="flex">
         <RetailerSidebar />
