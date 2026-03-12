@@ -37,6 +37,28 @@ export async function PATCH(
                 }
             })
 
+            // Find associated users to send notifications
+            const affectedUsers = await tx.user.findMany({
+                where: { retailerId: retailerId },
+                select: { id: true }
+            })
+
+            const notificationTitle = action === 'suspend' ? 'Account Suspended' : 'Account Suspension Revoked'
+            const notificationMessage = action === 'suspend'
+                ? 'Your account has been suspended by the administrator. Please contact support for more information.'
+                : 'Your account suspension has been revoked. You can now access the portal.'
+
+            if (affectedUsers.length > 0) {
+                await tx.notification.createMany({
+                    data: affectedUsers.map(u => ({
+                        userId: u.id,
+                        title: notificationTitle,
+                        message: notificationMessage,
+                        link: null,
+                    }))
+                })
+            }
+
             return retailer
         })
 

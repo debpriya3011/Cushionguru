@@ -21,7 +21,7 @@ export const authOptions: NextAuthOptions = {
           include: { retailer: true },
         })
 
-        if (!user || user.status !== 'ACTIVE') {
+        if (!user || (user.status !== 'ACTIVE' && user.status !== 'SUSPENDED')) {
           return null
         }
 
