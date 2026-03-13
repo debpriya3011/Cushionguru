@@ -131,14 +131,24 @@ export default function AdminOrdersPage() {
                                         <TableCell className="text-gray-500 text-sm">
                                             {new Date(order.createdAt).toLocaleDateString()}
                                         </TableCell>
-                                        <TableCell className="text-right space-x-2 flex">
+                                        <TableCell className="text-right flex items-end sm:items-center justify-end gap-2 whitespace-nowrap pt-1 mt-4 sm:mt-0">
                                             <Link href={`/admin/orders/${order.id}`}>
-                                                <Button variant="ghost" size="sm" className="text-gray-600 hover:text-gray-800 hover:bg-gray-100">
+                                                <Button
+                                                  variant="ghost"
+                                                  size="sm"
+                                                  className="text-gray-600 hover:text-gray-800 hover:bg-gray-100"
+                                                >
                                                     <Eye className="h-4 w-4" />
                                                 </Button>
                                             </Link>
-                                            <Button variant="ghost" size="sm" className="text-blue-600 hover:text-blue-800 hover:bg-blue-50" onClick={() => handleDownload(order.id, order.orderNumber)}>
+                                            <Button
+                                              variant="ghost"
+                                              size="sm"
+                                              className="text-blue-600 hover:text-blue-800 hover:bg-blue-50"
+                                              onClick={() => handleDownload(order.id, order.orderNumber)}
+                                            >
                                                 <Download className="h-4 w-4" />
+                                                <span className="ml-1 hidden sm:inline">PDF</span>
                                             </Button>
                                         </TableCell>
                                     </TableRow>
