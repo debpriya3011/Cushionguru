@@ -21,7 +21,6 @@ export default function CalculatorEditPage() {
         name: '',
         description: '',
         status: 'DRAFT',
-        configStr: '{}',
     })
 
     useEffect(() => {
@@ -34,7 +33,6 @@ export default function CalculatorEditPage() {
                         name: data.name || '',
                         description: data.description || '',
                         status: data.status || 'DRAFT',
-                        configStr: JSON.stringify(data.config || {}, null, 2),
                     })
                 }
             } catch (err) {
@@ -53,17 +51,6 @@ export default function CalculatorEditPage() {
         setSaving(true)
         setError('')
 
-        let parsedConfig = {}
-        try {
-            if (formData.configStr.trim() !== '') {
-                parsedConfig = JSON.parse(formData.configStr)
-            }
-        } catch (err) {
-            setError('Invalid JSON in configuration. Please fix it before saving.')
-            setSaving(false)
-            return
-        }
-
         try {
             const res = await fetch(`/api/calculators/${params.id}`, {
                 method: 'PUT',
@@ -72,7 +59,6 @@ export default function CalculatorEditPage() {
                     name: formData.name,
                     description: formData.description,
                     status: formData.status,
-                    config: parsedConfig,
                 }),
             })
 
@@ -97,21 +83,25 @@ export default function CalculatorEditPage() {
     )
 
     return (
-        <div className="max-w-4xl mx-auto space-y-8">
-            <div className="flex justify-between items-center">
-                <div className="flex items-center space-x-4">
+        <div className="max-w-4xl mx-auto space-y-6 sm:space-y-8">
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 sm:gap-4">
+                <div className="flex items-start gap-3 sm:gap-4 min-w-0">
                     <Link href="/admin/calculators">
-                        <Button variant="outline" size="icon">
+                        <Button variant="outline" size="icon" className="shrink-0">
                             <ArrowLeft className="h-4 w-4" />
                         </Button>
                     </Link>
-                    <div>
-                        <h1 className="text-3xl font-bold text-gray-900">Edit Template</h1>
-                        <p className="text-gray-600 mt-1">Modify calculator options and configuration.</p>
+                    <div className="min-w-0">
+                        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 leading-tight">
+                            Edit Template
+                        </h1>
+                        <p className="text-sm sm:text-base text-gray-600 mt-1">
+                            Modify calculator options and configuration.
+                        </p>
                     </div>
                 </div>
                 <Link href={`/admin/calculators/${params.id}`}>
-                    <Button variant="outline">
+                    <Button variant="outline" className="w-full sm:w-auto justify-center">
                         <Eye className="mr-2 h-4 w-4" />
                         Preview Mode
                     </Button>
@@ -125,12 +115,15 @@ export default function CalculatorEditPage() {
             )}
 
             <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <Card className="md:col-span-1">
-                        <CardHeader>
-                            <CardTitle>Basic Details</CardTitle>
-                        </CardHeader>
-                        <CardContent className="space-y-4">
+                <Card>
+                    <CardHeader>
+                        <CardTitle>Template Details</CardTitle>
+                        <CardDescription>
+                            Update the name, description, and availability for this calculator template.
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div className="space-y-4">
                             <div className="space-y-2">
                                 <Label htmlFor="name">Template Name</Label>
                                 <Input
@@ -166,26 +159,26 @@ export default function CalculatorEditPage() {
                                     <option value="ARCHIVED">Archived</option>
                                 </select>
                             </div>
-                        </CardContent>
-                    </Card>
+                        </div>
 
-                    <Card className="md:col-span-1">
-                        <CardHeader>
-                            <CardTitle>Configuration (Advanced)</CardTitle>
-                            <CardDescription>
-                                JSON format override. Leave as {"{}"} to use default shapes, foams, fabrics, and options.
-                            </CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                            <Textarea
-                                value={formData.configStr}
-                                onChange={(e) => setFormData({ ...formData, configStr: e.target.value })}
-                                className="font-mono text-sm h-[320px] bg-gray-50 text-gray-800 focus:bg-white"
-                                spellCheck={false}
-                            />
-                        </CardContent>
-                    </Card>
-                </div>
+                        <div className="rounded-xl border border-gray-100 bg-gray-50 p-4 sm:p-5 space-y-3">
+                            <div>
+                                <p className="text-sm font-semibold text-gray-900">Preview Mode</p>
+                                <p className="text-sm text-gray-600 mt-1">
+                                    Use <span className="font-medium">Preview Mode</span> to review how this template behaves before assigning it to retailers.
+                                </p>
+                            </div>
+                            <div className="border-t border-gray-200 pt-3">
+                                <p className="text-sm font-semibold text-gray-900">Availability</p>
+                                <ul className="mt-2 space-y-1 text-sm text-gray-600">
+                                    <li><span className="font-medium text-gray-800">Draft</span> — hidden from retailers</li>
+                                    <li><span className="font-medium text-gray-800">Active</span> — available for assignment</li>
+                                    <li><span className="font-medium text-gray-800">Archived</span> — keep for history, don’t use for new work</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </CardContent>
+                </Card>
 
                 <div className="flex justify-end space-x-4 pt-4 border-t border-gray-100">
                     <Link href="/admin/calculators">
