@@ -22,11 +22,11 @@ import {
 } from '@/components/ui/dialog'
 
 const paymentStatusConfig: Record<string, { label: string; className: string }> = {
-    PENDING: { label: 'Payment Pending', className: 'bg-gray-100 text-gray-600' },
-    UNPAID: { label: 'Payment Pending', className: 'bg-gray-100 text-gray-600' },
-    SUCCESS: { label: '✓ Paid', className: 'bg-green-100 text-green-700' },
-    FAILED: { label: 'Payment Failed', className: 'bg-red-100 text-red-700' },
-    REFUNDED: { label: 'Refunded', className: 'bg-orange-100 text-orange-700' },
+    PENDING: { label: 'Payment Pending', className: 'border-transparent bg-gray-100 text-gray-700' },
+    UNPAID: { label: 'Payment Pending', className: 'border-transparent bg-gray-100 text-gray-700' },
+    SUCCESS: { label: '✓ Paid', className: 'border-transparent bg-green-100 text-green-700' },
+    FAILED: { label: 'Payment Failed', className: 'border-transparent bg-red-100 text-red-700' },
+    REFUNDED: { label: 'Refunded', className: 'border-transparent bg-orange-100 text-orange-700' },
 }
 
 // Simple native toggle switch — uses <div> to avoid global mobile CSS `min-height: 36px` on buttons
@@ -395,7 +395,7 @@ export default function RetailerQuoteDetailsPage() {
                         <h1 className="text-xl sm:text-2xl font-bold text-gray-900 flex flex-wrap items-center gap-2">
                             {quote.quoteNumber}
                             <Badge className="bg-blue-100 text-blue-800">{quote.status}</Badge>
-                            <Badge className={pmtConfig.className}>{pmtConfig.label}</Badge>
+                            <Badge variant="secondary" className={pmtConfig.className}>{pmtConfig.label}</Badge>
                         </h1>
                         <p className="text-gray-500 text-xs sm:text-sm mt-1">Generated on {new Date(quote.createdAt).toLocaleDateString()}</p>
                     </div>
@@ -661,7 +661,7 @@ export default function RetailerQuoteDetailsPage() {
                             <div className={`mt-1 p-3 rounded-xl border ${isPaid ? 'bg-green-50 border-green-200' : 'bg-gray-50 border-gray-200'}`}>
                                 <div className="flex items-center justify-between">
                                     <span className="text-sm font-medium text-gray-700">Payment Status</span>
-                                    <Badge className={pmtConfig.className}>{pmtConfig.label}</Badge>
+                                    <Badge variant="secondary" className={pmtConfig.className}>{pmtConfig.label}</Badge>
                                 </div>
                                 {isPaid && (
                                     <div className="flex items-center justify-between mt-2 text-sm text-green-700">

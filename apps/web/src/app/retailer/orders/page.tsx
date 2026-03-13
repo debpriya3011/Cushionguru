@@ -126,9 +126,15 @@ export default function RetailerOrdersPage() {
                     <TableCell className="text-gray-500 text-sm">
                       {new Date(order.createdAt).toLocaleDateString()}
                     </TableCell>
-                    <TableCell className="text-right space-x-2 flex">
-                      <Button variant="ghost" size="sm" className="text-blue-600 hover:text-blue-800 hover:bg-blue-50" onClick={() => handleDownload(order.id, order.orderNumber)}>
-                        <Download className="h-4 w-4" /> PDF
+                    <TableCell className="text-right flex items-end sm:items-center justify-end gap-2 whitespace-nowrap pt-1 mt-4 sm:mt-0">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="text-blue-600 hover:text-blue-800 hover:bg-blue-50"
+                        onClick={() => handleDownload(order.id, order.orderNumber)}
+                      >
+                        <Download className="h-4 w-4" />
+                        <span className="ml-1 hidden sm:inline">PDF</span>
                       </Button>
                     </TableCell>
                   </TableRow>
