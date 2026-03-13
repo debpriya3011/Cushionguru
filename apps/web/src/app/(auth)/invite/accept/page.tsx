@@ -240,9 +240,9 @@ function AcceptInvitationForm() {
           <CardHeader>
             <CardTitle>Set Up Your Account</CardTitle>
             <CardDescription>
-              {invitationData?.retailerName && (
+              {/* {invitationData?.retailerName && (
                 <>You&apos;ve been invited to join <strong>{invitationData.retailerName}</strong></>
-              )}
+              )} */}
             </CardDescription>
           </CardHeader>
 
@@ -297,7 +297,7 @@ function AcceptInvitationForm() {
                 </div>
                 <p className="text-xs text-gray-500">Email cannot be changed</p>
               </div>
-
+              <p className="text-md font-medium text-gray-900">Set Up Your Password</p>
               <div className="space-y-2">
                 <Label htmlFor="password">Password</Label>
                 <div className="relative">
@@ -315,7 +315,7 @@ function AcceptInvitationForm() {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-3 text-gray-400 hover:text-gray-600 transition-colors focus:outline-none"
+                    className="absolute right-3 top-0 sm:top-3 text-gray-400 hover:text-gray-600 transition-colors focus:outline-none"
                     tabIndex={-1}
                     aria-label={showPassword ? 'Hide password' : 'Show password'}
                   >
@@ -344,7 +344,7 @@ function AcceptInvitationForm() {
                   <button
                     type="button"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="absolute right-3 top-3 text-gray-400 hover:text-gray-600 transition-colors focus:outline-none"
+                    className="absolute right-3 top-0 sm:top-3 text-gray-400 hover:text-gray-600 transition-colors focus:outline-none"
                     tabIndex={-1}
                     aria-label={showConfirmPassword ? 'Hide password' : 'Show password'}
                   >
