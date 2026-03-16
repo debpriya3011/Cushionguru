@@ -26,7 +26,7 @@ export function PipingSelector({ options, selected, onSelect }: PipingSelectorPr
               : 'border-gray-200 hover:border-gray-300 hover:shadow-md hover:bg-gray-50'
             }`}
         >
-          <div className="relative w-full h-24 mb-3 overflow-hidden rounded-lg flex items-center justify-center">
+          <div className="relative w-full aspect-square mb-3 overflow-hidden rounded-lg bg-white/60 flex items-center justify-center">
             {option.imageUrl ? (
               <Image
                 src={option.imageUrl}

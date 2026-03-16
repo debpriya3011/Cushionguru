@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { Search, Download, ShoppingBag } from 'lucide-react'
+import { Search, Download, Truck } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import {
@@ -126,7 +126,19 @@ export default function RetailerOrdersPage() {
                     <TableCell className="text-gray-500 text-sm">
                       {new Date(order.createdAt).toLocaleDateString()}
                     </TableCell>
-                    <TableCell className="text-right flex items-end sm:items-center justify-end gap-2 whitespace-nowrap pt-1 mt-4 sm:mt-0">
+                    <TableCell className="text-right flex flex-col sm:flex-row items-end sm:items-center justify-end gap-2 whitespace-nowrap pt-1 mt-4 sm:mt-0">
+
+                      <Link href={`/retailer/orders/${order.id}`}>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="border-blue-200 text-blue-700 hover:bg-blue-50"
+                        >
+                          <Truck className="h-4 w-4" />
+                          <span className="ml-1 hidden sm:inline">Track</span>
+                        </Button>
+                      </Link>
+
                       <Button
                         variant="ghost"
                         size="sm"

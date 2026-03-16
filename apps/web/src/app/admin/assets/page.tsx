@@ -48,8 +48,6 @@ const categories = [
   { id: 'PIPING_IMAGE', name: 'Piping' },
   { id: 'TIES_IMAGE', name: 'Ties' },
   { id: 'FABRIC_IMAGE', name: 'Fabrics' },
-  { id: 'LOGO', name: 'Logos' },
-  { id: 'DOCUMENT', name: 'Documents' },
 ]
 
 export default function AssetsPage() {
@@ -83,6 +81,7 @@ export default function AssetsPage() {
   const handleUpload = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     const formData = new FormData(e.currentTarget)
+    const uploadedCategory = String(formData.get('category') || '')
 
     setUploading(true)
     try {
@@ -93,10 +92,16 @@ export default function AssetsPage() {
 
       if (res.ok) {
         setUploadDialogOpen(false)
+        // Switch to the category that was uploaded so it "looks like it worked".
+        if (uploadedCategory) setSelectedCategory(uploadedCategory)
         fetchAssets()
+      } else {
+        const data = await res.json().catch(() => null as any)
+        alert(data?.error || 'Failed to upload asset')
       }
     } catch (error) {
       console.error('Failed to upload:', error)
+      alert('Failed to upload asset')
     } finally {
       setUploading(false)
     }
@@ -174,8 +179,6 @@ export default function AssetsPage() {
     SHAPE_IMAGE: 'Shape',
     FOAM_IMAGE: 'Foam',
     FABRIC_IMAGE: 'Fabric',
-    LOGO: 'Logo',
-    DOCUMENT: 'Document',
     ZIPPER_IMAGE: 'Zipper',
     PIPING_IMAGE: 'Piping',
     TIES_IMAGE: 'Ties',
@@ -213,7 +216,7 @@ export default function AssetsPage() {
               <DialogHeader>
                 <DialogTitle>Upload Individual Asset</DialogTitle>
                 <DialogDescription>
-                  Upload a shape, foam, zipper, piping or ties image
+                  Upload a shape, foam, zipper, piping, ties, or fabric image.
                 </DialogDescription>
               </DialogHeader>
 
@@ -231,8 +234,7 @@ export default function AssetsPage() {
                     <option value="ZIPPER_IMAGE">Zipper</option>
                     <option value="PIPING_IMAGE">Piping</option>
                     <option value="TIES_IMAGE">Ties</option>
-                    <option value="FABRIC_IMAGE">Fabric</option>
-                    <option value="OTHER">Other</option>
+                    {/* <option value="FABRIC_IMAGE">Fabric</option> */}
                   </select>
                 </div>
 

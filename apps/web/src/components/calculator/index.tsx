@@ -307,7 +307,10 @@ export function Calculator({
           {/* Step 5: Fabric Selection */}
           <CalculatorSection title="5. Fabric Selection" step={5}>
             <FabricSelector
-              brands={config.fabricBrands}
+              brands={config.fabricBrands.map(b => ({
+                ...b,
+                name: b.name.replace("Bulk Import - ", "")
+              }))}
               selected={selections.fabricCode}
               onSelect={(code, tier, price) => {
                 setSelections(prev => ({
