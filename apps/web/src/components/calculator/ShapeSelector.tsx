@@ -18,7 +18,7 @@ interface ShapeSelectorProps {
 
 export function ShapeSelector({ shapes, selected, onSelect }: ShapeSelectorProps) {
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
+    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-4">
       {shapes.map((shape) => (
         <button
           key={shape.id}
@@ -29,7 +29,7 @@ export function ShapeSelector({ shapes, selected, onSelect }: ShapeSelectorProps
               : 'border-gray-200 hover:border-gray-300 hover:shadow-md hover:bg-gray-50'
           }`}
         >
-          <div className="relative w-full h-24 mb-3 overflow-hidden rounded-lg">
+          <div className="relative w-full aspect-square mb-3 overflow-hidden rounded-lg bg-white/60 flex items-center justify-center">
             {shape.imageUrl ? (
               <Image
                 src={shape.imageUrl}
@@ -95,7 +95,7 @@ function ShapePlaceholder({ shape }: { shape: CushionShape }) {
   };
 
   return (
-    <div className="w-full h-full text-gray-400">
+    <div className="w-full h-full p-3 text-gray-400 flex items-center justify-center">
       {shapes[shape]}
     </div>
   );

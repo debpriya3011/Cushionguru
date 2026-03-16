@@ -36,16 +36,18 @@ export function FoamSelector({ foams, selected, onSelect }: FoamSelectorProps) {
               : 'border-gray-200 hover:border-gray-300 hover:shadow-md'
           }`}
         >
-          <div className="relative w-16 h-16 mx-auto mb-3">
+          <div className="relative w-full aspect-square mb-3 overflow-hidden rounded-lg bg-white/60 flex items-center justify-center">
             {foam.imageUrl ? (
               <Image
                 src={foam.imageUrl}
                 alt={foam.name}
                 fill
-                className="object-contain"
+                className="object-cover"
               />
             ) : (
-              <FoamPlaceholder type={foam.id} />
+              <div className="w-full h-full p-6 text-gray-400">
+                <FoamPlaceholder type={foam.id} />
+              </div>
             )}
           </div>
           
