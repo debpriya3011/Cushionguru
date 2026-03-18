@@ -34,7 +34,7 @@ export function PriceDisplay({
       return;
     }
 
-    fetch('/api/admin/settings')
+    fetch('/api/platform/settings')
       .then(res => res.json())
       .then(data => {
         setAllowBreakdown(data.showRetailerPriceBreakdown === true);
