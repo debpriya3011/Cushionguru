@@ -67,14 +67,35 @@ export async function GET(req: NextRequest) {
 
     const quotes = await prisma.quote.findMany({
       where,
-      include: {
-        items: true,
+      select: {
+        id: true,
+        quoteNumber: true,
+        customerName: true,
+        customerEmail: true,
+        customerPhone: true,
+        customerAddress: true,
+        status: true,
+        subtotal: true,
+        markupAmount: true,
+        total: true,
+        pdfPreference: true,
+        labelPreference: true,
+        isCustomized: true,
+        paymentStatus: true,
+        convertedToOrderId: true,
+        createdAt: true,
+        updatedAt: true,
+        retailerId: true,
         retailer: {
           select: {
             businessName: true,
             pdfPreference: true,
             labelPreference: true,
           }
+        },
+        // Only fetch quantity from items — needed for fee calculation and counts
+        items: {
+          select: { id: true, quantity: true }
         },
         _count: {
           select: { items: true },

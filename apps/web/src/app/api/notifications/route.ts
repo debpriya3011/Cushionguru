@@ -11,17 +11,19 @@ export async function GET(req: NextRequest) {
     }
 
     try {
+        // Single query: fetch last 50 notifications and count unread in one round-trip
         const notifications = await prisma.notification.findMany({
             where: { userId: session.user.id },
             orderBy: { createdAt: 'desc' },
             take: 50,
         })
 
-        const unreadCount = await prisma.notification.count({
-            where: { userId: session.user.id, isRead: false },
-        })
+        const unreadCount = notifications.filter((n: any) => !n.isRead).length
 
-        return NextResponse.json({ notifications, unreadCount })
+        const response = NextResponse.json({ notifications, unreadCount })
+        // Cache for 10 seconds on the client to reduce repeated identical polls
+        response.headers.set('Cache-Control', 'private, max-age=10, stale-while-revalidate=30')
+        return response
     } catch (error) {
         console.error('Failed to fetch notifications:', error)
         return NextResponse.json(

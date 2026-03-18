@@ -21,7 +21,11 @@ export async function GET(req: NextRequest) {
         }
 
         const isSuspended = user.status === 'SUSPENDED' || user.retailer?.status === 'SUSPENDED'
-        return NextResponse.json({ isSuspended })
+        const response = NextResponse.json({ isSuspended })
+        // Short private cache — safe because data is user-specific and changes rarely.
+        // Avoids repeated DB hits when retailer has multiple tabs open polling this endpoint.
+        response.headers.set('Cache-Control', 'private, max-age=15, stale-while-revalidate=30')
+        return response
     } catch (error) {
         return NextResponse.json({ error: 'Server error' }, { status: 500 })
     }
