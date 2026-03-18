@@ -13,13 +13,9 @@ export async function GET() {
 
         const config = setting?.value as Record<string, any> || {}
 
-        const response = NextResponse.json({
+        return NextResponse.json({
             showRetailerPriceBreakdown: config.showRetailerPriceBreakdown ?? false,
         })
-        // Cache for 60 seconds — settings change rarely, safe to cache per user.
-        // stale-while-revalidate allows instant response while refreshing in background.
-        response.headers.set('Cache-Control', 'private, max-age=60, stale-while-revalidate=120')
-        return response
     } catch (error) {
         console.error(error)
         return NextResponse.json({

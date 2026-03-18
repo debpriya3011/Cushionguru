@@ -21,9 +21,12 @@ export function useAuth() {
       return { success: false, error: result.error }
     }
 
-    // Role is already in the JWT — use getSession() to read it without an extra network hop
-    const session = await getSession()
-    const redirectUrl = session?.user?.role === 'SUPER_ADMIN'
+    // Get user role for redirect
+    const fetchTime = new Date().getTime();
+    const userRes = await fetch(`/api/auth/me?t=${fetchTime}`, { cache: 'no-store' });
+    const user = await userRes.json();
+
+    const redirectUrl = user.role === 'SUPER_ADMIN'
       ? '/admin/dashboard'
       : '/retailer/dashboard'
 

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect } from 'react'
 import { Bell } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -19,7 +19,7 @@ export function NotificationBell() {
     const [unreadCount, setUnreadCount] = useState(0)
     const router = useRouter()
 
-    const fetchNotifications = useCallback(async () => {
+    const fetchNotifications = async () => {
         try {
             const res = await fetch('/api/notifications')
             const data = await res.json()
@@ -30,48 +30,37 @@ export function NotificationBell() {
         } catch (err) {
             console.error(err)
         }
-    }, [])
+    }
 
     useEffect(() => {
         fetchNotifications()
         const interval = setInterval(fetchNotifications, 60000) // Poll every 60s
         return () => clearInterval(interval)
-    }, [fetchNotifications])
+    }, [])
 
     const markAsRead = async (id: string) => {
-        // Optimistic update — no visible flicker, no extra re-fetch needed
-        setNotifications(prev =>
-            prev.map(n => n.id === id ? { ...n, isRead: true } : n)
-        )
-        setUnreadCount(prev => Math.max(0, prev - 1))
-
         try {
             await fetch('/api/notifications', {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ id })
             })
+            fetchNotifications()
         } catch (err) {
             console.error(err)
-            // Re-fetch on error to restore correct state
-            fetchNotifications()
         }
     }
 
     const markAllAsRead = async () => {
-        // Optimistic update
-        setNotifications(prev => prev.map(n => ({ ...n, isRead: true })))
-        setUnreadCount(0)
-
         try {
             await fetch('/api/notifications', {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ id: 'all' })
             })
+            fetchNotifications()
         } catch (err) {
             console.error(err)
-            fetchNotifications()
         }
     }
 

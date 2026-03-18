@@ -16,34 +16,6 @@ interface PriceDisplayProps {
   quantity?: number;
 }
 
-// Module-level cache so all mounted PriceDisplay instances share one fetch result.
-// Cached for 5 minutes — platform settings change rarely, no need to hammer API.
-let settingsCache: { value: boolean; expiresAt: number } | null = null
-let settingsFetchPromise: Promise<boolean> | null = null
-
-async function fetchPlatformSettings(): Promise<boolean> {
-  const now = Date.now()
-  if (settingsCache && settingsCache.expiresAt > now) {
-    return settingsCache.value
-  }
-  // Deduplicate concurrent fetches (e.g. multiple mounts at the same time)
-  if (!settingsFetchPromise) {
-    settingsFetchPromise = fetch('/api/platform/settings')
-      .then(res => res.json())
-      .then((data: any) => {
-        const value = data.showRetailerPriceBreakdown === true
-        settingsCache = { value, expiresAt: Date.now() + 5 * 60 * 1000 } // 5 min TTL
-        settingsFetchPromise = null
-        return value
-      })
-      .catch(() => {
-        settingsFetchPromise = null
-        return false
-      })
-  }
-  return settingsFetchPromise
-}
-
 export function PriceDisplay({
   calculations,
   markup,
@@ -62,7 +34,12 @@ export function PriceDisplay({
       return;
     }
 
-    fetchPlatformSettings().then(setAllowBreakdown);
+    fetch('/api/platform/settings')
+      .then(res => res.json())
+      .then(data => {
+        setAllowBreakdown(data.showRetailerPriceBreakdown === true);
+      })
+      .catch(() => setAllowBreakdown(false));
   }, [pathname]);
 
   if (!calculations) {

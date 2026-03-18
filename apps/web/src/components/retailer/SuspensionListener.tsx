@@ -25,9 +25,8 @@ export function SuspensionListener({ isCurrentlySuspended }: { isCurrentlySuspen
             }
         }
 
-        // Poll every 30 seconds — still near-real-time but 3x less DB pressure
-        // vs the previous 10s when 30+ retailers are online simultaneously
-        const interval = setInterval(checkStatus, 30000)
+        // Check every 10 seconds for real-time vibe
+        const interval = setInterval(checkStatus, 10000)
         return () => {
             isMounted = false
             clearInterval(interval)
