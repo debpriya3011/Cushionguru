@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import Link from 'next/link'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Loader2, User, Lock, Mail, AlertCircle, CheckCircle, Eye, EyeOff } from 'lucide-react'
@@ -203,6 +204,12 @@ function AcceptInvitationForm() {
                 </Button>
               </CardFooter>
             </form>
+            <p className="text-sm text-center text-gray-600 h-11">
+              Already have an account?{' '}
+              <Link href="/login" className="text-blue-600 hover:underline">
+                Sign in
+              </Link>
+            </p>
           </Card>
         </div>
       </div>
