@@ -68,6 +68,7 @@ export default function NewRetailerPage() {
 
       setInvitationUrl(data.invitationUrl)
       setSuccess(true)
+      setLoading(false)
     } catch (err) {
       setError('An error occurred. Please try again.')
       setLoading(false)
