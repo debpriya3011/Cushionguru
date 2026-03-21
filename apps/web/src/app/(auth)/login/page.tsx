@@ -32,8 +32,8 @@ function LoginForm() {
     setDebugInfo('')
 
     // DEBUG: Log what we're sending
-    console.log('🔍 Attempting login with:', { email, passwordLength: password.length })
-    setDebugInfo(`Sending: ${email} / Password length: ${password.length}`)
+    // console.log('🔍 Attempting login with:', { email, passwordLength: password.length })
+    // setDebugInfo(`Sending: ${email} / Password length: ${password.length}`)
 
     try {
       const result = await signIn('credentials', {
@@ -44,43 +44,43 @@ function LoginForm() {
       })
 
       // DEBUG: Log the full result
-      console.log('📊 Login result:', result)
-      setDebugInfo(prev => `${prev}\nResult: ${JSON.stringify(result, null, 2)}`)
+      // console.log('📊 Login result:', result)
+      // setDebugInfo(prev => `${prev}\nResult: ${JSON.stringify(result, null, 2)}`)
 
       if (result?.error) {
-        console.error('❌ Login error:', result.error)
-        setDebugInfo(prev => `${prev}\nError: ${result.error}`)
+        // console.error('❌ Login error:', result.error)
+        // setDebugInfo(prev => `${prev}\nError: ${result.error}`)
         setError(`Invalid email or password (${result.error})`)
         setLoading(false)
         return
       }
 
       if (!result?.ok) {
-        console.error('❌ Result not OK:', result)
+        // console.error('❌ Result not OK:', result)
         setDebugInfo(prev => `${prev}\nResult not OK`)
         setError('Login failed - check console')
         setLoading(false)
         return
       }
 
-      console.log('✅ Login OK, fetching user session...')
-      setDebugInfo(prev => `${prev}\nLogin OK, fetching user session...`)
+      // console.log('✅ Login OK, fetching user session...')
+      // setDebugInfo(prev => `${prev}\nLogin OK, fetching user session...`)
 
       // Fetch user to determine redirect (bypass next-auth's aggressive client session caching)
       const fetchTime = new Date().getTime();
       const userRes = await fetch(`/api/auth/me?t=${fetchTime}`, { cache: 'no-store' });
 
       if (!userRes.ok) {
-        console.error('❌ Failed to fetch user session')
-        setDebugInfo(prev => `${prev}\nFailed to fetch user session from API`)
+        // console.error('❌ Failed to fetch user session')
+        // setDebugInfo(prev => `${prev}\nFailed to fetch user session from API`)
         setError('Logged in but failed to get user data')
         setLoading(false)
         return
       }
 
       const userData = await userRes.json()
-      console.log('👤 User data:', userData)
-      setDebugInfo(prev => `${prev}\nUser: ${JSON.stringify(userData, null, 2)}`)
+      // console.log('👤 User data:', userData)
+      // setDebugInfo(prev => `${prev}\nUser: ${JSON.stringify(userData, null, 2)}`)
 
       if (userData.role === 'SUPER_ADMIN') {
         router.push('/admin/dashboard')
@@ -92,8 +92,8 @@ function LoginForm() {
 
       router.refresh()
     } catch (err) {
-      console.error('💥 Exception:', err)
-      setDebugInfo(prev => `${prev}\nException: ${String(err)}`)
+      // console.error('💥 Exception:', err)
+      // setDebugInfo(prev => `${prev}\nException: ${String(err)}`)
       setError(`An error occurred: ${String(err)}`)
       setLoading(false)
     }
