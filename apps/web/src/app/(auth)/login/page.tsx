@@ -196,7 +196,7 @@ function LoginForm() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#e2e8f0] p-4">
+    <div className="min-h-screen flex flex-col bg-slate-200 p-4">
       <div className="text-center mb-6 mt-6">
         <h1 className="text-3xl font-bold text-slate-800">Cushion Quoting</h1>
         <p className="text-slate-600 mt-2">Sign in to your account</p>
@@ -206,9 +206,8 @@ function LoginForm() {
         <div className="w-full max-w-4xl flex flex-col md:flex-row rounded-xl overflow-hidden bg-slate-700 shadow-xl border border-slate-600">
           {/* Left: Login form - not in DOM when closed; slides in smoothly when open */}
           <div
-            className={`overflow-hidden flex flex-col justify-center bg-slate-700 transition-[max-width,opacity] duration-500 ease-out ${
-              curtainsOpen ? 'max-w-md opacity-100 flex-1 min-w-0' : 'max-w-0 opacity-0 flex-none'
-            }`}
+            className={`overflow-hidden flex flex-col justify-center bg-slate-700 transition-[max-width,opacity] duration-500 ease-out ${curtainsOpen ? 'max-w-md opacity-100 flex-1 min-w-0' : 'max-w-0 opacity-0 flex-none'
+              }`}
           >
             {curtainsOpen && (
               <div className="p-8 min-w-[280px] animate-in slide-in-from-left-8 fade-in duration-500">
@@ -312,7 +311,7 @@ export default function LoginPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen flex items-center justify-center bg-[#e2e8f0] p-4">
+        <div className="min-h-screen flex items-center justify-center bg-slate-200 p-4">
           <Loader2 className="h-8 w-8 animate-spin text-slate-600" />
         </div>
       }

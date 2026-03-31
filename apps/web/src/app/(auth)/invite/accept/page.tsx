@@ -142,7 +142,7 @@ function AcceptInvitationForm() {
 
   if (step === 'verify' && loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#e2e8f0] p-4">
+      <div className="min-h-screen flex items-center justify-center bg-slate-200 p-4">
         <Loader2 className="h-8 w-8 animate-spin text-slate-600" />
       </div>
     )
@@ -150,7 +150,7 @@ function AcceptInvitationForm() {
 
   if (step === 'input_token') {
     return (
-      <div className="min-h-screen flex flex-col bg-[#e2e8f0] p-4">
+      <div className="min-h-screen flex flex-col bg-slate-200 p-4">
         <div className="text-center mb-6 mt-6">
           <h1 className="text-3xl font-bold text-slate-800">Cushion Quoting</h1>
           <p className="text-slate-600 mt-2">Accept your invitation</p>
@@ -217,7 +217,7 @@ function AcceptInvitationForm() {
 
   if (step === 'success') {
     return (
-      <div className="min-h-screen flex flex-col bg-[#e2e8f0] p-4">
+      <div className="min-h-screen flex flex-col bg-slate-200 p-4">
         <div className="text-center mb-6 mt-6">
           <h1 className="text-3xl font-bold text-slate-800">Cushion Quoting</h1>
           <p className="text-slate-600 mt-2">Accept your invitation</p>
@@ -247,7 +247,7 @@ function AcceptInvitationForm() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#e2e8f0] p-4">
+    <div className="min-h-screen flex flex-col bg-slate-200 p-4">
       <div className="text-center mb-6 mt-6">
         <h1 className="text-3xl font-bold text-slate-800">Cushion Quoting</h1>
         <p className="text-slate-600 mt-2">Create your account to get started</p>
@@ -396,7 +396,7 @@ function AcceptInvitationForm() {
 
 export default function AcceptInvitationPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-[#e2e8f0] p-4"><Loader2 className="h-8 w-8 animate-spin text-slate-600" /></div>}>
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-slate-200 p-4"><Loader2 className="h-8 w-8 animate-spin text-slate-600" /></div>}>
       <AcceptInvitationForm />
     </Suspense>
   )
