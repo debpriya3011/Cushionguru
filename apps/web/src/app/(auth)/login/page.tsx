@@ -117,10 +117,21 @@ function InteractiveCurtains({
           {isOpen && (
             <g>
               <rect x="24" y="24" width="232" height="272" fill="url(#windowLight)" rx="8" />
-              <path d="M24 24 L24 296 L48 296 L48 24 Z" fill="url(#curtainShade)" stroke="#64748b" strokeWidth="1" opacity="0.98" />
-              <path d="M256 24 L256 296 L232 296 L232 24 Z" fill="url(#curtainShade)" stroke="#64748b" strokeWidth="1" opacity="0.98" />
-              <circle cx="60" cy="80" r="6" fill="white" opacity="0.2" />
-              <circle cx="220" cy="100" r="5" fill="white" opacity="0.2" />
+              
+              {/* Left curtain (tied back) */}
+              <path d="M24 24 L24 296 L90 296 Q75 228 45 160 Q75 92 90 24 Z" fill="url(#curtainShade)" stroke="#64748b" strokeWidth="1" opacity="0.98" />
+              {/* Left tie-back */}
+              <path d="M22 154 L47 154 Q52 160 47 166 L22 166 Z" fill="#cbd5e1" stroke="#64748b" strokeWidth="1" />
+              
+              {/* Right curtain (tied back) */}
+              <path d="M256 24 L256 296 L190 296 Q205 228 235 160 Q205 92 190 24 Z" fill="url(#curtainShade)" stroke="#64748b" strokeWidth="1" opacity="0.98" />
+              {/* Right tie-back */}
+              <path d="M258 154 L233 154 Q228 160 233 166 L258 166 Z" fill="#cbd5e1" stroke="#64748b" strokeWidth="1" />
+
+              <circle cx="55" cy="70" r="6" fill="white" opacity="0.2" />
+              <circle cx="225" cy="85" r="5" fill="white" opacity="0.2" />
+              <circle cx="60" cy="240" r="5" fill="white" opacity="0.15" />
+              <circle cx="220" cy="250" r="5" fill="white" opacity="0.15" />
             </g>
           )}
 
