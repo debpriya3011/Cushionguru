@@ -114,7 +114,7 @@ export function PriceDisplay({
 
         {markup && markup.value > 0 && (
           <p className="text-xs opacity-70 mt-2">
-            Includes  Markup
+            Includes Markup
           </p>
         )}
       </div>

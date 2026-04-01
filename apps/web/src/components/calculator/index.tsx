@@ -227,6 +227,27 @@ export function Calculator({
     alert("Draft Quote Saved");
   };
 
+  const getDisplayTotal = () => {
+    if (!calculations) return 0;
+    let finalPrice = calculations.baseSubtotal;
+
+    if (preferences?.pdfPreference === 'ALWAYS') {
+      finalPrice += 10;
+    }
+    if (preferences?.labelPreference === 'ALWAYS') {
+      finalPrice += 8 * (selections.quantity || 1);
+    }
+
+    if (markup && Number(markup.value) > 0) {
+      if (markup.type === 'PERCENTAGE') {
+        finalPrice += finalPrice * (Number(markup.value) / 100);
+      } else {
+        finalPrice += Number(markup.value);
+      }
+    }
+    return finalPrice;
+  };
+
   return (
     <>
       <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 pb-24 relative">
@@ -425,7 +446,7 @@ export function Calculator({
             <div>
               {calculations && (
                 <p className="text-lg font-semibold">
-                  Total: ${calculations.finalPrice.toFixed(2)}
+                  Total: ${getDisplayTotal().toFixed(2)}
                 </p>
               )}
             </div>

@@ -2,6 +2,7 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import { NewQuoteClient } from './NewQuoteClient'
+import { prisma } from '@/lib/prisma'
 
 export default async function NewQuotePage() {
   const session = await getServerSession(authOptions)
@@ -10,18 +11,22 @@ export default async function NewQuotePage() {
     redirect('/login?callbackUrl=/retailer/quotes/new')
   }
 
+  const retailer = await prisma.retailer.findUnique({
+    where: { id: session.user.retailerId },
+    select: { markupType: true, markupValue: true }
+  })
+
   return (
     <NewQuoteClient
       retailerId={session.user.retailerId!}
       markup={
-        session.user.retailer?.markupType && session.user.retailer?.markupValue !== undefined
+        retailer?.markupType && retailer?.markupValue !== undefined
           ? {
-            type: session.user.retailer.markupType as 'PERCENTAGE' | 'FIXED',
-            value: session.user.retailer.markupValue,
+            type: retailer.markupType as 'PERCENTAGE' | 'FIXED',
+            value: Number(retailer.markupValue),
           }
           : undefined
       }
     />
   )
 }
-
