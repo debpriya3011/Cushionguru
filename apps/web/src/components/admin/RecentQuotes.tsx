@@ -64,8 +64,9 @@ export function RecentQuotes({ quotes }: RecentQuotesProps) {
         ) : (
           <div className="space-y-4">
             {quotes.map((quote) => (
-              <div
+              <Link
                 key={quote.id}
+                href={`/admin/quotes/${quote.id}`}
                 className="flex flex-col sm:flex-row sm:items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors gap-2"
               >
                 <div className="flex items-center gap-4">
@@ -92,7 +93,7 @@ export function RecentQuotes({ quotes }: RecentQuotesProps) {
                     {quote.status}
                   </Badge>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         )}

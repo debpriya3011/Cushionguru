@@ -226,9 +226,10 @@ export default async function RetailerDashboardPage() {
             ) : (
               <div className="space-y-3">
                 {recentQuotes.map((quote) => (
-                  <div
+                  <Link
                     key={quote.id}
-                    className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                    href={`/retailer/quotes/${quote.id}`}
+                    className="flex items-center justify-between p-3 bg-gray-50 hover:bg-gray-100 transition-colors rounded-lg"
                   >
                     <div>
                       <p className="font-medium">{quote.quoteNumber}</p>
@@ -243,7 +244,7 @@ export default async function RetailerDashboardPage() {
                         {quote.status}
                       </Badge>
                     </div>
-                  </div>
+                  </Link>
                 ))}
               </div>
             )}
@@ -268,9 +269,10 @@ export default async function RetailerDashboardPage() {
             ) : (
               <div className="space-y-3">
                 {recentOrders.map((order) => (
-                  <div
+                  <Link
                     key={order.id}
-                    className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                    href={`/retailer/orders/${order.id}`}
+                    className="flex items-center justify-between p-3 bg-gray-50 hover:bg-gray-100 transition-colors rounded-lg"
                   >
                     <div>
                       <p className="font-medium">{order.orderNumber}</p>
@@ -285,7 +287,7 @@ export default async function RetailerDashboardPage() {
                         {order.status.replace(/_/g, ' ')}
                       </Badge>
                     </div>
-                  </div>
+                  </Link>
                 ))}
               </div>
             )}
