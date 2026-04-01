@@ -58,9 +58,10 @@ export function RetailerActivity({ retailers }: RetailerActivityProps) {
         ) : (
           <div className="space-y-4">
             {retailers.map((retailer) => (
-              <div
+              <Link
                 key={retailer.id}
-                className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors gap-3"
+                href={`/admin/retailers/${retailer.id}`}
+                className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors gap-3 block"
               >
                 <div className="flex items-center gap-4">
                   {retailer.labelFileUrl ? (
@@ -109,13 +110,11 @@ export function RetailerActivity({ retailers }: RetailerActivityProps) {
                     {retailer.status}
                   </Badge>
 
-                  <Link href={`/admin/retailers/${retailer.id}`}>
-                    <Button variant="ghost" size="sm">
-                      View
-                    </Button>
-                  </Link>
+                  <div className="h-9 px-3 flex items-center justify-center rounded-md text-sm font-medium hover:bg-slate-200 transition-colors">
+                    View
+                  </div>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         )}

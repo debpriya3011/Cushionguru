@@ -133,12 +133,12 @@ export default async function RetailerDashboardPage() {
             Here&apos;s what&apos;s happening with your business today.
           </p>
         </div>
-        <Link href="/retailer/quotes/new">
+        {/* <Link href="/retailer/quotes/new">
           <Button size="lg">
             <Plus className="mr-2 h-5 w-5" />
             New Quote
           </Button>
-        </Link>
+        </Link> */}
       </div>
 
       {/* Stats Grid */}
