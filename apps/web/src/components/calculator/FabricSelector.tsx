@@ -29,7 +29,7 @@ interface FabricSelectorProps {
   fabricsPerPage?: number;
 }
 
-const DEFAULT_FABRICS_PER_PAGE = 50;
+const DEFAULT_FABRICS_PER_PAGE = 54;
 
 export function FabricSelector({
   brands,
