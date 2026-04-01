@@ -72,8 +72,9 @@ export function RecentOrders({ orders }: RecentOrdersProps) {
         ) : (
           <div className="space-y-4">
             {orders.map((order) => (
-              <div
+              <Link
                 key={order.id}
+                href={`/admin/orders/${order.id}`}
                 className="flex flex-col sm:flex-row sm:items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors gap-2"
               >
                 <div className="flex items-center gap-4">
@@ -105,7 +106,7 @@ export function RecentOrders({ orders }: RecentOrdersProps) {
                     {order.status.replace(/_/g, ' ')}
                   </Badge>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         )}
